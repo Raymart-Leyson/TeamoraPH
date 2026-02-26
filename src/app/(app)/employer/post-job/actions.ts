@@ -13,7 +13,6 @@ export async function createJobAction(formData: FormData) {
     const location = formData.get("location") as string;
     const job_type = formData.get("job_type") as string;
     const salary_range = formData.get("salary_range") as string;
-    const status = "draft"; // save as draft initially, or "published" directly if paid
 
     if (!title || !description) {
         return { error: "Title and description are required" };
@@ -21,15 +20,6 @@ export async function createJobAction(formData: FormData) {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: "Not authorized" };
-
-    // ── Entitlement gate ────────────────────────────────────────────────────
-    const subscribed = await hasActiveSubscription(user.id);
-    if (!subscribed) {
-        return {
-            error: "An active subscription is required to post jobs. Please upgrade on the Billing page.",
-        };
-    }
-    // ───────────────────────────────────────────────────────────────────────
 
     // Fetch employer company ID
     const { data: employer } = await supabase
@@ -42,6 +32,37 @@ export async function createJobAction(formData: FormData) {
         return { error: "You must create a company profile before posting a job." };
     }
 
+    // ── Entitlement gate & Status Logic ─────────────────────────────────────
+    const subscribed = await hasActiveSubscription(user.id);
+    let finalStatus = "draft"; // fallback
+
+    if (subscribed) {
+        // Pro users don't need review, directly publish
+        finalStatus = "published";
+    } else {
+        // Free users logic
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        // Check posts in current month
+        const { count } = await supabase
+            .from("job_posts")
+            .select("*", { count: "exact", head: true })
+            .eq("author_id", user.id)
+            .gte("created_at", startOfMonth.toISOString());
+
+        if (count && count >= 3) {
+            return {
+                error: "Free accounts are limited to 3 job posts per month. Please upgrade your subscription to post more.",
+            };
+        }
+
+        // Free postings need review. We assume 'pending_approval' or 'draft' 
+        // Note: For this to work flawlessly, 'pending' must be added to the job_status ENUM
+        finalStatus = "pending";
+    }
+
     const { error } = await supabase.from("job_posts").insert({
         company_id: employer.company_id,
         author_id: user.id,
@@ -50,7 +71,7 @@ export async function createJobAction(formData: FormData) {
         location,
         job_type,
         salary_range,
-        status
+        status: finalStatus
     });
 
     if (error) {

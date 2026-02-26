@@ -13,11 +13,29 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 // Pricing config — single source of truth. Update here to change the plan.
 export const PLANS = {
     pro: {
-        name: "Teamora Pro",
-        description: "Post unlimited jobs and message candidates",
-        priceId: process.env.STRIPE_PRO_PRICE_ID ?? "", // Set in Stripe dashboard → copy price ID here
-        monthlyAmount: 2900, // $29.00 in cents — displayed in UI
+        name: "Pro Talent",
+        description: "Perfect for scaling startups hiring multiple roles.",
+        priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
+        monthlyAmount: 6900, // $69.00
+        features: [
+            "Unlimited Job Postings",
+            "Unlimited Candidate Messaging",
+            "Advanced Candidate Search",
+            "Verified Status Badge",
+        ]
     },
+    premium: {
+        name: "Premium Search",
+        description: "Full service hiring with priority support and tools.",
+        priceId: process.env.STRIPE_PREMIUM_PRICE_ID ?? "",
+        monthlyAmount: 9900, // $99.00
+        features: [
+            "Everything in Pro",
+            "Priority Job Placement",
+            "Dedicated Account Manager",
+            "Early Access to Top Talent",
+        ]
+    }
 } as const;
 
 export type PlanKey = keyof typeof PLANS;

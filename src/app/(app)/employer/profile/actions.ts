@@ -14,6 +14,11 @@ export async function updateEmployerProfile(formData: FormData) {
     const company_name = formData.get("company_name") as string;
     const website = formData.get("website") as string;
     const description = formData.get("description") as string;
+    let logo_url = formData.get("logo_url") as string;
+    const logoFile = formData.get("logo_upload") as File | null;
+    const industry = formData.get("industry") as string;
+    const company_size = formData.get("company_size") as string;
+    const location = formData.get("location") as string;
 
     const first_name = formData.get("first_name") as string;
     const last_name = formData.get("last_name") as string;
@@ -21,6 +26,24 @@ export async function updateEmployerProfile(formData: FormData) {
 
     if (!company_name) {
         return { error: "Company Name is required" };
+    }
+
+    // --- LOGO UPLOAD LOGIC ---
+    if (logoFile && logoFile.size > 0) {
+        const fileExt = logoFile.name.split('.').pop();
+        const fileName = `${user.id}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from("company-logos")
+            .upload(fileName, logoFile, { upsert: true });
+
+        if (uploadError) {
+            console.error("Logo upload error:", uploadError);
+            return { error: `Failed to upload logo: ${uploadError.message}. Make sure the 'company-logos' bucket exists in Supabase.` };
+        }
+
+        const { data: publicUrlData } = supabase.storage.from("company-logos").getPublicUrl(fileName);
+        logo_url = publicUrlData.publicUrl;
     }
 
     // 1. Get existing employer profile to find company ID
@@ -33,22 +56,37 @@ export async function updateEmployerProfile(formData: FormData) {
     let companyId = employerData?.company_id;
 
     // 2. Upsert Company 
-    // If companyId exists, update, else insert and retrieve new ID
+    console.log("Saving company data:", { company_name, website, industry, company_size, location });
+
     if (companyId) {
         const { error } = await supabase.from("companies").update({
             name: company_name,
             website,
             description,
+            logo_url,
+            industry,
+            company_size,
+            location,
             updated_at: new Date().toISOString()
         }).eq("id", companyId);
-        if (error) return { error: error.message };
+        if (error) {
+            console.error("Company update error:", error);
+            return { error: error.message };
+        }
     } else {
         const { data: insertedCompany, error } = await supabase.from("companies").insert({
             name: company_name,
             website,
-            description
+            description,
+            logo_url,
+            industry,
+            company_size,
+            location
         }).select("id").single();
-        if (error) return { error: error.message };
+        if (error) {
+            console.error("Company insert error:", error);
+            return { error: error.message };
+        }
         companyId = insertedCompany.id;
     }
 
@@ -70,5 +108,8 @@ export async function updateEmployerProfile(formData: FormData) {
 
     revalidatePath("/employer/profile");
     revalidatePath("/employer/dashboard");
+    revalidatePath("/companies/[id]", "page");
+    revalidatePath("/jobs/[id]", "page");
+    revalidatePath("/jobs", "page");
     return { success: "Company profile updated successfully" };
 }

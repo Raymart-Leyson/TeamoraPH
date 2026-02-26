@@ -25,37 +25,46 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     const validRole = profile.role as "candidate" | "employer" | "admin";
     const supabase = await createClient();
 
-    // Fetch unread message count: messages in this user's conversations NOT sent by them
+    // Fetch unread message count
     let unreadMessages = 0;
     try {
-        // Step 1: get conversation IDs for this user
-        const convField = validRole === "employer" ? "employer_id" : "candidate_id";
+        const field = validRole === "employer" ? "employer_last_read_at" : "candidate_last_read_at";
+        const userIdField = validRole === "employer" ? "employer_id" : "candidate_id";
+
         const { data: convs } = await supabase
             .from("conversations")
-            .select("id")
-            .eq(convField, profile.id);
+            .select(`id, ${field}`)
+            .eq(userIdField, profile.id);
 
-        const convIds = (convs ?? []).map((c) => c.id);
-
-        if (convIds.length > 0) {
-            // Step 2: count messages in those convs not sent by current user
-            const { count } = await supabase
-                .from("messages")
-                .select("id", { count: "exact", head: true })
-                .in("conversation_id", convIds)
-                .neq("sender_id", profile.id);
-            unreadMessages = count ?? 0;
+        if (convs && convs.length > 0) {
+            for (const conv of convs) {
+                const { count } = await supabase
+                    .from("messages")
+                    .select("id", { count: "exact", head: true })
+                    .eq("conversation_id", conv.id)
+                    .neq("sender_id", profile.id)
+                    .gt("created_at", (conv as any)[field]);
+                unreadMessages += count ?? 0;
+            }
         }
-    } catch {
-        // Non-blocking: unread count failure should not crash the layout
+    } catch (e) {
+        console.error("Unread count error:", e);
         unreadMessages = 0;
     }
+
+    // Fetch subscription status for Pro badge
+    const { data: subData } = await supabase
+        .from("subscriptions")
+        .select("status")
+        .eq("employer_id", profile.id)
+        .maybeSingle();
+    const isPro = subData?.status === "active" || subData?.status === "trialing";
 
     return (
         <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
             {/* Desktop Sidebar */}
             <aside className="hidden border-r bg-muted/30 lg:block lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
-                <Sidebar role={validRole} unreadMessages={unreadMessages} />
+                <Sidebar role={validRole} unreadMessages={unreadMessages} isPro={isPro} />
             </aside>
 
             {/* Main Container */}
@@ -70,7 +79,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="flex flex-col p-0 w-72">
-                            <Sidebar role={validRole} unreadMessages={unreadMessages} />
+                            <Sidebar role={validRole} unreadMessages={unreadMessages} isPro={isPro} />
                         </SheetContent>
                     </Sheet>
                     <div className="w-full flex-1">

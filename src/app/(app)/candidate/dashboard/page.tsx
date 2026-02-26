@@ -35,7 +35,7 @@ export default async function CandidateDashboard() {
         .limit(5);
 
     return (
-        <div className="flex-1 space-y-8 p-8 pt-10">
+        <div className="flex-1 space-y-8 p-8 pt-10 max-w-[90%] mx-auto">
             <div className="flex items-center justify-between space-y-2">
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>

@@ -63,7 +63,7 @@ export default async function ApplicationsPage({ searchParams }: ApplicationsPag
     const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
 
     return (
-        <div className="flex-1 space-y-8 p-8 max-w-5xl mx-auto pt-10">
+        <div className="flex-1 space-y-8 p-8 max-w-[90%] mx-auto pt-10">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>

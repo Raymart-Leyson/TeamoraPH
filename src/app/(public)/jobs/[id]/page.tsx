@@ -1,13 +1,15 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Building2, CalendarDays } from "lucide-react";
+import { MapPin, Globe, Building2, CalendarDays, Users, Activity } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getUserProfile } from "@/utils/auth";
 import { ApplyButton } from "./apply-button";
 
-export default async function JobDetailPage({ params }: { params: { id: string } }) {
+export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+
     const supabase = await createClient();
     const profile = await getUserProfile();
 
@@ -17,97 +19,153 @@ export default async function JobDetailPage({ params }: { params: { id: string }
       *,
       company:companies(*)
     `)
-        .eq("id", params.id)
+        .eq("id", id)
         .single();
 
-    if (error || !job || job.status !== 'published') {
+    const isAuthor = profile?.role === 'employer' && job?.author_id === profile?.id;
+
+    if (error || !job || (job.status !== 'published' && !isAuthor)) {
         notFound();
     }
 
-    // Check if candidate already applied
+    // Check if candidate already applied and has credits
     let hasApplied = false;
+    let candidateData = null;
     if (profile?.role === 'candidate') {
-        const { data: app } = await supabase
-            .from('applications')
-            .select('id')
-            .eq('job_id', job.id)
-            .eq('candidate_id', profile.id)
-            .single();
-        if (app) hasApplied = true;
+        const [appRes, candidateRes] = await Promise.all([
+            supabase.from('applications').select('id').eq('job_id', job.id).eq('candidate_id', profile.id).single(),
+            supabase.from('candidate_profiles').select('credit_balance, first_name, last_name').eq('id', profile.id).single()
+        ]);
+        if (appRes.data) hasApplied = true;
+        candidateData = candidateRes.data;
     }
 
     const company = job.company?.[0] || job.company;
 
     return (
-        <div className="flex-1 space-y-8 p-8 max-w-4xl mx-auto pt-10">
-            <div className="flex flex-col md:flex-row gap-8 items-start">
-                <div className="flex-1 space-y-6">
-                    <div className="space-y-4">
-                        <div>
-                            <h1 className="text-4xl font-extrabold tracking-tight mb-2">{job.title}</h1>
-                            <div className="flex items-center text-lg text-muted-foreground font-medium mb-4">
-                                <Building2 className="mr-2 h-5 w-5" /> {company?.name || "Unknown Company"}
+        <div className="relative min-h-[calc(100vh-4rem)] bg-[#EEE2DC] overflow-hidden">
+            {/* Background Blobs for Anti-Gravity feel */}
+            <div className="absolute top-[-5%] left-[-10%] w-[30rem] h-[30rem] bg-[#EDC7B7] rounded-full mix-blend-multiply blur-3xl opacity-60 pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-5%] w-[35rem] h-[35rem] bg-[#AC3B61] rounded-full mix-blend-multiply blur-[120px] opacity-30 pointer-events-none" />
+
+            <div className="relative z-10 flex-1 space-y-8 p-4 md:p-8 max-w-[90%] mx-auto pt-10">
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+
+                    {/* Main Content Area */}
+                    <div className="flex-1 space-y-8 w-full">
+                        {/* Header Section */}
+                        <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-8 md:p-10 transition-all duration-300">
+                            <h1 className="text-4xl md:text-5xl font-extrabold tracking-wide text-[#123C69] mb-4 leading-tight">{job.title}</h1>
+                            <div className="flex items-center text-lg text-[#123C69]/80 font-bold mb-6 tracking-wide">
+                                <Building2 className="mr-2 h-6 w-6 text-[#AC3B61]" /> {company?.name || "Confidential"}
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-3">
+                                {job.location && (
+                                    <span className="flex items-center gap-1.5 bg-white/50 border border-white/60 text-[#123C69] px-4 py-2 rounded-full font-bold shadow-sm">
+                                        <MapPin className="h-4 w-4" /> {job.location}
+                                    </span>
+                                )}
+                                {job.job_type && (
+                                    <Badge variant="outline" className="px-4 py-2 text-sm tracking-widest font-bold bg-[#123C69] border-none text-white rounded-full shadow-md">
+                                        {job.job_type.toUpperCase()}
+                                    </Badge>
+                                )}
+                                {job.salary_range && (
+                                    <span className="font-bold text-[#AC3B61] bg-white/60 px-5 py-2 rounded-full border border-white/50 shadow-sm">
+                                        {job.salary_range}
+                                    </span>
+                                )}
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-3">
-                            {job.location && (
-                                <span className="flex items-center gap-1.5 bg-muted/50 px-3 py-1.5 rounded-md font-medium">
-                                    <MapPin className="h-4 w-4" /> {job.location}
-                                </span>
-                            )}
-                            {job.job_type && (
-                                <Badge variant="secondary" className="px-3 py-1.5 text-sm tracking-widest font-bold">
-                                    {job.job_type.toUpperCase()}
-                                </Badge>
-                            )}
-                            {job.salary_range && (
-                                <span className="font-semibold text-foreground bg-green-500/10 text-green-700 px-4 py-1.5 rounded-full border border-green-500/20 shadow-sm">
-                                    {job.salary_range}
-                                </span>
-                            )}
+                        {/* Description Section */}
+                        <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-8 md:p-10 mb-10">
+                            <h3 className="text-2xl font-extrabold tracking-wide text-[#123C69] mb-6 border-b border-white/40 pb-4">Role Overview</h3>
+                            <div className="prose prose-lg text-[#123C69]/90 max-w-none font-medium whitespace-pre-wrap leading-relaxed">
+                                {job.description}
+                            </div>
                         </div>
                     </div>
 
-                    <hr className="w-full my-8 border-t" />
+                    {/* Sidebar Area */}
+                    <div className="w-full md:w-80 shrink-0 sticky top-24 space-y-6">
+                        <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-8 flex flex-col items-center text-center">
 
-                    <div className="prose prose-slate dark:prose-invert max-w-none">
-                        <h3 className="text-xl font-bold mb-4">Job Description</h3>
-                        <div className="whitespace-pre-wrap leading-relaxed">
-                            {job.description}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="w-full md:w-80 shrink-0 sticky top-24 space-y-6">
-                    <div className="border bg-card shadow-sm rounded-xl p-6 flex flex-col items-center text-center">
-                        <div className="h-20 w-20 bg-muted/80 rounded-2xl flex items-center justify-center border-2 mb-4 font-bold text-3xl text-primary uppercase shadow-inner">
-                            {company?.name ? company.name.substring(0, 2) : "CO"}
-                        </div>
-                        <h3 className="font-semibold text-lg">{company?.name || "Confidential"}</h3>
-                        {company?.website && (
-                            <a href={company.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center mt-2">
-                                <Globe className="mr-1 h-3 w-3" /> Visit website
-                            </a>
-                        )}
-                        <div className="w-full mt-6 space-y-3">
-                            {profile?.role === 'candidate' ? (
-                                hasApplied ? (
-                                    <Button disabled className="w-full opacity-60">Already Applied</Button>
+                            {/* Company Logo Display */}
+                            <div className="h-24 w-24 bg-white/60 rounded-3xl flex items-center justify-center border border-white/60 mb-5 font-bold text-3xl text-[#123C69] uppercase shadow-lg overflow-hidden relative">
+                                {company?.logo_url ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={company.logo_url} alt={company.name} className="object-cover w-full h-full absolute inset-0" />
                                 ) : (
-                                    <ApplyButton jobId={job.id} candidateId={profile.id} />
-                                )
-                            ) : !profile ? (
-                                <Button asChild className="w-full">
-                                    <Link href={`/login?redirect=/jobs/${job.id}`}>Login to Apply</Link>
-                                </Button>
-                            ) : (
-                                <p className="text-sm text-muted-foreground w-full">Employers cannot apply.</p>
-                            )}
-                        </div>
+                                    company?.name ? company.name.substring(0, 2) : "CO"
+                                )}
+                            </div>
 
-                        <div className="flex items-center text-xs text-muted-foreground mt-6 pt-6 border-t w-full justify-center">
-                            <CalendarDays className="h-4 w-4 mr-2" /> Posted {new Date(job.created_at).toLocaleDateString()}
+                            <h3 className="font-bold text-xl text-[#123C69] tracking-wide">{company?.name || "Confidential"}</h3>
+
+                            {company?.website && (
+                                <a href={company.website} target="_blank" rel="noopener noreferrer" className="text-sm text-[#AC3B61] hover:text-[#123C69] transition-colors font-bold flex items-center mt-3">
+                                    <Globe className="mr-1.5 h-4 w-4" /> Visit website
+                                </a>
+                            )}
+
+                            <div className="w-full grid gap-y-3 mt-6 pt-6 border-t border-white/40">
+                                {company?.industry && (
+                                    <div className="flex items-center gap-2 text-sm text-[#123C69]/80 font-medium">
+                                        <Activity className="h-4 w-4 text-[#AC3B61]" />
+                                        {company.industry}
+                                    </div>
+                                )}
+                                {company?.company_size && (
+                                    <div className="flex items-center gap-2 text-sm text-[#123C69]/80 font-medium">
+                                        <Users className="h-4 w-4 text-[#AC3B61]" />
+                                        {company.company_size} employees
+                                    </div>
+                                )}
+                                {company?.location && (
+                                    <div className="flex items-center gap-2 text-sm text-[#123C69]/80 font-medium">
+                                        <MapPin className="h-4 w-4 text-[#AC3B61]" />
+                                        {company.location}
+                                    </div>
+                                )}
+                                <div className="flex items-center gap-2 text-sm text-[#123C69]/80 font-medium">
+                                    <Link href={`/companies/${company?.id}`} className="text-[#AC3B61] hover:underline flex items-center gap-1.5 font-bold">
+                                        View Company Profile
+                                    </Link>
+                                </div>
+                            </div>
+
+                            <div className="w-full mt-8 space-y-3">
+                                {profile?.role === 'candidate' ? (
+                                    hasApplied ? (
+                                        <Button disabled className="w-full rounded-full py-6 text-lg tracking-wider font-bold bg-[#123C69]/50 text-white">
+                                            Application Sent
+                                        </Button>
+                                    ) : (
+                                        <div className="w-full">
+                                            <ApplyButton
+                                                jobId={job.id}
+                                                candidateId={profile.id}
+                                                defaultEmail={profile.email}
+                                                creditBalance={candidateData?.credit_balance || 0}
+                                            />
+                                        </div>
+                                    )
+                                ) : !profile ? (
+                                    <Button asChild className="w-full rounded-full py-6 text-lg tracking-wider font-bold bg-[#123C69] hover:bg-[#123C69]/90 text-white shadow-xl hover:-translate-y-1 transition-transform">
+                                        <Link href={`/login?redirect=/jobs/${job.id}`}>Login to Apply</Link>
+                                    </Button>
+                                ) : (
+                                    <p className="text-sm font-semibold tracking-wide text-[#123C69]/60 w-full bg-white/40 py-3 rounded-xl border border-white/30">
+                                        Employers cannot apply.
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="flex items-center text-xs font-bold tracking-wide text-[#123C69]/60 mt-8 pt-6 border-t border-white/40 w-full justify-center">
+                                <CalendarDays className="h-4 w-4 mr-2" /> Posted {new Date(job.created_at).toLocaleDateString()}
+                            </div>
                         </div>
                     </div>
                 </div>

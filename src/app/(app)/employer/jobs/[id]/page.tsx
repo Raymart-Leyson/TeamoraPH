@@ -4,11 +4,12 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, User, FileText } from "lucide-react";
+import { ArrowLeft, User, FileText, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export default async function EmployerJobDetailPage({ params }: { params: { id: string } }) {
+export default async function EmployerJobDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const profile = await getUserProfile();
     if (!profile || profile.role !== "employer") {
         redirect("/login");
@@ -20,7 +21,7 @@ export default async function EmployerJobDetailPage({ params }: { params: { id: 
     const { data: job, error: jobError } = await supabase
         .from("job_posts")
         .select("*")
-        .eq("id", params.id)
+        .eq("id", id)
         .eq("author_id", profile.id)
         .single();
 
@@ -40,14 +41,15 @@ export default async function EmployerJobDetailPage({ params }: { params: { id: 
         first_name,
         last_name,
         bio,
-        skills
+        skills,
+        profile:profiles(verification_status)
       )
     `)
         .eq("job_id", job.id)
         .order("created_at", { ascending: false });
 
     return (
-        <div className="flex-1 space-y-8 p-8 pt-10">
+        <div className="flex-1 space-y-8 p-8 pt-10 max-w-[90%] mx-auto">
             <div className="flex items-center space-x-4 mb-4">
                 <Button variant="ghost" size="icon" asChild>
                     <Link href="/employer/dashboard"><ArrowLeft className="h-5 w-5" /></Link>
@@ -106,7 +108,14 @@ export default async function EmployerJobDetailPage({ params }: { params: { id: 
                                     return (
                                         <div key={app.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow">
                                             <div className="space-y-1">
-                                                <h4 className="font-semibold">{name}</h4>
+                                                <div className="flex items-center gap-2">
+                                                    <h4 className="font-semibold">{name}</h4>
+                                                    {candidate?.profile?.verification_status === 'verified' && (
+                                                        <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-200 text-[10px] h-5 flex items-center gap-1">
+                                                            <ShieldCheck className="h-3 w-3" /> Verified
+                                                        </Badge>
+                                                    )}
+                                                </div>
                                                 <p className="text-sm text-muted-foreground line-clamp-1">{candidate?.bio || "No summary provided."}</p>
                                                 <div className="flex items-center gap-2 mt-2">
                                                     <Badge variant="outline" className="capitalize text-xs">{app.status}</Badge>

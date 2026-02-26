@@ -11,7 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Search, X } from "lucide-react";
+import { Search, X, MapPin } from "lucide-react";
 
 const JOB_TYPES = ["full-time", "part-time", "contract", "freelance"];
 
@@ -22,8 +22,9 @@ export function JobFilters() {
     const [isPending, startTransition] = useTransition();
 
     const q = searchParams.get("q") ?? "";
+    const location = searchParams.get("location") ?? "";
     const type = searchParams.get("type") ?? "";
-    const hasFilters = q || type;
+    const hasFilters = q || type || location;
 
     const updateParams = useCallback(
         (updates: Record<string, string>) => {
@@ -52,12 +53,12 @@ export function JobFilters() {
 
     return (
         <div className="flex flex-col sm:flex-row w-full gap-3">
-            <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <div className="relative flex-1 group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#123C69]/50 group-focus-within:text-[#123C69] transition-colors pointer-events-none" />
                 <Input
                     id="job-search-input"
                     placeholder="Search job titles..."
-                    className="pl-9 bg-background"
+                    className="pl-12 bg-white border-white/40 shadow-sm focus-visible:ring-[#123C69]/30 text-[#123C69] placeholder:text-[#123C69]/60 font-medium h-12 rounded-2xl"
                     defaultValue={q}
                     onKeyDown={(e) => {
                         if (e.key === "Enter") {
@@ -72,17 +73,37 @@ export function JobFilters() {
                 />
             </div>
 
+            <div className="relative flex-1 group">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#123C69]/50 group-focus-within:text-[#123C69] transition-colors pointer-events-none" />
+                <Input
+                    id="job-location-input"
+                    placeholder="City, state, or Remote"
+                    className="pl-12 bg-white border-white/40 shadow-sm focus-visible:ring-[#123C69]/30 text-[#123C69] placeholder:text-[#123C69]/60 font-medium h-12 rounded-2xl"
+                    defaultValue={location}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            updateParams({ location: e.currentTarget.value });
+                        }
+                    }}
+                    onBlur={(e) => {
+                        if (e.currentTarget.value !== location) {
+                            updateParams({ location: e.currentTarget.value });
+                        }
+                    }}
+                />
+            </div>
+
             <Select
                 value={type}
                 onValueChange={(val: string) => updateParams({ type: val === "all" ? "" : val })}
             >
-                <SelectTrigger id="job-type-filter" className="w-full sm:w-44 bg-background">
+                <SelectTrigger id="job-type-filter" className="w-full sm:w-48 bg-white border-white/40 shadow-sm h-12 rounded-2xl text-[#123C69] font-medium focus:ring-[#123C69]/30">
                     <SelectValue placeholder="Job type" />
                 </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">All types</SelectItem>
+                <SelectContent className="bg-white border-[#123C69]/10 text-[#123C69] shadow-xl rounded-xl">
+                    <SelectItem value="all" className="focus:bg-[#123C69]/5 focus:text-[#AC3B61] cursor-pointer">All types</SelectItem>
                     {JOB_TYPES.map((t) => (
-                        <SelectItem key={t} value={t}>
+                        <SelectItem key={t} value={t} className="focus:bg-[#123C69]/5 focus:text-[#AC3B61] cursor-pointer">
                             {t.charAt(0).toUpperCase() + t.slice(1).replace("-", " ")}
                         </SelectItem>
                     ))}

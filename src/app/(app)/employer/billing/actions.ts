@@ -6,17 +6,16 @@ import { getUserProfile } from "@/utils/auth";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
-export async function createCheckoutSession() {
+export async function createCheckoutSession(priceId: string) {
     const profile = await getUserProfile();
     if (!profile || profile.role !== "employer") {
         throw new Error("Unauthorized");
     }
 
-    if (!process.env.STRIPE_PRO_PRICE_ID?.startsWith("price_")) {
-        const id = process.env.STRIPE_PRO_PRICE_ID ?? "not set";
-        const hint = id.startsWith("prod_")
-            ? `You set a Product ID (${id}). Go to Stripe Dashboard → Products → click the product → copy the price_ ID from the Pricing section.`
-            : "Set STRIPE_PRO_PRICE_ID to a price_... value in .env.local and restart the server.";
+    if (!priceId?.startsWith("price_")) {
+        const hint = priceId.startsWith("prod_")
+            ? `You set a Product ID (${priceId}). Go to Stripe Dashboard → Products → click the product → copy the price_ ID from the Pricing section.`
+            : `Set the correct Price ID for this tier in your environment variables. current: ${priceId}`;
         throw new Error(hint);
     }
 
@@ -57,7 +56,7 @@ export async function createCheckoutSession() {
         payment_method_types: ["card"],
         line_items: [
             {
-                price: process.env.STRIPE_PRO_PRICE_ID,
+                price: priceId,
                 quantity: 1,
             },
         ],

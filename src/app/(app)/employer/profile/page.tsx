@@ -12,18 +12,20 @@ export default async function EmployerProfilePage() {
     const supabase = await createClient();
 
     // Fetch existing employer profile + company data
-    const { data: employerData } = await supabase
+    const { data: employerData, error: profileError } = await supabase
         .from("employer_profiles")
         .select(`
             first_name, last_name, position,
-            company:companies(name, website, description)
+            company:companies(name, website, description, logo_url, industry, company_size, location)
         `)
         .eq("id", profile.id)
-        .single();
+        .maybeSingle();
 
-    const company = Array.isArray(employerData?.company)
-        ? employerData.company[0]
-        : employerData?.company;
+    if (profileError) {
+        console.error("Employer profile fetch error:", profileError);
+    }
+
+    const company = employerData?.company as any;
 
     const defaults = {
         first_name: employerData?.first_name ?? "",
@@ -32,14 +34,18 @@ export default async function EmployerProfilePage() {
         company_name: company?.name ?? "",
         website: company?.website ?? "",
         description: company?.description ?? "",
+        logo_url: company?.logo_url ?? "",
+        industry: company?.industry ?? "",
+        company_size: company?.company_size ?? "",
+        location: company?.location ?? "",
     };
 
     return (
-        <div className="flex-1 space-y-8 p-8 max-w-4xl mx-auto pt-10">
+        <div className="flex-1 space-y-8 p-8 max-w-[90%] mx-auto pt-10">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight">Company Profile</h2>
-                <p className="text-muted-foreground mt-2">
-                    Set up your company details before posting a job.
+                <h2 className="text-4xl font-extrabold tracking-wide text-[#123C69]">Company Profile</h2>
+                <p className="text-[#123C69]/70 mt-3 text-lg font-medium">
+                    Set up your organization's identity to attract top remote talent.
                 </p>
             </div>
             <EmployerProfileForm defaults={defaults} />

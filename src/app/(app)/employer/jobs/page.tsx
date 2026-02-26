@@ -46,7 +46,7 @@ export default async function EmployerJobsPage() {
     const closed = jobs?.filter((j: any) => j.status === "closed").length ?? 0;
 
     return (
-        <div className="flex-1 space-y-8 p-8 max-w-5xl mx-auto pt-10">
+        <div className="flex-1 space-y-8 p-8 max-w-[90%] mx-auto pt-10">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>

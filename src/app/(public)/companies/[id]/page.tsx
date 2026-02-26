@@ -10,20 +10,24 @@ import {
     MapPin,
     ArrowLeft,
     ArrowRight,
+    Users,
+    Activity,
+    Building2,
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
 interface Props {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { id } = await params;
     const supabase = await createClient();
     const { data: company } = await supabase
         .from("companies")
         .select("name, description")
-        .eq("id", params.id)
+        .eq("id", id)
         .single();
 
     return {
@@ -33,12 +37,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CompanyDetailPage({ params }: Props) {
+    const { id } = await params;
     const supabase = await createClient();
 
     const { data: company, error } = await supabase
         .from("companies")
         .select("*")
-        .eq("id", params.id)
+        .eq("id", id)
         .single();
 
     if (error || !company) notFound();
@@ -61,7 +66,7 @@ export default async function CompanyDetailPage({ params }: Props) {
     return (
         <div className="min-h-screen">
             {/* Back */}
-            <div className="max-w-4xl mx-auto px-4 pt-8">
+            <div className="max-w-[90%] mx-auto px-4 pt-8">
                 <Button variant="ghost" size="sm" asChild className="-ml-2">
                     <Link href="/companies">
                         <ArrowLeft className="mr-2 h-4 w-4" /> All Companies
@@ -70,7 +75,7 @@ export default async function CompanyDetailPage({ params }: Props) {
             </div>
 
             {/* Company Header */}
-            <section className="max-w-4xl mx-auto px-4 py-8">
+            <section className="max-w-[90%] mx-auto px-4 py-8">
                 <div className="flex flex-col sm:flex-row items-start gap-6">
                     {/* Avatar */}
                     <div className="h-20 w-20 shrink-0 rounded-2xl bg-primary/10 border-2 flex items-center justify-center text-primary font-bold text-2xl shadow-sm">
@@ -82,16 +87,34 @@ export default async function CompanyDetailPage({ params }: Props) {
                             <h1 className="text-3xl font-extrabold tracking-tight">{company.name}</h1>
 
                             <div className="flex flex-wrap items-center gap-3 mt-2">
-                                <Badge variant="secondary" className="flex items-center gap-1">
+                                <Badge variant="secondary" className="flex items-center gap-1 bg-[#123C69]/5 text-[#123C69] border-none font-bold">
                                     <BriefcaseBusiness className="h-3 w-3" />
                                     {openJobs.length} open {openJobs.length === 1 ? "role" : "roles"}
                                 </Badge>
+                                {company.industry && (
+                                    <Badge variant="outline" className="flex items-center gap-1 border-[#123C69]/20 text-[#123C69]/70">
+                                        <Activity className="h-3 w-3" />
+                                        {company.industry}
+                                    </Badge>
+                                )}
+                                {company.company_size && (
+                                    <Badge variant="outline" className="flex items-center gap-1 border-[#123C69]/20 text-[#123C69]/70">
+                                        <Users className="h-3 w-3" />
+                                        {company.company_size} employees
+                                    </Badge>
+                                )}
+                                {company.location && (
+                                    <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                                        <MapPin className="h-3.5 w-3.5" />
+                                        {company.location}
+                                    </span>
+                                )}
                                 {company.website && (
                                     <a
                                         href={company.website}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center gap-1 text-sm text-primary hover:underline"
+                                        className="flex items-center gap-1 text-sm text-[#AC3B61] hover:underline font-bold"
                                     >
                                         <Globe className="h-3.5 w-3.5" />
                                         {new URL(company.website).hostname.replace("www.", "")}
@@ -109,10 +132,10 @@ export default async function CompanyDetailPage({ params }: Props) {
                 </div>
             </section>
 
-            <hr className="max-w-4xl mx-auto border-border" />
+            <hr className="max-w-[90%] mx-auto border-border" />
 
             {/* Open Roles */}
-            <section className="max-w-4xl mx-auto px-4 py-10 space-y-6">
+            <section className="max-w-[90%] mx-auto px-4 py-10 space-y-6">
                 <h2 className="text-xl font-bold">
                     Open Roles
                     <span className="ml-2 text-muted-foreground font-normal text-base">
