@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { createClient } from "@/utils/supabase/server";
+import { supabaseAdmin } from "@/utils/supabase/admin";
 import type Stripe from "stripe";
 
-// Stripe sends the raw body — Next.js must NOT parse it
+// Stripe requires the raw body — Next.js must NOT parse it
 export const runtime = "nodejs";
 
 const RELEVANT_EVENTS = new Set([
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!sig || !webhookSecret || webhookSecret === "whsec_...") {
-        console.error("Webhook: missing or placeholder secret");
+        console.error("Webhook: missing or placeholder STRIPE_WEBHOOK_SECRET");
         return NextResponse.json({ error: "Webhook not configured" }, { status: 400 });
     }
 
@@ -35,8 +35,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ received: true });
     }
 
-    const supabase = await createClient();
-
     try {
         switch (event.type) {
             case "checkout.session.completed": {
@@ -49,12 +47,10 @@ export async function POST(request: Request) {
                     break;
                 }
 
-                // Fetch full subscription details from Stripe
                 const subscription = await stripe.subscriptions.retrieve(
                     session.subscription as string
                 );
-
-                await upsertSubscription(supabase, userId, subscription);
+                await upsertSubscription(userId, subscription);
                 break;
             }
 
@@ -62,31 +58,37 @@ export async function POST(request: Request) {
             case "customer.subscription.updated": {
                 const subscription = event.data.object as Stripe.Subscription;
                 const userId = subscription.metadata?.supabase_user_id;
+
                 if (!userId) {
-                    // Fallback: look up by Stripe customer ID
-                    const { data: employer } = await supabase
+                    // Fallback: look up employer by Stripe customer ID
+                    const { data: employer } = await supabaseAdmin
                         .from("employer_profiles")
                         .select("id")
                         .eq("stripe_customer_id", subscription.customer as string)
                         .single();
+
                     if (employer) {
-                        await upsertSubscription(supabase, employer.id, subscription);
+                        await upsertSubscription(employer.id, subscription);
+                    } else {
+                        console.error("Webhook: could not find employer for customer", subscription.customer);
                     }
                     break;
                 }
-                await upsertSubscription(supabase, userId, subscription);
+                await upsertSubscription(userId, subscription);
                 break;
             }
 
             case "customer.subscription.deleted": {
                 const subscription = event.data.object as Stripe.Subscription;
-                await supabase
+                const { error } = await supabaseAdmin
                     .from("subscriptions")
                     .update({
                         status: "canceled",
                         updated_at: new Date().toISOString(),
                     })
                     .eq("stripe_subscription_id", subscription.id);
+
+                if (error) console.error("Webhook: failed to cancel subscription", error);
                 break;
             }
         }
@@ -99,20 +101,17 @@ export async function POST(request: Request) {
 }
 
 async function upsertSubscription(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    supabase: any,
     employerId: string,
     subscription: Stripe.Subscription
 ) {
     const item = subscription.items.data[0];
     const priceId = item?.price.id ?? null;
-    // In Stripe v20, current_period_end lives on the subscription item
     const periodEnd = item?.current_period_end ?? null;
     const currentPeriodEnd = periodEnd
         ? new Date(periodEnd * 1000).toISOString()
         : null;
 
-    await supabase.from("subscriptions").upsert(
+    const { error } = await supabaseAdmin.from("subscriptions").upsert(
         {
             employer_id: employerId,
             stripe_subscription_id: subscription.id,
@@ -124,4 +123,9 @@ async function upsertSubscription(
         },
         { onConflict: "employer_id" }
     );
+
+    if (error) {
+        console.error("Webhook: upsertSubscription failed", error);
+        throw error; // surface to caller so we return 500 to Stripe (it will retry)
+    }
 }
