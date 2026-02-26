@@ -4,6 +4,7 @@ import { stripe, PLANS } from "@/lib/stripe";
 import { createClient } from "@/utils/supabase/server";
 import { getUserProfile } from "@/utils/auth";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 
 export async function createCheckoutSession() {
     const profile = await getUserProfile();
@@ -43,7 +44,12 @@ export async function createCheckoutSession() {
             .eq("id", profile.id);
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const headersList = await headers();
+    const host = headersList.get("host") || "localhost:3000";
+    const protocol = host.includes("localhost") ? "http" : "https";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL && process.env.NEXT_PUBLIC_APP_URL.includes("http")
+        ? process.env.NEXT_PUBLIC_APP_URL
+        : `${protocol}://${host}`;
 
     const session = await stripe.checkout.sessions.create({
         customer: customerId,
@@ -95,7 +101,12 @@ export async function createBillingPortalSession() {
         throw new Error("No billing account found. Subscribe first.");
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const headersList = await headers();
+    const host = headersList.get("host") || "localhost:3000";
+    const protocol = host.includes("localhost") ? "http" : "https";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL && process.env.NEXT_PUBLIC_APP_URL.includes("http")
+        ? process.env.NEXT_PUBLIC_APP_URL
+        : `${protocol}://${host}`;
 
     const portalSession = await stripe.billingPortal.sessions.create({
         customer: employer.stripe_customer_id,
