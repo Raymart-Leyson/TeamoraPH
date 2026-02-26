@@ -1,5 +1,7 @@
 import { getUserProfile } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
+import { supabaseAdmin } from "@/utils/supabase/admin";
+import { stripe, PLANS } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,18 +16,7 @@ import {
     AlertCircle,
 } from "lucide-react";
 import { createCheckoutSession, createBillingPortalSession } from "./actions";
-import { PLANS } from "@/lib/stripe";
-
-// These wrappers are necessary: form `action` props require (formData: FormData) => void.
-// Our actions use redirect() so they never actually return, but TS needs the signature.
-async function checkoutFormAction(_: FormData) {
-    "use server";
-    await createCheckoutSession();
-}
-async function portalFormAction(_: FormData) {
-    "use server";
-    await createBillingPortalSession();
-}
+import { PLANS as PLAN_CONFIG } from "@/lib/stripe";
 
 const PLAN_FEATURES = [
     { icon: BriefcaseBusiness, text: "Post unlimited job listings" },
@@ -35,7 +26,16 @@ const PLAN_FEATURES = [
 ];
 
 interface BillingPageProps {
-    searchParams: { success?: string; canceled?: string };
+    searchParams: { success?: string; canceled?: string; session_id?: string };
+}
+
+async function checkoutFormAction(_: FormData) {
+    "use server";
+    await createCheckoutSession();
+}
+async function portalFormAction(_: FormData) {
+    "use server";
+    await createBillingPortalSession();
 }
 
 export default async function BillingPage({ searchParams }: BillingPageProps) {
@@ -45,6 +45,47 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
     }
 
     const supabase = await createClient();
+
+    // ── If returning from Stripe Checkout, sync the subscription directly ──────
+    // This acts as a reliable fallback: even if the webhook fires later, we write
+    // the subscription immediately from the session ID Stripe gives us.
+    if (searchParams.success === "1" && searchParams.session_id?.startsWith("cs_")) {
+        try {
+            const session = await stripe.checkout.sessions.retrieve(
+                searchParams.session_id,
+                { expand: ["subscription"] }
+            );
+
+            if (session.payment_status === "paid" && session.subscription) {
+                const sub =
+                    typeof session.subscription === "string"
+                        ? await stripe.subscriptions.retrieve(session.subscription)
+                        : session.subscription;
+
+                const item = sub.items.data[0];
+                const periodEnd = item?.current_period_end ?? null;
+
+                await supabaseAdmin.from("subscriptions").upsert(
+                    {
+                        employer_id: profile.id,
+                        stripe_subscription_id: sub.id,
+                        stripe_customer_id: sub.customer as string,
+                        stripe_price_id: item?.price.id ?? null,
+                        status: sub.status,
+                        current_period_end: periodEnd
+                            ? new Date(periodEnd * 1000).toISOString()
+                            : null,
+                        updated_at: new Date().toISOString(),
+                    },
+                    { onConflict: "employer_id" }
+                );
+            }
+        } catch (err) {
+            // Non-blocking — if sync fails we show the page anyway; webhook will catch up
+            console.error("Billing page: checkout sync error", err);
+        }
+    }
+    // ─────────────────────────────────────────────────────────────────────────
 
     const { data: subscription } = await supabase
         .from("subscriptions")
@@ -81,7 +122,9 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                 <div className="flex items-center gap-3 rounded-lg bg-green-500/15 border border-green-500/30 p-4 text-green-700 dark:text-green-400">
                     <CheckCircle2 className="h-5 w-5 shrink-0" />
                     <span className="font-medium">
-                        Subscription activated! You now have full access to all employer features.
+                        {isActive
+                            ? "Subscription activated! You now have full access to all employer features."
+                            : "Payment received — subscription activating. Refresh in a moment if it hasn't appeared."}
                     </span>
                 </div>
             )}
@@ -125,15 +168,15 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                     <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary to-blue-500" />
                     <CardHeader>
                         <div className="flex items-center justify-between">
-                            <CardTitle className="text-xl">{PLANS.pro.name}</CardTitle>
+                            <CardTitle className="text-xl">{PLAN_CONFIG.pro.name}</CardTitle>
                             <div className="text-right">
                                 <div className="text-3xl font-extrabold">
-                                    ${(PLANS.pro.monthlyAmount / 100).toFixed(0)}
+                                    ${(PLAN_CONFIG.pro.monthlyAmount / 100).toFixed(0)}
                                 </div>
                                 <div className="text-xs text-muted-foreground">per month</div>
                             </div>
                         </div>
-                        <CardDescription>{PLANS.pro.description}</CardDescription>
+                        <CardDescription>{PLAN_CONFIG.pro.description}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <ul className="space-y-3">
@@ -147,14 +190,9 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
 
                         {priceConfigured ? (
                             <form action={checkoutFormAction}>
-                                <Button
-                                    type="submit"
-                                    className="w-full"
-                                    size="lg"
-                                    id="subscribe-btn"
-                                >
+                                <Button type="submit" className="w-full" size="lg" id="subscribe-btn">
                                     <Zap className="mr-2 h-4 w-4" />
-                                    Subscribe — ${(PLANS.pro.monthlyAmount / 100).toFixed(0)}/mo
+                                    Subscribe — ${(PLAN_CONFIG.pro.monthlyAmount / 100).toFixed(0)}/mo
                                 </Button>
                             </form>
                         ) : isProductId ? (

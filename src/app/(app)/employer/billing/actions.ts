@@ -55,7 +55,9 @@ export async function createCheckoutSession() {
                 quantity: 1,
             },
         ],
-        success_url: `${appUrl}/employer/billing?success=1`,
+        // Include {CHECKOUT_SESSION_ID} so the billing page can self-sync
+        // even if the webhook hasn't fired yet
+        success_url: `${appUrl}/employer/billing?success=1&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/employer/billing?canceled=1`,
         metadata: {
             supabase_user_id: profile.id,
@@ -69,7 +71,7 @@ export async function createCheckoutSession() {
     });
 
     if (!session.url) {
-        return { error: "Could not create checkout session" };
+        throw new Error("Could not create checkout session");
     }
 
     redirect(session.url);
