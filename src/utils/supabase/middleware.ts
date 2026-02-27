@@ -39,7 +39,7 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     const isAuthRoute = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/signup");
-    const isAppRoute = request.nextUrl.pathname.startsWith("/app") || request.nextUrl.pathname.startsWith("/candidate") || request.nextUrl.pathname.startsWith("/employer") || request.nextUrl.pathname.startsWith("/admin");
+    const isAppRoute = request.nextUrl.pathname.startsWith("/app") || request.nextUrl.pathname.startsWith("/candidate") || request.nextUrl.pathname.startsWith("/employer") || request.nextUrl.pathname.startsWith("/admin") || request.nextUrl.pathname.startsWith("/owner") || request.nextUrl.pathname.startsWith("/staff");
 
     if (
         !user &&
@@ -63,8 +63,12 @@ export async function updateSession(request: NextRequest) {
 
         if (profile?.role === 'employer') {
             url.pathname = "/employer/dashboard";
-        } else if (profile?.role === 'admin' || profile?.role === 'staff') {
-            url.pathname = "/admin";
+        } else if (profile?.role === 'owner') {
+            url.pathname = "/owner/dashboard";
+        } else if (profile?.role === 'admin') {
+            url.pathname = "/admin/dashboard";
+        } else if (profile?.role === 'staff') {
+            url.pathname = "/staff/dashboard";
         } else {
             url.pathname = "/candidate/dashboard";
         }
@@ -84,25 +88,43 @@ export async function updateSession(request: NextRequest) {
 
         const isCandidateRoute = request.nextUrl.pathname.startsWith("/candidate");
         const isEmployerRoute = request.nextUrl.pathname.startsWith("/employer");
+        const isOwnerRoute = request.nextUrl.pathname.startsWith("/owner");
         const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
+        const isStaffRoute = request.nextUrl.pathname.startsWith("/staff");
 
         if (isCandidateRoute && role !== 'candidate') {
             const url = request.nextUrl.clone();
-            url.pathname = role === 'employer' ? "/employer/dashboard" : "/";
+            url.pathname = role === 'employer' ? "/employer/dashboard" : role === 'owner' ? "/owner/dashboard" : role === 'admin' ? "/admin/dashboard" : role === 'staff' ? "/staff/dashboard" : "/";
             const redirectResponse = NextResponse.redirect(url);
             supabaseResponse.cookies.getAll().forEach(cookie => { redirectResponse.cookies.set(cookie.name, cookie.value, cookie); });
             return redirectResponse;
         }
         if (isEmployerRoute && role !== 'employer') {
             const url = request.nextUrl.clone();
-            url.pathname = role === 'candidate' ? "/candidate/dashboard" : "/";
+            url.pathname = role === 'candidate' ? "/candidate/dashboard" : role === 'owner' ? "/owner/dashboard" : role === 'admin' ? "/admin/dashboard" : role === 'staff' ? "/staff/dashboard" : "/";
             const redirectResponse = NextResponse.redirect(url);
             supabaseResponse.cookies.getAll().forEach(cookie => { redirectResponse.cookies.set(cookie.name, cookie.value, cookie); });
             return redirectResponse;
         }
-        if (isAdminRoute && role !== 'admin' && role !== 'staff') {
+        if (isOwnerRoute && role !== 'owner') {
             const url = request.nextUrl.clone();
-            url.pathname = "/";
+            url.pathname = role === 'employer' ? "/employer/dashboard" : role === 'admin' ? "/admin/dashboard" : role === 'staff' ? "/staff/dashboard" : role === 'candidate' ? "/candidate/dashboard" : "/";
+            const redirectResponse = NextResponse.redirect(url);
+            supabaseResponse.cookies.getAll().forEach(cookie => { redirectResponse.cookies.set(cookie.name, cookie.value, cookie); });
+            return redirectResponse;
+        }
+        if (isAdminRoute && role !== 'admin' && role !== 'owner') {
+            // Owner can access admin routes
+            const url = request.nextUrl.clone();
+            url.pathname = role === 'employer' ? "/employer/dashboard" : role === 'staff' ? "/staff/dashboard" : role === 'candidate' ? "/candidate/dashboard" : "/";
+            const redirectResponse = NextResponse.redirect(url);
+            supabaseResponse.cookies.getAll().forEach(cookie => { redirectResponse.cookies.set(cookie.name, cookie.value, cookie); });
+            return redirectResponse;
+        }
+        if (isStaffRoute && role !== 'staff' && role !== 'admin' && role !== 'owner') {
+            // Owner and Admin can access staff routes
+            const url = request.nextUrl.clone();
+            url.pathname = role === 'employer' ? "/employer/dashboard" : role === 'candidate' ? "/candidate/dashboard" : "/";
             const redirectResponse = NextResponse.redirect(url);
             supabaseResponse.cookies.getAll().forEach(cookie => { redirectResponse.cookies.set(cookie.name, cookie.value, cookie); });
             return redirectResponse;

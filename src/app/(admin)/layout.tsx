@@ -10,7 +10,8 @@ import {
     Settings,
     LogOut,
     Menu,
-    AlertTriangle
+    AlertTriangle,
+    Database
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,26 +27,31 @@ export default async function AdminLayout({
 }) {
     const profile = await getUserProfile();
 
-    // Auth guard: Only admin and staff allowed
-    if (!profile || (profile.role !== "admin" && profile.role !== "staff")) {
+    // Auth guard: Only owner, admin, and staff allowed
+    if (!profile || !["owner", "admin", "staff"].includes(profile.role)) {
         redirect("/"); // Send non-admins back to home
     }
 
-    const navItems = [
-        { label: "Overview", href: "/admin", icon: LayoutDashboard },
-        { label: "Job Reviews", href: "/admin/jobs", icon: BriefcaseBusiness },
-        { label: "Verifications", href: "/admin/verifications", icon: ShieldCheck },
-        { label: "Reports", href: "/admin/reports", icon: AlertTriangle },
-        { label: "User Management", href: "/admin/users", icon: Users, adminOnly: true },
-        { label: "Settings", href: "/admin/settings", icon: Settings, adminOnly: true },
+    const role = profile.role;
+    const basePath = `/${role}`; // e.g., /owner, /admin, /staff
+
+    // Define all possible nav items
+    const allNavItems = [
+        { label: "Overview", href: `${basePath}`, icon: LayoutDashboard, roles: ["owner", "admin", "staff"] },
+        { label: "Job Reviews", href: `${basePath}/jobs`, icon: BriefcaseBusiness, roles: ["owner", "admin", "staff"] },
+        { label: "Verifications", href: `${basePath}/verifications`, icon: ShieldCheck, roles: ["owner", "admin"] },
+        { label: "Reports", href: `${basePath}/reports`, icon: AlertTriangle, roles: ["owner", "admin", "staff"] },
+        { label: "Audit Logs", href: `${basePath}/logs`, icon: Database, roles: ["owner"] },
+        { label: "User Management", href: `${basePath}/users`, icon: Users, roles: ["owner"] },
+        { label: "Settings", href: `${basePath}/settings`, icon: Settings, roles: ["owner"] },
     ];
 
-    const filteredNavItems = navItems.filter(item => !item.adminOnly || profile.role === 'admin');
+    const filteredNavItems = allNavItems.filter(item => item.roles.includes(role));
 
     const SidebarContent = () => (
         <div className="flex flex-col h-full py-6">
             <div className="px-6 mb-10">
-                <Link href="/admin" className="flex items-center gap-2">
+                <Link href={basePath} className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-[#123C69] rounded-lg flex items-center justify-center">
                         <span className="text-white font-black text-xl">T</span>
                     </div>
@@ -90,7 +96,7 @@ export default async function AdminLayout({
             {/* Mobile Nav Top Bar */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 <header className="lg:hidden flex items-center justify-between h-16 px-6 bg-white/50 backdrop-blur-md border-b border-white/20 sticky top-0 z-30">
-                    <Link href="/admin" className="flex items-center gap-2">
+                    <Link href={basePath} className="flex items-center gap-2">
                         <div className="w-6 h-6 bg-[#123C69] rounded flex items-center justify-center">
                             <span className="text-white font-black text-sm">T</span>
                         </div>

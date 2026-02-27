@@ -20,8 +20,12 @@ export async function Navbar() {
                 return "/candidate/dashboard";
             case "employer":
                 return "/employer/dashboard";
-            case "admin":
+            case 'owner':
+                return "/owner/dashboard";
+            case 'admin':
                 return "/admin/dashboard";
+            case 'staff':
+                return "/staff/dashboard";
             default:
                 return "/login";
         }

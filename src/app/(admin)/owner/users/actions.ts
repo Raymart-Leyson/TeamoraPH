@@ -22,6 +22,6 @@ export async function updateUserRoleAction(userId: string, newRole: 'candidate' 
         throw new Error("Failed to update user role.");
     }
 
-    revalidatePath("/admin/users");
+    revalidatePath("/owner/users");
     return { success: true };
 }

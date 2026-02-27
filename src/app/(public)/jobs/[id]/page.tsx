@@ -26,8 +26,9 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
         .single();
 
     const isAuthor = profile?.role === 'employer' && job?.author_id === profile?.id;
+    const isAdminView = profile?.role === 'owner' || profile?.role === 'admin' || profile?.role === 'staff';
 
-    if (error || !job || (job.status !== 'published' && !isAuthor)) {
+    if (error || !job || (job.status !== 'published' && !isAuthor && !isAdminView)) {
         notFound();
     }
 
