@@ -33,6 +33,7 @@ async function JobList({ q, location, type, skill, page }: { q: string; location
             { count: "exact" }
         )
         .eq("status", "published")
+        .lte("published_at", new Date().toISOString())
         .order("created_at", { ascending: false })
         .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
 

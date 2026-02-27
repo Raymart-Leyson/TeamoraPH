@@ -16,10 +16,36 @@ export async function approveJobAction(jobId: string) {
     const moderator = await assertModerator();
     const supabase = await createClient();
 
+    // 1. Get the job and its author
+    const { data: job, error: jobErr } = await supabase
+        .from("job_posts")
+        .select("author_id")
+        .eq("id", jobId)
+        .single();
+
+    if (jobErr || !job) throw new Error("Job not found");
+
+    // 2. Check employer's subscription status
+    const { data: subData } = await supabase
+        .from("subscriptions")
+        .select("status")
+        .eq("employer_id", job.author_id)
+        .maybeSingle();
+
+    const isPro = subData?.status === "active" || subData?.status === "trialing";
+
+    // 3. Calculate publishing date
+    const publishedAt = new Date();
+    if (!isPro) {
+        // Free users get a 3-day delay
+        publishedAt.setDate(publishedAt.getDate() + 3);
+    }
+
     const { error } = await supabase
         .from("job_posts")
         .update({
             status: "published",
+            published_at: publishedAt.toISOString(),
             reviewed_at: new Date().toISOString(),
             reviewed_by: moderator.id
         })
@@ -37,7 +63,7 @@ export async function approveJobAction(jobId: string) {
 
     revalidatePath("/admin/jobs");
     revalidatePath("/jobs");
-    return { success: true };
+    return { success: true, isPro, publishedAt: publishedAt.toISOString() };
 }
 
 export async function rejectJobAction(jobId: string, reason: string) {

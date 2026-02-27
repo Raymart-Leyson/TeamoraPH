@@ -101,14 +101,13 @@ export default async function AdminReportsPage() {
                                                 {report.reporter?.email || 'Unknown User'}
                                             </p>
                                         </div>
-
                                         <div className="flex flex-wrap gap-4 pt-4">
                                             <form action={async () => {
                                                 "use server";
                                                 await resolveReportAction(report.id, 'dismiss');
                                             }}>
                                                 <Button type="submit" variant="outline" className="text-[#123C69] border-[#123C69]/20 hover:bg-white font-bold rounded-2xl px-8 transition-all">
-                                                    <CheckCircle2 className="w-4 h-4 mr-2" /> Dismiss Report
+                                                    <CheckCircle2 className="w-4 h-4 mr-2" /> Dismiss
                                                 </Button>
                                             </form>
 
@@ -116,10 +115,21 @@ export default async function AdminReportsPage() {
                                                 "use server";
                                                 await resolveReportAction(report.id, 'action_taken');
                                             }}>
-                                                <Button type="submit" className="bg-red-500 hover:bg-red-600 text-white font-bold rounded-2xl px-8 shadow-md">
-                                                    <XCircle className="w-4 h-4 mr-2" /> Take Action
+                                                <Button type="submit" variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50 font-bold rounded-2xl px-8 transition-all">
+                                                    <Info className="w-4 h-4 mr-2" /> Resolved
                                                 </Button>
                                             </form>
+
+                                            {report.target_type === 'job' && (
+                                                <form action={async () => {
+                                                    "use server";
+                                                    await resolveReportAction(report.id, 'force_remove');
+                                                }}>
+                                                    <Button type="submit" className="bg-red-500 hover:bg-red-600 text-white font-black rounded-2xl px-8 shadow-md transition-all active:scale-95">
+                                                        <XCircle className="w-4 h-4 mr-2" /> Force Remove
+                                                    </Button>
+                                                </form>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -136,6 +146,6 @@ export default async function AdminReportsPage() {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }

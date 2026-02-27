@@ -23,6 +23,7 @@ export default async function Home() {
         .from("job_posts")
         .select(`id, title, location, job_type, salary_range, created_at, company:companies(name)`)
         .eq("status", "published")
+        .lte("published_at", new Date().toISOString())
         .order("created_at", { ascending: false })
         .limit(3);
 

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import { approveJobAction, rejectJobAction } from "./actions";
 import {
     Dialog,
@@ -39,7 +40,7 @@ export default async function AdminJobsPage({
             company:companies(name, logo_url),
             author:profiles(email)
         `)
-        .eq("status", "pending_review")
+        .in("status", ["pending_review", "flagged"])
         .order("created_at", { ascending: false });
 
     return (
@@ -52,7 +53,7 @@ export default async function AdminJobsPage({
             <div className="grid gap-6">
                 {jobs && jobs.length > 0 ? (
                     jobs.map((job: any) => (
-                        <Card key={job.id} className={`border-none shadow-xl rounded-[2.5rem] overflow-hidden bg-white/60 backdrop-blur-md transition-all ${selectedId === job.id ? 'ring-4 ring-[#AC3B61]' : ''}`}>
+                        <Card key={job.id} className={`border-none shadow-xl rounded-[2.5rem] overflow-hidden backdrop-blur-md transition-all ${selectedId === job.id ? 'ring-4 ring-[#AC3B61]' : ''} ${job.status === 'flagged' ? 'bg-red-50/80 ring-2 ring-red-500/30' : 'bg-white/60'}`}>
                             <CardContent className="p-8">
                                 <div className="flex flex-col md:flex-row gap-8">
                                     {/* Company Info */}
@@ -74,7 +75,14 @@ export default async function AdminJobsPage({
                                     <div className="flex-1 space-y-4">
                                         <div className="flex justify-between items-start gap-4">
                                             <div>
-                                                <h3 className="text-2xl font-black text-[#123C69] leading-tight">{job.title}</h3>
+                                                <h3 className="text-2xl font-black text-[#123C69] leading-tight flex items-center gap-3">
+                                                    {job.title}
+                                                    {job.status === 'flagged' && (
+                                                        <Badge className="bg-red-500 text-white font-black rounded-lg px-3 py-1 animate-pulse">
+                                                            FORCE REMOVED / FLAG
+                                                        </Badge>
+                                                    )}
+                                                </h3>
                                                 <div className="flex flex-wrap items-center gap-4 mt-2 text-xs font-bold text-[#123C69]/60">
                                                     <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {job.location || 'Remote'}</span>
                                                     <span className="flex items-center gap-1.5"><BriefcaseBusiness className="w-3.5 h-3.5" /> {job.job_type || 'Full-time'}</span>

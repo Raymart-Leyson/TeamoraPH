@@ -8,6 +8,7 @@ import { getUserProfile } from "@/utils/auth";
 import { ApplyButton } from "./apply-button";
 import { refreshCreditsIfNeeded } from "@/utils/credits";
 import { toggleSavedJob } from "@/app/(app)/candidate/saved-jobs/actions";
+import { ReportJobButton } from "@/components/jobs/ReportJobButton";
 
 export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -184,6 +185,10 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
 
                             <div className="flex items-center text-xs font-bold tracking-wide text-[#123C69]/60 mt-8 pt-6 border-t border-white/40 w-full justify-center">
                                 <CalendarDays className="h-4 w-4 mr-2" /> Posted {new Date(job.created_at).toLocaleDateString()}
+                            </div>
+
+                            <div className="mt-4 flex flex-col items-center gap-4 w-full">
+                                <ReportJobButton jobId={job.id} jobTitle={job.title} />
                             </div>
                         </div>
                     </div>
