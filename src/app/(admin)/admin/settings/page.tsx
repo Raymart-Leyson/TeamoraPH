@@ -10,7 +10,8 @@ import {
     Database,
     Bell,
     Save,
-    Lock
+    Lock,
+    AlertTriangle
 } from "lucide-react";
 
 export default async function AdminSettingsPage() {
