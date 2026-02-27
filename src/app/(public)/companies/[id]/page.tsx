@@ -48,6 +48,9 @@ export default async function CompanyDetailPage({ params }: Props) {
 
     if (error || !company) notFound();
 
+    // Increment profile views
+    await supabase.from("companies").update({ profile_views: (company.profile_views ?? 0) + 1 }).eq("id", company.id);
+
     const { data: jobs } = await supabase
         .from("job_posts")
         .select("id, title, location, job_type, salary_range, created_at")
@@ -66,7 +69,7 @@ export default async function CompanyDetailPage({ params }: Props) {
     return (
         <div className="min-h-screen">
             {/* Back */}
-            <div className="max-w-[90%] mx-auto px-4 pt-8">
+            <div className="max-w-[90%] mx-auto px-4 pt-6">
                 <Button variant="ghost" size="sm" asChild className="-ml-2">
                     <Link href="/companies">
                         <ArrowLeft className="mr-2 h-4 w-4" /> All Companies
@@ -75,8 +78,8 @@ export default async function CompanyDetailPage({ params }: Props) {
             </div>
 
             {/* Company Header */}
-            <section className="max-w-[90%] mx-auto px-4 py-8">
-                <div className="flex flex-col sm:flex-row items-start gap-6">
+            <section className="max-w-[90%] mx-auto px-4 py-6">
+                <div className="flex flex-col sm:flex-row items-start gap-5">
                     {/* Avatar */}
                     <div className="h-20 w-20 shrink-0 rounded-2xl bg-primary/10 border-2 flex items-center justify-center text-primary font-bold text-2xl shadow-sm">
                         {initials}
@@ -135,7 +138,7 @@ export default async function CompanyDetailPage({ params }: Props) {
             <hr className="max-w-[90%] mx-auto border-border" />
 
             {/* Open Roles */}
-            <section className="max-w-[90%] mx-auto px-4 py-10 space-y-6">
+            <section className="max-w-[90%] mx-auto px-4 py-8 space-y-4">
                 <h2 className="text-xl font-bold">
                     Open Roles
                     <span className="ml-2 text-muted-foreground font-normal text-base">
@@ -155,7 +158,7 @@ export default async function CompanyDetailPage({ params }: Props) {
                     <div className="grid gap-3">
                         {openJobs.map((job: any) => (
                             <Card key={job.id} className="hover:border-primary/40 transition-colors">
-                                <CardContent className="p-5">
+                                <CardContent className="p-4 md:p-5">
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                         <div className="space-y-1.5">
                                             <Link

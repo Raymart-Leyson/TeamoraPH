@@ -1,14 +1,21 @@
 import Stripe from "stripe";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error("STRIPE_SECRET_KEY is not set");
-}
+const getStripe = () => {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) {
+        // We log it but don't hard throw here to avoid breaking the build/startup
+        // We only throw if someone actually tries to use stripe
+        console.warn("STRIPE_SECRET_KEY is not set in environment variables");
+        return null;
+    }
+    return new Stripe(key, {
+        apiVersion: "2026-02-25.clover" as any,
+        typescript: true,
+    });
+};
 
-// Singleton pattern — avoids creating multiple Stripe instances during Next.js hot reloads
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2026-02-25.clover",
-    typescript: true,
-});
+export const stripe = getStripe()!;
+
 
 // Pricing config — single source of truth. Update here to change the plan.
 export const PLANS = {
@@ -39,3 +46,34 @@ export const PLANS = {
 } as const;
 
 export type PlanKey = keyof typeof PLANS;
+
+// Candidate Credit Packages (One-time purchases)
+export const CREDIT_PACKAGES = {
+    basic: {
+        name: "10 Credits",
+        credits: 10,
+        prices: {
+            php: { amount: 4900, label: "₱49.00" },
+            usd: { amount: 500, label: "$5.00" }
+        }
+    },
+    standard: {
+        name: "50 Credits",
+        credits: 50,
+        prices: {
+            php: { amount: 19900, label: "₱199.00" },
+            usd: { amount: 1500, label: "$15.00" }
+        }
+    },
+    premium: {
+        name: "100 Credits",
+        credits: 100,
+        prices: {
+            php: { amount: 34900, label: "₱349.00" },
+            usd: { amount: 2500, label: "$25.00" }
+        }
+    },
+} as const;
+
+
+

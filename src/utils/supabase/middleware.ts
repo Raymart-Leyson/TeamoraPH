@@ -45,30 +45,40 @@ export async function updateSession(request: NextRequest) {
         !user &&
         isAppRoute
     ) {
-        // no user, potentially respond by redirecting the user to the login page
         const url = request.nextUrl.clone();
         url.pathname = "/login";
-        return NextResponse.redirect(url);
+        const redirectResponse = NextResponse.redirect(url);
+
+        // Essential: Keep cookies from supabase on redirect to avoid refresh token loop
+        supabaseResponse.cookies.getAll().forEach(cookie => {
+            redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+        });
+
+        return redirectResponse;
     }
 
     if (user && isAuthRoute) {
-        // user is logged in, redirect away from auth pages
         const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
         const url = request.nextUrl.clone();
 
         if (profile?.role === 'employer') {
             url.pathname = "/employer/dashboard";
-        } else if (profile?.role === 'admin') {
-            url.pathname = "/admin/dashboard";
+        } else if (profile?.role === 'admin' || profile?.role === 'staff') {
+            url.pathname = "/admin";
         } else {
             url.pathname = "/candidate/dashboard";
         }
-        return NextResponse.redirect(url);
+        const redirectResponse = NextResponse.redirect(url);
+
+        supabaseResponse.cookies.getAll().forEach(cookie => {
+            redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+        });
+
+        return redirectResponse;
     }
 
     // Basic Role checks
     if (user && isAppRoute) {
-        // Need to fetch role for simple routing guards
         const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
         const role = profile?.role;
 
@@ -79,17 +89,23 @@ export async function updateSession(request: NextRequest) {
         if (isCandidateRoute && role !== 'candidate') {
             const url = request.nextUrl.clone();
             url.pathname = role === 'employer' ? "/employer/dashboard" : "/";
-            return NextResponse.redirect(url);
+            const redirectResponse = NextResponse.redirect(url);
+            supabaseResponse.cookies.getAll().forEach(cookie => { redirectResponse.cookies.set(cookie.name, cookie.value, cookie); });
+            return redirectResponse;
         }
         if (isEmployerRoute && role !== 'employer') {
             const url = request.nextUrl.clone();
             url.pathname = role === 'candidate' ? "/candidate/dashboard" : "/";
-            return NextResponse.redirect(url);
+            const redirectResponse = NextResponse.redirect(url);
+            supabaseResponse.cookies.getAll().forEach(cookie => { redirectResponse.cookies.set(cookie.name, cookie.value, cookie); });
+            return redirectResponse;
         }
-        if (isAdminRoute && role !== 'admin') {
+        if (isAdminRoute && role !== 'admin' && role !== 'staff') {
             const url = request.nextUrl.clone();
             url.pathname = "/";
-            return NextResponse.redirect(url);
+            const redirectResponse = NextResponse.redirect(url);
+            supabaseResponse.cookies.getAll().forEach(cookie => { redirectResponse.cookies.set(cookie.name, cookie.value, cookie); });
+            return redirectResponse;
         }
     }
 

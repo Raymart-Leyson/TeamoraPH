@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
+import { refreshCreditsIfNeeded } from "@/utils/credits";
 
 export async function applyAction(formData: FormData) {
     const supabase = await createClient();
@@ -22,15 +23,21 @@ export async function applyAction(formData: FormData) {
         return { error: "Not authorized" };
     }
 
-    // 1. Get current credit balance
-    const { data: candidate } = await supabase
+    // 1. Refresh daily credits if needed and get current balance
+    const candidate = await refreshCreditsIfNeeded(user.id);
+
+    const { data: currentProfile } = await supabase
         .from("candidate_profiles")
-        .select("credit_balance")
+        .select("free_credits, bought_credits")
         .eq("id", user.id)
         .single();
 
-    if (!candidate || candidate.credit_balance < credits_allocated) {
-        return { error: `Insufficient credits. You only have ${candidate?.credit_balance || 0} credits.` };
+    if (!currentProfile) return { error: "Profile not found" };
+
+    const totalAvailable = (currentProfile.free_credits || 0) + (currentProfile.bought_credits || 0);
+
+    if (totalAvailable < credits_allocated) {
+        return { error: `Insufficient credits. You only have ${totalAvailable} credits available (${currentProfile.free_credits} free, ${currentProfile.bought_credits} bought).` };
     }
 
     // 2. Insert application
@@ -49,10 +56,26 @@ export async function applyAction(formData: FormData) {
         return { error: appError.message };
     }
 
-    // 3. Deduct credits
+    // 3. Deduct credits (Free first, then Bought)
+    let toDeduct = credits_allocated;
+    let newFree = currentProfile.free_credits || 0;
+    let newBought = currentProfile.bought_credits || 0;
+
+    if (newFree >= toDeduct) {
+        newFree -= toDeduct;
+        toDeduct = 0;
+    } else {
+        toDeduct -= newFree;
+        newFree = 0;
+        newBought -= toDeduct;
+    }
+
     const { error: creditError } = await supabase
         .from("candidate_profiles")
-        .update({ credit_balance: candidate.credit_balance - credits_allocated })
+        .update({
+            free_credits: newFree,
+            bought_credits: newBought
+        })
         .eq("id", user.id);
 
     if (creditError) return { error: "Credits deducted but error occurred: " + creditError.message };

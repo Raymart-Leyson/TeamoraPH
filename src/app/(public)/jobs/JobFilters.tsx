@@ -11,7 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Search, X, MapPin } from "lucide-react";
+import { Search, X, MapPin, Tag } from "lucide-react";
 
 const JOB_TYPES = ["full-time", "part-time", "contract", "freelance"];
 
@@ -24,7 +24,8 @@ export function JobFilters() {
     const q = searchParams.get("q") ?? "";
     const location = searchParams.get("location") ?? "";
     const type = searchParams.get("type") ?? "";
-    const hasFilters = q || type || location;
+    const skill = searchParams.get("skill") ?? "";
+    const hasFilters = q || type || location || skill;
 
     const updateParams = useCallback(
         (updates: Record<string, string>) => {
@@ -88,6 +89,26 @@ export function JobFilters() {
                     onBlur={(e) => {
                         if (e.currentTarget.value !== location) {
                             updateParams({ location: e.currentTarget.value });
+                        }
+                    }}
+                />
+            </div>
+
+            <div className="relative flex-1 group">
+                <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#123C69]/50 group-focus-within:text-[#123C69] transition-colors pointer-events-none" />
+                <Input
+                    id="job-skill-input"
+                    placeholder="Skill (e.g. React, Python)"
+                    className="pl-12 bg-white border-white/40 shadow-sm focus-visible:ring-[#123C69]/30 text-[#123C69] placeholder:text-[#123C69]/60 font-medium h-12 rounded-2xl"
+                    defaultValue={skill}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            updateParams({ skill: e.currentTarget.value });
+                        }
+                    }}
+                    onBlur={(e) => {
+                        if (e.currentTarget.value !== skill) {
+                            updateParams({ skill: e.currentTarget.value });
                         }
                     }}
                 />

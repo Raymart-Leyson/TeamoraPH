@@ -3,7 +3,8 @@ import { getUserProfile } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BriefcaseBusiness, CheckCircle2, Clock, MapPin } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, Clock, MapPin, Coins, Star } from "lucide-react";
+import { refreshCreditsIfNeeded } from "@/utils/credits";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,32 +17,55 @@ export default async function CandidateDashboard() {
 
     const supabase = await createClient();
 
-    // Fetch recent applications
-    const { data: applications } = await supabase
-        .from("applications")
-        .select(`
-      id,
-      status,
-      created_at,
-      job:job_posts(
-        id,
-        title,
-        location,
-        company:companies(name)
-      )
-    `)
-        .eq("candidate_id", profile.id)
-        .order("created_at", { ascending: false })
-        .limit(5);
+    // Fetch profile completion data in parallel with applications
+    const [
+        { data: candidateProfile },
+        { count: skillsCount },
+        { count: expCount },
+        { data: applications },
+    ] = await Promise.all([
+        refreshCreditsIfNeeded(profile.id),
+        supabase
+            .from("candidate_skills")
+            .select("id", { count: "exact", head: true })
+            .eq("candidate_id", profile.id),
+        supabase
+            .from("candidate_experience")
+            .select("id", { count: "exact", head: true })
+            .eq("candidate_id", profile.id),
+        supabase
+            .from("applications")
+            .select(`
+              id, status, created_at,
+              job:job_posts(id, title, location, company:companies(name))
+            `)
+            .eq("candidate_id", profile.id)
+            .order("created_at", { ascending: false })
+            .limit(5),
+    ]);
+
+    const completionSteps = [
+        { label: "Account created", done: true },
+        { label: "Add a profile picture", done: !!candidateProfile?.avatar_url },
+        { label: "Write a headline", done: !!candidateProfile?.headline },
+        { label: "Upload your resume", done: !!candidateProfile?.resume_url },
+        { label: "Add skills", done: (skillsCount ?? 0) > 0 },
+        { label: "Add work experience", done: (expCount ?? 0) > 0 },
+    ];
+    const completedCount = completionSteps.filter((s) => s.done).length;
+    const completionPct = Math.round((completedCount / completionSteps.length) * 100);
 
     return (
-        <div className="flex-1 space-y-8 p-8 pt-10 max-w-[90%] mx-auto">
+        <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
             <div className="flex items-center justify-between space-y-2">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+                    <h2 className="text-xl font-bold tracking-tight">Dashboard</h2>
                     <p className="text-muted-foreground">Keep track of your applications and profile views.</p>
                 </div>
                 <div className="flex items-center space-x-2">
+                    <Button variant="outline" asChild>
+                        <Link href="/candidate/billing">Buy Credits</Link>
+                    </Button>
                     <Button asChild>
                         <Link href="/jobs">Browse Jobs</Link>
                     </Button>
@@ -59,15 +83,34 @@ export default async function CandidateDashboard() {
                         <p className="text-xs text-muted-foreground">Lifetime applications</p>
                     </CardContent>
                 </Card>
-                {/* Placeholder for future metrics */}
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Free Credits</CardTitle>
+                        <Coins className="h-4 w-4 text-[#AC3B61]" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{candidateProfile?.free_credits ?? 0} / 50</div>
+                        <p className="text-xs text-muted-foreground">Daily allowance (Refreshes task daily)</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Premium Credits</CardTitle>
+                        <Star className="h-4 w-4 text-primary" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{candidateProfile?.bought_credits ?? 0}</div>
+                        <p className="text-xs text-muted-foreground">Purchased credits</p>
+                    </CardContent>
+                </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">--</div>
-                        <p className="text-xs text-muted-foreground">Coming soon</p>
+                        <div className="text-2xl font-bold">{candidateProfile?.profile_views ?? 0}</div>
+                        <p className="text-xs text-muted-foreground">Total profile visits</p>
                     </CardContent>
                 </Card>
             </div>
@@ -114,26 +157,39 @@ export default async function CandidateDashboard() {
                     </CardContent>
                 </Card>
                 <Card className="col-span-3">
-                    <CardHeader>
+                    <CardHeader className="pb-2">
                         <CardTitle>Profile Completion</CardTitle>
                         <CardDescription>Improve your chances of getting hired</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <CheckCircle2 className="h-5 w-5 text-primary" />
-                                <span className="text-sm font-medium">Account created</span>
+                        <div className="mb-4">
+                            <div className="flex justify-between text-xs font-medium mb-1.5">
+                                <span className="text-muted-foreground">{completedCount} of {completionSteps.length} complete</span>
+                                <span className="text-primary">{completionPct}%</span>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <Clock className="h-5 w-5 text-muted-foreground" />
-                                <span className="text-sm text-muted-foreground line-through">Add a profile picture</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Clock className="h-5 w-5 text-muted-foreground" />
-                                <span className="text-sm text-muted-foreground line-through">Upload your resume</span>
+                            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                                <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${completionPct}%` }} />
                             </div>
                         </div>
-                        <div className="mt-8 pt-6 border-t">
+                        <div className="space-y-3">
+                            {completionSteps.map((step) => (
+                                <div key={step.label} className="flex items-center gap-3">
+                                    {step.done ? (
+                                        <div className="bg-emerald-500/10 p-1 rounded-full shrink-0">
+                                            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                                        </div>
+                                    ) : (
+                                        <div className="bg-muted p-1 rounded-full shrink-0">
+                                            <Clock className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                    )}
+                                    <span className={`text-sm ${step.done ? "font-bold text-[#123C69]" : "font-medium text-muted-foreground"}`}>
+                                        {step.label}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-6 pt-5 border-t">
                             <Button variant="outline" className="w-full" asChild>
                                 <Link href="/candidate/profile">Complete Profile</Link>
                             </Button>

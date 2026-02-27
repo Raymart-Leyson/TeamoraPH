@@ -47,7 +47,7 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
     return (
         <div className="min-h-screen">
             {/* Header */}
-            <section className="py-16 px-4 bg-gradient-to-b from-primary/5 to-background text-center">
+            <section className="py-10 md:py-12 px-4 bg-gradient-to-b from-primary/5 to-background text-center">
                 <div className="max-w-2xl mx-auto space-y-4">
                     <h1 className="text-4xl font-extrabold tracking-tight">
                         Companies Hiring Remotely
@@ -73,9 +73,9 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
             </section>
 
             {/* Grid */}
-            <section className="max-w-6xl mx-auto px-4 py-12">
+            <section className="max-w-6xl mx-auto px-4 py-8">
                 {active.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-16 text-center border border-dashed rounded-xl bg-muted/20">
+                    <div className="flex flex-col items-center justify-center p-10 md:p-12 text-center border border-dashed rounded-xl bg-muted/20">
                         <Building2 className="h-10 w-10 text-muted-foreground mb-4 opacity-50" />
                         <h3 className="font-semibold text-lg">
                             {q ? `No companies matching "${q}"` : "No companies yet"}
@@ -100,9 +100,9 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
                             return (
                                 <Link key={company.id} href={`/companies/${company.id}`}>
                                     <Card className="h-full hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer group">
-                                        <CardContent className="p-6 flex flex-col gap-4">
+                                        <CardContent className="p-4 md:p-5 flex flex-col gap-4">
                                             {/* Logo placeholder */}
-                                            <div className="h-14 w-14 rounded-2xl bg-primary/10 border flex items-center justify-center text-primary font-bold text-xl group-hover:bg-primary/15 transition-colors">
+                                            <div className="h-12 w-12 rounded-2xl bg-primary/10 border flex items-center justify-center text-primary font-bold text-xl group-hover:bg-primary/15 transition-colors">
                                                 {initials}
                                             </div>
 

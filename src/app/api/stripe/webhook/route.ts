@@ -39,18 +39,23 @@ export async function POST(request: Request) {
         switch (event.type) {
             case "checkout.session.completed": {
                 const session = event.data.object as Stripe.Checkout.Session;
-                if (session.mode !== "subscription") break;
-
                 const userId = session.metadata?.supabase_user_id;
                 if (!userId) {
                     console.error("Webhook: no supabase_user_id in session metadata");
                     break;
                 }
 
-                const subscription = await stripe.subscriptions.retrieve(
-                    session.subscription as string
-                );
-                await upsertSubscription(userId, subscription);
+                if (session.mode === "subscription") {
+                    const subscription = await stripe.subscriptions.retrieve(
+                        session.subscription as string
+                    );
+                    await upsertSubscription(userId, subscription);
+                } else if (session.mode === "payment" && session.metadata?.purchase_type === "credits") {
+                    const creditsToAdd = parseInt(session.metadata.credits_to_add || "0");
+                    if (creditsToAdd > 0) {
+                        await addCandidateCredits(userId, creditsToAdd);
+                    }
+                }
                 break;
             }
 
@@ -127,5 +132,34 @@ async function upsertSubscription(
     if (error) {
         console.error("Webhook: upsertSubscription failed", error);
         throw error; // surface to caller so we return 500 to Stripe (it will retry)
+    }
+}
+
+async function addCandidateCredits(candidateId: string, credits: number) {
+    // We use a RPC or a direct update with increment logic if possible, 
+    // but here we'll just do a select + update for simplicity in this MVP 
+    // (though a direct SQL update is safer for concurrency)
+
+    const { data: current, error: fetchError } = await supabaseAdmin
+        .from("candidate_profiles")
+        .select("bought_credits")
+        .eq("id", candidateId)
+        .single();
+
+    if (fetchError) {
+        console.error("Webhook: failed to fetch candidate for credits", fetchError);
+        throw fetchError;
+    }
+
+    const { error: updateError } = await supabaseAdmin
+        .from("candidate_profiles")
+        .update({
+            bought_credits: (current.bought_credits || 0) + credits
+        })
+        .eq("id", candidateId);
+
+    if (updateError) {
+        console.error("Webhook: failed to update candidate credits", updateError);
+        throw updateError;
     }
 }

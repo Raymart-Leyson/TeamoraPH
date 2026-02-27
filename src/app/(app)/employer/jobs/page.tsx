@@ -46,11 +46,11 @@ export default async function EmployerJobsPage() {
     const closed = jobs?.filter((j: any) => j.status === "closed").length ?? 0;
 
     return (
-        <div className="flex-1 space-y-8 p-8 max-w-[90%] mx-auto pt-10">
+        <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">My Job Posts</h2>
+                    <h2 className="text-xl font-bold tracking-tight">My Job Posts</h2>
                     <p className="text-muted-foreground mt-1">
                         Manage and track all your job listings.
                     </p>
@@ -77,7 +77,7 @@ export default async function EmployerJobsPage() {
 
             {/* List */}
             {!jobs || jobs.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-16 text-center bg-muted/20 rounded-xl border border-dashed">
+                <div className="flex flex-col items-center justify-center p-8 text-center bg-muted/20 rounded-xl border border-dashed">
                     <BriefcaseBusiness className="h-10 w-10 text-muted-foreground mb-4" />
                     <h3 className="font-semibold text-lg">No job posts yet</h3>
                     <p className="text-sm text-muted-foreground max-w-sm mt-1 mb-6">

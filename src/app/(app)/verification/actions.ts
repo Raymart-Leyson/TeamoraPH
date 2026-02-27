@@ -79,7 +79,7 @@ export async function adminReviewVerificationAction(requestId: string, status: '
         .eq("id", user?.id)
         .single();
 
-    if (profile?.role !== 'admin') return { error: "Unauthorized" };
+    if (profile?.role !== 'admin' && profile?.role !== 'staff') return { error: "Unauthorized" };
 
     // 1. Get the request
     const { data: request } = await supabase

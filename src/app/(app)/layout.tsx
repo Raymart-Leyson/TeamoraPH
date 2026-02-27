@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, UserCircle2 } from "lucide-react";
+import { Menu, UserCircle2, Bell } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -14,6 +14,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { NotificationDropdown } from "@/components/layout/NotificationDropdown";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
     const profile = await getUserProfile();
@@ -52,6 +53,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         unreadMessages = 0;
     }
 
+    // Fetch unread notification count
+    const { count: unreadNotifications } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", profile.id)
+        .eq("read_status", false);
+
     // Fetch subscription status for Pro badge
     const { data: subData } = await supabase
         .from("subscriptions")
@@ -85,6 +93,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                     <div className="w-full flex-1">
                         <h1 className="font-semibold text-lg lg:hidden">Teamora App</h1>
                     </div>
+                    <NotificationDropdown initialCount={unreadNotifications ?? 0} />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="secondary" size="icon" className="rounded-full relative">
@@ -101,12 +110,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                                 <span className="sr-only">Toggle user menu</span>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="shadow-lg border-muted">
                             <DropdownMenuItem className="opacity-50 pointer-events-none truncate max-w-[200px]">
                                 {profile.email} - {profile.role}
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
-                                <Link href="/profile/edit">Settings</Link>
+                                <Link href={
+                                    profile.role === "admin" || profile.role === "staff"
+                                        ? "/admin/settings"
+                                        : profile.role === "employer"
+                                            ? "/employer/profile"
+                                            : "/candidate/profile"
+                                }>Settings</Link>
                             </DropdownMenuItem>
                             <LogoutButton />
                         </DropdownMenuContent>

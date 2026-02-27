@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import {
     BriefcaseBusiness,
     Users,
@@ -19,44 +18,18 @@ export const revalidate = 3600; // Revalidate homepage stats every hour
 export default async function Home() {
     const supabase = await createClient();
 
-    // Fetch homepage stats + featured jobs in parallel
-    const [
-        { count: jobCount },
-        { count: companyCount },
-        { count: candidateCount },
-        { data: featuredJobs },
-    ] = await Promise.all([
-        supabase
-            .from("job_posts")
-            .select("id", { count: "exact", head: true })
-            .eq("status", "published"),
-        supabase
-            .from("companies")
-            .select("id", { count: "exact", head: true }),
-        supabase
-            .from("candidate_profiles")
-            .select("id", { count: "exact", head: true }),
-        supabase
-            .from("job_posts")
-            .select(`
-                id, title, location, job_type, salary_range, created_at,
-                company:companies(name)
-            `)
-            .eq("status", "published")
-            .order("created_at", { ascending: false })
-            .limit(6),
-    ]);
-
-    const stats = [
-        { label: "Open Roles", value: jobCount ?? 0 },
-        { label: "Companies", value: companyCount ?? 0 },
-        { label: "Candidates", value: candidateCount ?? 0 },
-    ];
+    // Fetch featured jobs for hero cards
+    const { data: featuredJobs } = await supabase
+        .from("job_posts")
+        .select(`id, title, location, job_type, salary_range, created_at, company:companies(name)`)
+        .eq("status", "published")
+        .order("created_at", { ascending: false })
+        .limit(3);
 
     return (
         <div className="flex flex-col min-h-[calc(100vh-4rem)]">
             {/* ── Anti-Gravity Hero ─────────────────────────────────────────── */}
-            <section className="relative flex flex-col items-center justify-center text-center px-4 py-20 bg-[#EEE2DC] overflow-hidden min-h-[90vh]">
+            <section className="relative flex flex-col items-center justify-center text-center px-4 py-12 bg-[#EEE2DC] overflow-hidden min-h-[70vh]">
                 {/* Floating Blobs (Peach & Ruby) */}
                 <div className="absolute top-[-10%] left-[-10%] w-[30rem] h-[30rem] bg-[#EDC7B7] rounded-full mix-blend-multiply blur-3xl opacity-70 animate-float" style={{ animationDuration: '8s' }} />
                 <div className="absolute top-[20%] right-[-5%] w-[35rem] h-[35rem] bg-[#AC3B61] rounded-full mix-blend-multiply blur-[120px] opacity-40 animate-float" style={{ animationDuration: '10s', animationDelay: '2s' }} />
@@ -110,147 +83,51 @@ export default async function Home() {
                     </form>
 
                     {/* Featured Job Cards (Floating) */}
-                    <div className="w-full grid mt-12 grid-cols-1 md:grid-cols-3 gap-6 text-left pt-8 px-4 sm:px-0">
-                        {featuredJobs?.slice(0, 3).map((job, idx) => {
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const company = Array.isArray(job.company) ? job.company[0] : (job.company as any);
-                            return (
-                                <Link key={job.id} href={`/jobs/${job.id}`} className="block focus:outline-none focus:ring-2 focus:ring-[#123C69] rounded-3xl">
-                                    <div className="h-full bg-white/40 backdrop-blur-xl border border-white/30 shadow-2xl rounded-3xl p-6 hover:bg-white/50 transition-colors group relative overflow-hidden">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                                        <div className="flex items-start justify-between mb-5 relative z-10">
-                                            <div className="h-14 w-14 rounded-2xl bg-white/60 shadow-sm flex items-center justify-center text-[#123C69]">
-                                                <Building2 className="h-7 w-7" />
-                                            </div>
-                                            {job.job_type && (
-                                                <Badge variant="outline" className="border-white/50 text-[#123C69] bg-white/30 backdrop-blur-md rounded-full px-3 py-1 tracking-wide font-medium shadow-sm">
-                                                    {job.job_type}
-                                                </Badge>
-                                            )}
-                                        </div>
-                                        <h3 className="text-xl font-bold tracking-wide text-[#123C69] mb-2 group-hover:text-[#AC3B61] transition-colors line-clamp-1 relative z-10">{job.title}</h3>
-                                        <p className="text-[#123C69]/80 font-medium tracking-wide mb-6 flex items-center gap-2 relative z-10">
-                                            {company?.name ?? "Company"}
-                                            {job.location && <span className="text-sm border-l border-[#123C69]/20 pl-2 line-clamp-1">{job.location}</span>}
-                                        </p>
-                                        <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/30 relative z-10">
-                                            <span className="text-[15px] font-bold tracking-wide text-[#AC3B61]">
-                                                {job.salary_range || 'Competitive'}
-                                            </span>
-                                            <span className="text-[#123C69] font-bold tracking-wide text-[15px] flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
-                                                Apply <ArrowRight className="h-4 w-4" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            )
-                        }) ?? (
-                                // Mock cards if no featured jobs exist yet
-                                [1, 2, 3].map((idx) => (
-                                    <div key={idx} className="h-full bg-white/40 backdrop-blur-xl border border-white/30 shadow-2xl rounded-3xl p-6 relative overflow-hidden group">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                                        <div className="flex items-start justify-between mb-5 relative z-10">
-                                            <div className="h-14 w-14 rounded-2xl bg-white/60 shadow-sm flex items-center justify-center text-[#123C69]">
-                                                <Building2 className="h-7 w-7" />
-                                            </div>
-                                            <Badge variant="outline" className="border-white/50 text-[#123C69] bg-white/30 backdrop-blur-md rounded-full px-3 py-1 tracking-wide font-medium shadow-sm">
-                                                Full-time
-                                            </Badge>
-                                        </div>
-                                        <h3 className="text-xl font-bold tracking-wide text-[#123C69] mb-2 line-clamp-1 relative z-10">Senior Product Designer</h3>
-                                        <p className="text-[#123C69]/80 font-medium tracking-wide mb-6 flex items-center gap-2 relative z-10">
-                                            TechVision Inc. <span className="text-sm border-l border-[#123C69]/20 pl-2">Remote</span>
-                                        </p>
-                                        <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/30 relative z-10">
-                                            <span className="text-[15px] font-bold tracking-wide text-[#AC3B61]">
-                                                $120k - $150k
-                                            </span>
-                                            <span className="text-[#123C69] font-bold tracking-wide text-[15px] flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
-                                                Apply <ArrowRight className="h-4 w-4" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))
-                            )}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Featured Jobs ──────────────────────────────────────────────────── */}
-            {(featuredJobs ?? []).length > 0 && (
-                <section className="py-20 bg-muted/20">
-                    <div className="max-w-6xl mx-auto px-4">
-                        <div className="flex items-end justify-between mb-10">
-                            <div>
-                                <h2 className="text-2xl font-bold tracking-tight">
-                                    Latest Remote Jobs
-                                </h2>
-                                <p className="text-muted-foreground mt-1">
-                                    Freshly posted, hiring now
-                                </p>
-                            </div>
-                            <Button variant="ghost" asChild>
-                                <Link href="/jobs">
-                                    View all <ArrowRight className="ml-1 h-4 w-4" />
-                                </Link>
-                            </Button>
-                        </div>
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {(featuredJobs ?? []).map((job) => {
+                    {(featuredJobs ?? []).length > 0 && (
+                        <div className="w-full grid mt-12 grid-cols-1 md:grid-cols-3 gap-6 text-left pt-8 px-4 sm:px-0">
+                            {featuredJobs!.slice(0, 3).map((job) => {
                                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 const company = Array.isArray(job.company) ? job.company[0] : (job.company as any);
                                 return (
-                                    <Link key={job.id} href={`/jobs/${job.id}`}>
-                                        <Card className="h-full hover:border-primary/40 hover:shadow-md transition-all duration-200 group cursor-pointer">
-                                            <CardContent className="p-5 flex flex-col gap-3">
-                                                <div className="flex items-start gap-3">
-                                                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0 group-hover:bg-primary/15 transition-colors">
-                                                        <Building2 className="h-5 w-5" />
-                                                    </div>
-                                                    <div className="min-w-0">
-                                                        <p className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
-                                                            {job.title}
-                                                        </p>
-                                                        <p className="text-xs text-muted-foreground truncate">
-                                                            {company?.name ?? "Company"}
-                                                        </p>
-                                                    </div>
+                                    <Link key={job.id} href={`/jobs/${job.id}`} className="block focus:outline-none focus:ring-2 focus:ring-[#123C69] rounded-3xl">
+                                        <div className="h-full bg-white/40 backdrop-blur-xl border border-white/30 shadow-2xl rounded-3xl p-6 hover:bg-white/50 transition-colors group relative overflow-hidden">
+                                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                                            <div className="flex items-start justify-between mb-5 relative z-10">
+                                                <div className="h-14 w-14 rounded-2xl bg-white/60 shadow-sm flex items-center justify-center text-[#123C69]">
+                                                    <Building2 className="h-7 w-7" />
                                                 </div>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {job.location && (
-                                                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                            <MapPin className="h-3 w-3" />
-                                                            {job.location}
-                                                        </span>
-                                                    )}
-                                                    {job.job_type && (
-                                                        <Badge
-                                                            variant="secondary"
-                                                            className="text-[10px] px-1.5 py-0"
-                                                        >
-                                                            {job.job_type}
-                                                        </Badge>
-                                                    )}
-                                                    {job.salary_range && (
-                                                        <span className="text-[10px] text-green-600 dark:text-green-400 font-medium">
-                                                            {job.salary_range}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </CardContent>
-                                        </Card>
+                                                {job.job_type && (
+                                                    <Badge variant="outline" className="border-white/50 text-[#123C69] bg-white/30 backdrop-blur-md rounded-full px-3 py-1 tracking-wide font-medium shadow-sm">
+                                                        {job.job_type}
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            <h3 className="text-xl font-bold tracking-wide text-[#123C69] mb-2 group-hover:text-[#AC3B61] transition-colors line-clamp-1 relative z-10">{job.title}</h3>
+                                            <p className="text-[#123C69]/80 font-medium tracking-wide mb-6 flex items-center gap-2 relative z-10">
+                                                {company?.name ?? "Company"}
+                                                {job.location && <span className="text-sm border-l border-[#123C69]/20 pl-2 line-clamp-1">{job.location}</span>}
+                                            </p>
+                                            <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/30 relative z-10">
+                                                <span className="text-[15px] font-bold tracking-wide text-[#AC3B61]">
+                                                    {job.salary_range || 'Competitive'}
+                                                </span>
+                                                <span className="text-[#123C69] font-bold tracking-wide text-[15px] flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
+                                                    Apply <ArrowRight className="h-4 w-4" />
+                                                </span>
+                                            </div>
+                                        </div>
                                     </Link>
                                 );
                             })}
                         </div>
-                    </div>
-                </section>
-            )}
+                    )}
+                </div>
+            </section>
 
             {/* ── Features Section ───────────────────────────────────────────────── */}
-            <section className="py-24 bg-background">
+            <section className="py-16 bg-background">
                 <div className="container mx-auto px-4 max-w-6xl">
-                    <div className="text-center mb-16 space-y-4">
+                    <div className="text-center mb-12 space-y-3">
                         <h2 className="text-3xl font-bold tracking-tight">
                             Why choose Teamora?
                         </h2>
@@ -279,8 +156,8 @@ export default async function Home() {
             </section>
 
             {/* ── Bottom CTA ─────────────────────────────────────────────────────── */}
-            <section className="py-20 bg-primary text-primary-foreground text-center">
-                <div className="max-w-2xl mx-auto px-4 space-y-6">
+            <section className="py-16 bg-primary text-primary-foreground text-center">
+                <div className="max-w-2xl mx-auto px-4 space-y-5">
                     <h2 className="text-3xl font-bold">Ready to get started?</h2>
                     <p className="text-primary-foreground/80">
                         Join thousands of professionals and companies already using Teamora.
@@ -319,8 +196,8 @@ function FeatureCard({
     description: string;
 }) {
     return (
-        <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-card border shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="p-4 bg-primary/10 rounded-2xl mb-6">{icon}</div>
+        <div className="flex flex-col items-center text-center p-5 md:p-6 rounded-3xl bg-card border shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="p-3 bg-primary/10 rounded-2xl mb-4">{icon}</div>
             <h3 className="text-xl font-semibold mb-3">{title}</h3>
             <p className="text-muted-foreground">{description}</p>
         </div>

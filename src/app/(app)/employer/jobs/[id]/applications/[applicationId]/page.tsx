@@ -64,7 +64,7 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
     const isSubscribed = subData?.status === "active" || subData?.status === "trialing";
 
     return (
-        <div className="flex-1 space-y-8 p-4 md:p-8 max-w-6xl mx-auto">
+        <div className="flex-1 space-y-4 p-4 md:p-6 max-w-6xl mx-auto">
             {/* Promotion Banner for Free Users */}
             {!isSubscribed && (
                 <div className="bg-gradient-to-r from-[#123C69] to-[#AC3B61] p-6 rounded-[2rem] text-white shadow-2xl relative overflow-hidden group">
@@ -91,17 +91,17 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                     <Link href={`/employer/jobs/${id}`}><ArrowLeft className="h-5 w-5" /></Link>
                 </Button>
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Application: {name}</h2>
-                    <p className="text-muted-foreground mt-2">Applied for {application.job.title} on {new Date(application.created_at).toLocaleDateString()}</p>
+                    <h2 className="text-xl font-bold tracking-tight">Application: {name}</h2>
+                    <p className="text-muted-foreground mt-1 text-sm">Applied for {application.job.title} on {new Date(application.created_at).toLocaleDateString()}</p>
                 </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <Card className="col-span-2">
-                    <CardHeader>
+                    <CardHeader className="pb-3">
                         <CardTitle>Candidate Profile</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-6">
+                    <CardContent className="space-y-4">
                         <div>
                             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Summary</h3>
                             <p className="text-foreground leading-relaxed whitespace-pre-wrap">
@@ -217,11 +217,11 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                 </Card>
 
                 <Card>
-                    <CardHeader className="bg-muted/30">
+                    <CardHeader className="bg-muted/30 pb-4">
                         <CardTitle>Actions</CardTitle>
                         <CardDescription>Status: <span className="capitalize font-semibold text-foreground">{application.status}</span></CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4 pt-6">
+                    <CardContent className="space-y-3 pt-4">
                         <form action={async () => {
                             "use server";
                             const client = await createClient();

@@ -27,6 +27,17 @@ export async function Navbar() {
         }
     };
 
+    const getProfileURL = () => {
+        switch (profile?.role) {
+            case "candidate":
+                return "/candidate/profile";
+            case "employer":
+                return "/employer/profile";
+            default:
+                return "/candidate/profile";
+        }
+    };
+
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -84,7 +95,7 @@ export async function Navbar() {
                                             <Link href={getDashboardURL()}>Dashboard</Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/profile/edit">Profile Settings</Link>
+                                            <Link href={getProfileURL()}>Profile Settings</Link>
                                         </DropdownMenuItem>
                                         <LogoutButton />
                                     </DropdownMenuContent>

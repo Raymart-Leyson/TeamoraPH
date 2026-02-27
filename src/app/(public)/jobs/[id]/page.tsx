@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getUserProfile } from "@/utils/auth";
 import { ApplyButton } from "./apply-button";
+import { refreshCreditsIfNeeded } from "@/utils/credits";
+import { toggleSavedJob } from "@/app/(app)/candidate/saved-jobs/actions";
 
 export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -28,16 +30,24 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
         notFound();
     }
 
+    // Increment views if the user is not the author of this job post
+    if (!isAuthor && job.status === 'published') {
+        await supabase.from("job_posts").update({ views: (job.views ?? 0) + 1 }).eq("id", job.id);
+    }
+
     // Check if candidate already applied and has credits
     let hasApplied = false;
     let candidateData = null;
+    let isSaved = false;
     if (profile?.role === 'candidate') {
-        const [appRes, candidateRes] = await Promise.all([
+        const [appRes, candidateRes, savedRes] = await Promise.all([
             supabase.from('applications').select('id').eq('job_id', job.id).eq('candidate_id', profile.id).single(),
-            supabase.from('candidate_profiles').select('credit_balance, first_name, last_name').eq('id', profile.id).single()
+            refreshCreditsIfNeeded(profile.id),
+            supabase.from('saved_jobs').select('id').eq('job_id', job.id).eq('candidate_id', profile.id).single()
         ]);
         if (appRes.data) hasApplied = true;
-        candidateData = candidateRes.data;
+        if (savedRes.data) isSaved = true;
+        candidateData = candidateRes;
     }
 
     const company = job.company?.[0] || job.company;
@@ -48,13 +58,13 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
             <div className="absolute top-[-5%] left-[-10%] w-[30rem] h-[30rem] bg-[#EDC7B7] rounded-full mix-blend-multiply blur-3xl opacity-60 pointer-events-none" />
             <div className="absolute bottom-[-10%] right-[-5%] w-[35rem] h-[35rem] bg-[#AC3B61] rounded-full mix-blend-multiply blur-[120px] opacity-30 pointer-events-none" />
 
-            <div className="relative z-10 flex-1 space-y-8 p-4 md:p-8 max-w-[90%] mx-auto pt-10">
-                <div className="flex flex-col md:flex-row gap-8 items-start">
+            <div className="relative z-10 flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto pt-6">
+                <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
 
                     {/* Main Content Area */}
-                    <div className="flex-1 space-y-8 w-full">
+                    <div className="flex-1 space-y-4 md:space-y-6 w-full">
                         {/* Header Section */}
-                        <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-8 md:p-10 transition-all duration-300">
+                        <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-6 md:p-8 transition-all duration-300">
                             <h1 className="text-4xl md:text-5xl font-extrabold tracking-wide text-[#123C69] mb-4 leading-tight">{job.title}</h1>
                             <div className="flex items-center text-lg text-[#123C69]/80 font-bold mb-6 tracking-wide">
                                 <Building2 className="mr-2 h-6 w-6 text-[#AC3B61]" /> {company?.name || "Confidential"}
@@ -80,8 +90,8 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                         </div>
 
                         {/* Description Section */}
-                        <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-8 md:p-10 mb-10">
-                            <h3 className="text-2xl font-extrabold tracking-wide text-[#123C69] mb-6 border-b border-white/40 pb-4">Role Overview</h3>
+                        <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-6 md:p-8 mb-8">
+                            <h3 className="text-2xl font-extrabold tracking-wide text-[#123C69] mb-4 border-b border-white/40 pb-3">Role Overview</h3>
                             <div className="prose prose-lg text-[#123C69]/90 max-w-none font-medium whitespace-pre-wrap leading-relaxed">
                                 {job.description}
                             </div>
@@ -90,7 +100,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
 
                     {/* Sidebar Area */}
                     <div className="w-full md:w-80 shrink-0 sticky top-24 space-y-6">
-                        <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-8 flex flex-col items-center text-center">
+                        <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-6 flex flex-col items-center text-center">
 
                             {/* Company Logo Display */}
                             <div className="h-24 w-24 bg-white/60 rounded-3xl flex items-center justify-center border border-white/60 mb-5 font-bold text-3xl text-[#123C69] uppercase shadow-lg overflow-hidden relative">
@@ -143,13 +153,22 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                                             Application Sent
                                         </Button>
                                     ) : (
-                                        <div className="w-full">
+                                        <div className="w-full space-y-3">
                                             <ApplyButton
                                                 jobId={job.id}
                                                 candidateId={profile.id}
                                                 defaultEmail={profile.email}
-                                                creditBalance={candidateData?.credit_balance || 0}
+                                                freeCredits={candidateData?.free_credits || 0}
+                                                boughtCredits={candidateData?.bought_credits || 0}
                                             />
+                                            <form action={async () => {
+                                                "use server";
+                                                await toggleSavedJob(job.id);
+                                            }}>
+                                                <Button type="submit" variant="outline" className={`w-full rounded-full py-6 text-lg tracking-wider font-bold shadow-sm transition-all ${isSaved ? "bg-[#123C69]/10 text-[#123C69] border-[#123C69]/20" : "bg-white text-[#123C69] hover:bg-slate-50 border-slate-200"}`}>
+                                                    {isSaved ? "Saved" : "Save Job"}
+                                                </Button>
+                                            </form>
                                         </div>
                                     )
                                 ) : !profile ? (

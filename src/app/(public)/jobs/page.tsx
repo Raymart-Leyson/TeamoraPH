@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Card } from "@/components/ui/card";
 import { MapPin, BriefcaseBusiness } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { JobFilters } from "./JobFilters";
@@ -18,7 +19,7 @@ interface JobsPageProps {
     searchParams: { q?: string; location?: string; type?: string; page?: string };
 }
 
-async function JobList({ q, location, type, page }: { q: string; location: string; type: string; page: number }) {
+async function JobList({ q, location, type, skill, page }: { q: string; location: string; type: string; skill: string; page: number }) {
     const supabase = await createClient();
 
     const profile = await getUserProfile();
@@ -43,6 +44,9 @@ async function JobList({ q, location, type, page }: { q: string; location: strin
     }
     if (type) {
         query = query.eq("job_type", type);
+    }
+    if (skill) {
+        query = query.contains("skills_required", [skill]);
     }
 
 
@@ -99,11 +103,10 @@ async function JobList({ q, location, type, page }: { q: string; location: strin
                             {/* Full Card Click Overlay */}
                             <Link href={`/jobs/${job.id}`} className="absolute inset-0 z-10" aria-label={`View details for ${job.title}`} />
 
-                            <div className="relative z-0 flex flex-col md:flex-row p-6 gap-6">
-                                <div className="h-14 w-14 shrink-0 bg-muted/50 rounded-lg flex items-center justify-center border font-bold text-xl text-[#123C69] uppercase group-hover:bg-[#123C69]/10 transition-colors overflow-hidden">
+                            <div className="relative z-0 flex flex-col md:flex-row p-4 md:p-5 gap-4 md:gap-5">
+                                <div className="h-12 w-12 shrink-0 bg-muted/50 rounded-lg flex items-center justify-center border font-bold text-xl text-[#123C69] uppercase group-hover:bg-[#123C69]/10 transition-colors overflow-hidden">
                                     {company?.logo_url ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={company.logo_url} alt={company.name} className="object-cover w-full h-full" />
+                                        <Image src={company.logo_url} alt={company.name} width={48} height={48} className="object-cover w-full h-full" />
                                     ) : (
                                         initials
                                     )}
@@ -111,10 +114,10 @@ async function JobList({ q, location, type, page }: { q: string; location: strin
                                 <div className="flex-1 space-y-3">
                                     <div className="flex items-start justify-between">
                                         <div>
-                                            <h3 className="text-xl font-semibold leading-none mb-1.5 group-hover:text-[#123C69] transition-colors">
+                                            <h3 className="text-lg font-semibold leading-none mb-1 group-hover:text-[#123C69] transition-colors">
                                                 {job.title}
                                             </h3>
-                                            <p className="text-muted-foreground font-medium flex items-center gap-1.5">
+                                            <p className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
                                                 {company?.name ?? "Unknown Company"}
                                                 <span className="text-xs font-normal text-muted-foreground/60">•</span>
                                                 <span className="text-xs font-normal text-muted-foreground/60 flex items-center gap-1">
@@ -155,7 +158,7 @@ async function JobList({ q, location, type, page }: { q: string; location: strin
                                         )}
                                     </div>
                                 </div>
-                                <div className="md:hidden mt-4 pt-4 border-t w-full flex justify-end relative z-20">
+                                <div className="md:hidden mt-3 pt-3 border-t w-full flex justify-end relative z-20">
                                     <Button asChild className="w-full bg-[#123C69] text-white hover:bg-[#123C69]/90">
                                         <Link href={`/jobs/${job.id}`}>View &amp; Apply</Link>
                                     </Button>
@@ -188,16 +191,16 @@ async function JobList({ q, location, type, page }: { q: string; location: strin
     );
 }
 
-export default async function JobsPage({ searchParams }: { searchParams: Promise<{ q?: string; location?: string; type?: string; page?: string }> }) {
-    const { q = "", location = "", type = "", page: pageStr = "1" } = await searchParams;
+export default async function JobsPage({ searchParams }: { searchParams: Promise<{ q?: string; location?: string; type?: string; skill?: string; page?: string }> }) {
+    const { q = "", location = "", type = "", skill = "", page: pageStr = "1" } = await searchParams;
     const page = Math.max(1, parseInt(pageStr, 10));
 
     return (
-        <div className="flex-1 space-y-8 p-8 max-w-[90%] mx-auto pt-10">
+        <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto pt-6">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-4xl font-extrabold tracking-wide text-[#123C69]">Find Jobs</h2>
-                    <p className="text-[#123C69]/70 font-medium mt-2 text-lg">
+                    <h2 className="text-2xl font-extrabold tracking-wide text-[#123C69]">Find Jobs</h2>
+                    <p className="text-[#123C69]/70 font-medium mt-1 text-sm">
                         Browse the latest remote opportunities.
                     </p>
                 </div>
@@ -210,7 +213,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
 
             {/* Job list — Server Component with real Supabase query */}
             <Suspense
-                key={`${q}-${location}-${type}-${page}`}
+                key={`${q}-${location}-${type}-${skill}-${page}`}
                 fallback={
                     <div className="grid gap-4">
                         {Array.from({ length: 4 }).map((_, i) => (
@@ -219,7 +222,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
                     </div>
                 }
             >
-                <JobList q={q} location={location} type={type} page={page} />
+                <JobList q={q} location={location} type={type} skill={skill} page={page} />
             </Suspense>
         </div>
     );

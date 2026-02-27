@@ -26,7 +26,7 @@ export async function publishJobAction(jobId: string) {
     const supabase = await assertEmployerOwnsJob(jobId);
     await supabase
         .from("job_posts")
-        .update({ status: "published" })
+        .update({ status: "pending_review" })
         .eq("id", jobId);
     revalidatePath("/employer/jobs");
     revalidatePath("/employer/dashboard");

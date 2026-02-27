@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { MessageSquare, Circle, ShieldCheck } from "lucide-react";
 
-export async function InboxList({ role }: { role: "employer" | "candidate" }) {
+export async function InboxList({ role, sidebar = false }: { role: "employer" | "candidate"; sidebar?: boolean }) {
     const profile = await getUserProfile();
     if (!profile) return null;
 
@@ -86,11 +86,14 @@ export async function InboxList({ role }: { role: "employer" | "candidate" }) {
     }
 
     return (
-        <div className="flex flex-col max-w-4xl mx-auto w-full bg-white/60 backdrop-blur-xl rounded-[2rem] shadow-xl border border-white/40 overflow-hidden">
-            <div className="p-6 border-b border-[#123C69]/10 bg-white/40">
+        <div className={sidebar
+            ? "flex flex-col w-full h-full overflow-hidden"
+            : "flex flex-col max-w-4xl mx-auto w-full bg-white/60 backdrop-blur-xl rounded-[2rem] shadow-xl border border-white/40 overflow-hidden"
+        }>
+            <div className={`border-b border-[#123C69]/10 bg-white/40 ${sidebar ? "px-5 py-4" : "p-6"}`}>
                 <h3 className="text-xl font-bold text-[#123C69]">Messages</h3>
             </div>
-            <div className="divide-y divide-[#123C69]/5">
+            <div className={`divide-y divide-[#123C69]/5 ${sidebar ? "overflow-y-auto flex-1" : ""}`}>
                 {conversations.map((conv: any) => {
                     const app = Array.isArray(conv.application) ? conv.application[0] : conv.application;
                     const candidate = Array.isArray(app?.candidate) ? app.candidate[0] : app?.candidate;

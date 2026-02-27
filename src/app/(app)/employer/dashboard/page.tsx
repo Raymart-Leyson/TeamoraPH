@@ -14,18 +14,34 @@ export default async function EmployerDashboard() {
 
     const supabase = await createClient();
 
-    // Step 1: get this employer's job IDs and subscription in parallel
-    const [{ data: jobs }, { data: subscription }] = await Promise.all([
+    // Step 1: get this employer's job IDs, subscription, and company profile views in parallel
+    const [{ data: jobs }, { data: subscription }, { data: employerData }] = await Promise.all([
         supabase
             .from("job_posts")
-            .select("id, status, title")
+            .select("id, status, title, views")
             .eq("author_id", profile.id),
         supabase
             .from("subscriptions")
             .select("status, current_period_end")
             .eq("employer_id", profile.id)
             .maybeSingle(),
+        supabase
+            .from("employer_profiles")
+            .select("company_id")
+            .eq("id", profile.id)
+            .single(),
     ]);
+
+    // Step 1.5: get company profile views if they have a company
+    let companyViews = 0;
+    if (employerData?.company_id) {
+        const { data: companyData } = await supabase
+            .from("companies")
+            .select("profile_views")
+            .eq("id", employerData.company_id)
+            .single();
+        companyViews = companyData?.profile_views ?? 0;
+    }
 
     // Step 2: count applicants across all employer jobs
     const jobIds = (jobs ?? []).map((j) => j.id);
@@ -38,14 +54,18 @@ export default async function EmployerDashboard() {
         totalApplicants = count ?? 0;
     }
 
+    // Step 3: Calculate total impressions (company views + job views)
+    const jobViews = (jobs ?? []).reduce((acc, job) => acc + (job.views ?? 0), 0);
+    const totalImpressions = companyViews + jobViews;
+
     const publishedCount = jobs?.filter((j) => j.status === "published").length ?? 0;
     const recentJobs = jobs?.slice(0, 5) ?? [];
 
     return (
-        <div className="flex-1 space-y-8 p-8 pt-10 max-w-[90%] mx-auto">
+        <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
             <div className="flex items-center justify-between space-y-2">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Dashboard Overview</h2>
+                    <h2 className="text-xl font-bold tracking-tight">Dashboard Overview</h2>
                     <p className="text-muted-foreground">Manage your job posts and incoming applicants.</p>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -96,7 +116,7 @@ export default async function EmployerDashboard() {
                         <Activity className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">0</div>
+                        <div className="text-2xl font-bold">{totalImpressions}</div>
                         <p className="text-xs text-muted-foreground border-t pt-1 mt-2">Visibility metrics</p>
                     </CardContent>
                 </Card>
@@ -122,11 +142,11 @@ export default async function EmployerDashboard() {
                             </div>
                         ) : (
                             <div className="space-y-6">
-                                {recentJobs.map((job: { id: string; title: string; status: string }) => (
+                                {recentJobs.map((job: { id: string; title: string; status: string; views: number }) => (
                                     <div key={job.id} className="flex items-center justify-between p-4 border rounded-xl hover:bg-muted/10 transition-colors">
                                         <div>
                                             <p className="font-medium text-sm">{job.title}</p>
-                                            <p className="text-xs text-muted-foreground capitalize">{job.status} • Pending stats</p>
+                                            <p className="text-xs text-muted-foreground capitalize">{job.status} • {job.views || 0} views</p>
                                         </div>
                                         <Button variant="ghost" size="sm" asChild>
                                             <Link href={`/employer/jobs/${job.id}`}>Manage</Link>

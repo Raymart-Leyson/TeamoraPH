@@ -40,13 +40,13 @@ export default function PostJobPage() {
     );
 
     return (
-        <div className="flex-1 space-y-8 p-8 pt-10 max-w-[90%] mx-auto">
-            <div className="flex items-center space-x-4 mb-8">
+        <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
+            <div className="flex items-center space-x-4 mb-4">
                 <Button variant="ghost" size="icon" asChild>
                     <Link href="/employer/dashboard"><ArrowLeft className="h-5 w-5" /></Link>
                 </Button>
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Post a New Job</h2>
+                    <h2 className="text-xl font-bold tracking-tight">Post a New Job</h2>
                     <p className="text-muted-foreground">Find the best remote talent by providing clear details.</p>
                 </div>
             </div>

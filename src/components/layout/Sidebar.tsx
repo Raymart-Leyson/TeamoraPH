@@ -14,6 +14,8 @@ import {
     Building2,
     Users,
     ShieldCheck,
+    Bookmark,
+    AlertTriangle
 } from "lucide-react";
 
 interface SidebarProps {
@@ -36,6 +38,7 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
         { name: "Dashboard", href: "/candidate/dashboard", icon: LayoutDashboard },
         { name: "My Profile", href: "/candidate/profile", icon: UserCircle2 },
         { name: "Applications", href: "/candidate/applications", icon: BriefcaseBusiness },
+        { name: "Saved Jobs", href: "/candidate/saved-jobs", icon: Bookmark },
         { name: "Messages", href: "/candidate/messages", icon: MessageSquare, badge: unreadMessages },
         { name: "Verification", href: "/verification", icon: ShieldCheck },
     ];
@@ -50,10 +53,12 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
     ];
 
     const adminLinks: NavLink[] = [
-        { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-        { name: "Verifications", href: "/admin/verification", icon: ShieldCheck },
-        { name: "Reports", href: "/admin/reports", icon: MessageSquare },
+        { name: "Overview", href: "/admin", icon: LayoutDashboard },
+        { name: "Job Reviews", href: "/admin/jobs", icon: BriefcaseBusiness },
+        { name: "Verifications", href: "/admin/verifications", icon: ShieldCheck },
+        { name: "Reports", href: "/admin/reports", icon: AlertTriangle },
         { name: "Users", href: "/admin/users", icon: Users },
+        { name: "Settings", href: "/admin/settings", icon: Settings },
     ];
 
     const links: NavLink[] =

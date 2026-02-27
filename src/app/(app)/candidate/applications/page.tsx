@@ -63,11 +63,11 @@ export default async function ApplicationsPage({ searchParams }: ApplicationsPag
     const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
 
     return (
-        <div className="flex-1 space-y-8 p-8 max-w-[90%] mx-auto pt-10">
+        <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">My Applications</h2>
+                    <h2 className="text-xl font-bold tracking-tight">My Applications</h2>
                     <p className="text-muted-foreground mt-1">
                         Track the status of every job you&apos;ve applied to.
                     </p>
@@ -103,7 +103,7 @@ export default async function ApplicationsPage({ searchParams }: ApplicationsPag
 
             {/* List */}
             {!applications || applications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-12 text-center bg-muted/20 rounded-xl border border-dashed">
+                <div className="flex flex-col items-center justify-center p-8 text-center bg-muted/20 rounded-xl border border-dashed">
                     <BriefcaseBusiness className="h-10 w-10 text-muted-foreground mb-4" />
                     <h3 className="font-semibold text-lg">
                         {status !== "all" ? `No "${status}" applications` : "No applications yet"}
@@ -128,7 +128,7 @@ export default async function ApplicationsPage({ searchParams }: ApplicationsPag
 
                         return (
                             <Card key={app.id} className="hover:border-primary/40 transition-colors">
-                                <CardContent className="p-6">
+                                <CardContent className="p-4 sm:p-5">
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                         {/* Company Avatar */}
                                         <div className="h-12 w-12 shrink-0 bg-muted/50 rounded-lg flex items-center justify-center border font-bold text-lg text-primary uppercase">

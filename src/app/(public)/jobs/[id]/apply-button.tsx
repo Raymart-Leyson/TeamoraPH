@@ -20,10 +20,11 @@ interface ApplyButtonProps {
     jobId: string;
     candidateId: string;
     defaultEmail: string | null;
-    creditBalance: number;
+    freeCredits: number;
+    boughtCredits: number;
 }
 
-export function ApplyButton({ jobId, candidateId, defaultEmail, creditBalance }: ApplyButtonProps) {
+export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, boughtCredits }: ApplyButtonProps) {
     const [open, setOpen] = useState(false);
     const [credits, setCredits] = useState(1);
 
@@ -92,11 +93,17 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, creditBalance }:
                     </div>
 
                     <div className="p-8 bg-white/60 border border-white/50 rounded-[2.5rem] shadow-sm space-y-6">
-                        <div className="flex items-center justify-between">
-                            <Label className="text-[#123C69] font-extrabold flex items-center gap-2">
-                                <Coins className="h-4 w-4 text-[#AC3B61]" /> Booster Credits
-                            </Label>
-                            <span className="text-sm font-bold text-[#AC3B61]">Balance: {creditBalance}</span>
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center justify-between">
+                                <Label className="text-[#123C69] font-extrabold flex items-center gap-2">
+                                    <Coins className="h-4 w-4 text-[#AC3B61]" /> Total Available Credits
+                                </Label>
+                                <span className="text-sm font-bold text-[#AC3B61]">{freeCredits + boughtCredits}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-[10px] font-bold text-[#123C69]/60 px-1">
+                                <span>Free: {freeCredits} / 50 | Premium: {boughtCredits}</span>
+                                <a href="/candidate/billing" className="text-[#AC3B61] hover:underline">Buy More</a>
+                            </div>
                         </div>
 
                         <div className="flex items-center gap-4">
@@ -120,7 +127,7 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, creditBalance }:
                                     name="credits_allocated"
                                     type="number"
                                     min="1"
-                                    max={creditBalance}
+                                    max={freeCredits + boughtCredits}
                                     value={credits}
                                     onChange={(e) => setCredits(parseInt(e.target.value) || 1)}
                                     className="bg-white border-white/60 font-black text-center rounded-xl h-11"
