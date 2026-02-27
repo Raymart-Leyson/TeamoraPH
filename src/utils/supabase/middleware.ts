@@ -39,7 +39,7 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     const isAuthRoute = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/signup");
-    const isAppRoute = request.nextUrl.pathname.startsWith("/app") || request.nextUrl.pathname.startsWith("/candidate") || request.nextUrl.pathname.startsWith("/employer") || request.nextUrl.pathname.startsWith("/admin") || request.nextUrl.pathname.startsWith("/owner") || request.nextUrl.pathname.startsWith("/staff");
+    const isAppRoute = request.nextUrl.pathname.startsWith("/app") || request.nextUrl.pathname.startsWith("/candidate/") || request.nextUrl.pathname.startsWith("/employer") || request.nextUrl.pathname.startsWith("/admin") || request.nextUrl.pathname.startsWith("/owner") || request.nextUrl.pathname.startsWith("/staff");
 
     if (
         !user &&
@@ -86,7 +86,7 @@ export async function updateSession(request: NextRequest) {
         const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
         const role = profile?.role;
 
-        const isCandidateRoute = request.nextUrl.pathname.startsWith("/candidate");
+        const isCandidateRoute = request.nextUrl.pathname.startsWith("/candidate/");
         const isEmployerRoute = request.nextUrl.pathname.startsWith("/employer");
         const isOwnerRoute = request.nextUrl.pathname.startsWith("/owner");
         const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");

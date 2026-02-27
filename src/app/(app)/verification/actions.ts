@@ -50,6 +50,7 @@ export async function submitVerificationAction(formData: FormData) {
             user_id: user.id,
             type,
             documents: uploadedUrls,
+            notes: notes || null,
             status: 'pending'
         });
 
@@ -64,6 +65,8 @@ export async function submitVerificationAction(formData: FormData) {
     revalidatePath("/candidate/dashboard");
     revalidatePath("/employer/dashboard");
     revalidatePath("/admin/dashboard");
+    revalidatePath("/owner/dashboard");
+    revalidatePath("/staff/dashboard");
 
     return { success: true };
 }
@@ -72,19 +75,23 @@ export async function adminReviewVerificationAction(requestId: string, status: '
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Check if admin
+    if (!user) return { error: "Not authenticated" };
+
+    // Check if authorized moderator
     const { data: profile } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .single();
 
-    if (profile?.role !== 'admin' && profile?.role !== 'staff') return { error: "Unauthorized" };
+    if (profile?.role !== 'admin' && profile?.role !== 'staff' && profile?.role !== 'owner') {
+        return { error: "Unauthorized" };
+    }
 
-    // 1. Get the request
+    // 1. Get the request (include type to set individual flags)
     const { data: request } = await supabase
         .from("verification_requests")
-        .select("user_id")
+        .select("user_id, type")
         .eq("id", requestId)
         .single();
 
@@ -93,23 +100,42 @@ export async function adminReviewVerificationAction(requestId: string, status: '
     // 2. Update request status
     const { error: updateReqError } = await supabase
         .from("verification_requests")
-        .update({ status, updated_at: new Date().toISOString() })
+        .update({
+            status,
+            updated_at: new Date().toISOString(),
+            reviewed_by: user.id,
+            reviewed_at: new Date().toISOString()
+        })
         .eq("id", requestId);
 
     if (updateReqError) return { error: updateReqError.message };
 
-    // 3. Update user profile
+    // 3. Build profile update — set the individual flag when approved
+    const profileUpdate: Record<string, unknown> = {
+        verification_status: status,
+        verification_notes: notes || null,
+        verified_at: status === 'verified' ? new Date().toISOString() : null,
+        verified_by: status === 'verified' ? user.id : null,
+    };
+
+    if (status === 'verified') {
+        if (request.type === 'id_doc') profileUpdate.id_verified = true;
+        if (request.type === 'selfie') profileUpdate.selfie_verified = true;
+        if (request.type === 'social_link') profileUpdate.social_verified = true;
+    }
+
     const { error: updateUserError } = await supabase
         .from("profiles")
-        .update({
-            verification_status: status,
-            verification_notes: notes || null,
-            verified_at: status === 'verified' ? new Date().toISOString() : null
-        })
+        .update(profileUpdate)
         .eq("id", request.user_id);
 
     if (updateUserError) return { error: updateUserError.message };
 
     revalidatePath("/admin/dashboard");
+    revalidatePath("/owner/dashboard");
+    revalidatePath("/staff/dashboard");
+    revalidatePath("/candidate/dashboard");
+    revalidatePath("/employer/dashboard");
+    revalidatePath("/verification");
     return { success: true };
 }

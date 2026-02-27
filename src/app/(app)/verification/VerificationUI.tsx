@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     CheckCircle2,
-    Circle,
     ShieldCheck,
     Camera,
     FileText,
@@ -14,8 +13,10 @@ import {
     Globe,
     AlertCircle,
     ArrowRight,
-    Loader2
+    Loader2,
+    Link as LinkIcon
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { submitVerificationAction } from "./actions";
 
 interface VerificationStep {
@@ -30,6 +31,7 @@ interface VerificationStep {
 export function VerificationUI({ initialProfile }: { initialProfile: any }) {
     const [profile, setProfile] = useState(initialProfile);
     const [submitting, setSubmitting] = useState<string | null>(null);
+    const [socialUrl, setSocialUrl] = useState("");
 
     if (!profile) {
         return <div className="p-8 text-center text-muted-foreground">Profile not found. Please try logging in again.</div>;
@@ -63,7 +65,7 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
             icon: Camera
         },
         {
-            id: 'social',
+            id: 'social_link',
             label: 'Social Presence',
             description: 'Link your active LinkedIn or GitHub profile.',
             weight: 20,
@@ -90,7 +92,7 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
             icon: FileText
         },
         {
-            id: 'social',
+            id: 'social_link',
             label: 'Company Website',
             description: 'Provide your official corporate website URL.',
             weight: 20,
@@ -123,8 +125,24 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
 
         const result = await submitVerificationAction(formData);
         if (result.success) {
-            // Optimistic update or refresh
             alert("Verification documents submitted for review!");
+        } else {
+            alert(result.error);
+        }
+        setSubmitting(null);
+    };
+
+    const handleSocialLink = async () => {
+        if (!socialUrl.trim()) return;
+        setSubmitting("social_link");
+        const formData = new FormData();
+        formData.append("type", "social_link");
+        formData.append("notes", socialUrl.trim());
+
+        const result = await submitVerificationAction(formData);
+        if (result.success) {
+            setSocialUrl("");
+            alert("Social profile link submitted for review!");
         } else {
             alert(result.error);
         }
@@ -219,6 +237,26 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
                                     ) : step.status === 'pending' ? (
                                         <div className="text-[10px] font-black text-yellow-600 bg-yellow-500/10 px-4 py-2 rounded-xl">
                                             IN REVIEW
+                                        </div>
+                                    ) : step.id === 'social_link' ? (
+                                        <div className="flex items-center gap-2">
+                                            <Input
+                                                type="url"
+                                                placeholder="https://linkedin.com/in/..."
+                                                value={socialUrl}
+                                                onChange={(e) => setSocialUrl(e.target.value)}
+                                                className="w-56 text-sm rounded-xl border-[#123C69]/20"
+                                                disabled={!!submitting}
+                                            />
+                                            <Button
+                                                onClick={handleSocialLink}
+                                                disabled={!!submitting || !socialUrl.trim()}
+                                                variant="outline"
+                                                className="rounded-xl border-[#123C69]/20 font-bold hover:bg-[#123C69] hover:text-white transition-all shrink-0"
+                                            >
+                                                {submitting === 'social_link' ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <LinkIcon className="h-4 w-4 mr-2" />}
+                                                Submit
+                                            </Button>
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-2">

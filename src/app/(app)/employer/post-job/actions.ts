@@ -13,6 +13,8 @@ export async function createJobAction(formData: FormData) {
     const location = formData.get("location") as string;
     const job_type = formData.get("job_type") as string;
     const salary_range = formData.get("salary_range") as string;
+    const hours_per_week_raw = formData.get("hours_per_week") as string;
+    const hours_per_week = hours_per_week_raw ? parseInt(hours_per_week_raw, 10) : null;
 
     if (!title || !description) {
         return { error: "Title and description are required" };
@@ -71,6 +73,7 @@ export async function createJobAction(formData: FormData) {
         location,
         job_type,
         salary_range,
+        hours_per_week,
         status: finalStatus
     });
 

@@ -75,7 +75,7 @@ export default function PostJobPage() {
                             />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="location">Location (Optional)</Label>
                                 <Input
@@ -87,7 +87,6 @@ export default function PostJobPage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="job_type">Job Type (Optional)</Label>
-                                {/* Hidden input used by form action */}
                                 <Select name="job_type" disabled={isPending}>
                                     <SelectTrigger id="job_type" className="w-full">
                                         <SelectValue placeholder="Select type…" />
@@ -100,6 +99,18 @@ export default function PostJobPage() {
                                         ))}
                                     </SelectContent>
                                 </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="hours_per_week">Hours per Week (Optional)</Label>
+                                <Input
+                                    id="hours_per_week"
+                                    name="hours_per_week"
+                                    type="number"
+                                    min="1"
+                                    max="168"
+                                    placeholder="e.g. 40"
+                                    disabled={isPending}
+                                />
                             </div>
                         </div>
 

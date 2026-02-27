@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Building2, CalendarDays, Users, Activity } from "lucide-react";
+import { MapPin, Globe, Building2, CalendarDays, Users, Activity, Clock } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getUserProfile } from "@/utils/auth";
@@ -86,6 +86,11 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                                 {job.salary_range && (
                                     <span className="font-bold text-[#AC3B61] bg-white/60 px-5 py-2 rounded-full border border-white/50 shadow-sm">
                                         {job.salary_range}
+                                    </span>
+                                )}
+                                {job.hours_per_week && (
+                                    <span className="flex items-center gap-1.5 bg-white/50 border border-white/60 text-[#123C69] px-4 py-2 rounded-full font-bold shadow-sm">
+                                        <Clock className="h-4 w-4" /> {job.hours_per_week} hrs/week
                                     </span>
                                 )}
                             </div>

@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install sonner --save)"
+      "Bash(npm install sonner --save)",
+      "Bash(ls -la /c/Users/rayma/OneDrive/Documents/Projects/TeamoraPH/src/app/\\\\\\(public\\\\\\)/jobs/)",
+      "Bash(grep -n \"views\\\\|job_posts\" /c/Users/rayma/OneDrive/Documents/Projects/TeamoraPH/supabase/migrations/*.sql)",
+      "Bash(find /c/Users/rayma/OneDrive/Documents/Projects/TeamoraPH -type f -name \"*.sql\" -exec grep -l \"verif\\\\|badge\" {} ;)",
+      "Bash(grep -n \"ALTER TABLE.*candidate_profiles\" /c/Users/rayma/OneDrive/Documents/Projects/TeamoraPH/supabase/migrations/*.sql)"
     ]
   }
 }

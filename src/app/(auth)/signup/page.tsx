@@ -75,6 +75,27 @@ export default function SignupPage() {
                             minLength={6}
                         />
                     </div>
+                    <div className="flex items-start gap-3">
+                        <input
+                            type="checkbox"
+                            id="accept-terms"
+                            name="accept_terms"
+                            value="yes"
+                            required
+                            disabled={isPending}
+                            className="mt-0.5 h-4 w-4 shrink-0 rounded border border-input accent-primary cursor-pointer"
+                        />
+                        <label htmlFor="accept-terms" className="text-sm text-muted-foreground leading-relaxed cursor-pointer select-none">
+                            I agree to the{" "}
+                            <Link href="/terms" target="_blank" className="font-semibold text-primary hover:underline">
+                                Terms of Service
+                            </Link>{" "}
+                            and{" "}
+                            <Link href="/privacy" target="_blank" className="font-semibold text-primary hover:underline">
+                                Privacy Policy
+                            </Link>
+                        </label>
+                    </div>
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-4 pt-4 border-t mt-2">
                     <Button className="w-full h-11 text-base font-semibold" type="submit" disabled={isPending}>

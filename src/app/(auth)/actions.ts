@@ -48,9 +48,14 @@ export async function signup(formData: FormData) {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const role = formData.get("role") as "candidate" | "employer";
+    const acceptTerms = formData.get("accept_terms") as string;
 
     if (!email || !password || !role) {
         return { error: "Email, password, and role are required" };
+    }
+
+    if (acceptTerms !== "yes") {
+        return { error: "You must accept the Terms of Service and Privacy Policy to create an account." };
     }
 
     const { error } = await supabase.auth.signUp({

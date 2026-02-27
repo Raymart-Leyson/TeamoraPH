@@ -3,7 +3,7 @@ import { getUserProfile } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BriefcaseBusiness, CheckCircle2, Clock, MapPin, Coins, Star } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, Clock, MapPin, Coins, Star, ShieldCheck } from "lucide-react";
 import { refreshCreditsIfNeeded } from "@/utils/credits";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -17,14 +17,26 @@ export default async function CandidateDashboard() {
 
     const supabase = await createClient();
 
-    // Fetch profile completion data in parallel with applications
+    // Fetch all data in parallel
     const [
         { data: candidateProfile },
+        { data: profileData },
+        { data: authProfile },
         { count: skillsCount },
         { count: expCount },
         { data: applications },
     ] = await Promise.all([
         refreshCreditsIfNeeded(profile.id),
+        supabase
+            .from("candidate_profiles")
+            .select("avatar_url, headline, resume_url")
+            .eq("id", profile.id)
+            .single(),
+        supabase
+            .from("profiles")
+            .select("verification_status")
+            .eq("id", profile.id)
+            .single(),
         supabase
             .from("candidate_skills")
             .select("id", { count: "exact", head: true })
@@ -44,13 +56,21 @@ export default async function CandidateDashboard() {
             .limit(5),
     ]);
 
+    const verificationStatus = authProfile?.verification_status ?? 'unverified';
+
     const completionSteps = [
-        { label: "Account created", done: true },
-        { label: "Add a profile picture", done: !!candidateProfile?.avatar_url },
-        { label: "Write a headline", done: !!candidateProfile?.headline },
-        { label: "Upload your resume", done: !!candidateProfile?.resume_url },
-        { label: "Add skills", done: (skillsCount ?? 0) > 0 },
-        { label: "Add work experience", done: (expCount ?? 0) > 0 },
+        { label: "Account created", done: true, href: null },
+        { label: "Add a profile picture", done: !!profileData?.avatar_url, href: "/candidate/profile" },
+        { label: "Write a headline", done: !!profileData?.headline, href: "/candidate/profile" },
+        { label: "Upload your resume", done: !!profileData?.resume_url, href: "/candidate/profile" },
+        { label: "Add skills", done: (skillsCount ?? 0) > 0, href: "/candidate/profile" },
+        { label: "Add work experience", done: (expCount ?? 0) > 0, href: "/candidate/profile" },
+        {
+            label: verificationStatus === 'pending' ? "Identity Verification (In Review)" : verificationStatus === 'verified' ? "Identity Verified" : "Verify your identity",
+            done: verificationStatus === 'verified',
+            href: "/verification",
+            icon: ShieldCheck,
+        },
     ];
     const completedCount = completionSteps.filter((s) => s.done).length;
     const completionPct = Math.round((completedCount / completionSteps.length) * 100);
@@ -172,22 +192,45 @@ export default async function CandidateDashboard() {
                             </div>
                         </div>
                         <div className="space-y-3">
-                            {completionSteps.map((step) => (
-                                <div key={step.label} className="flex items-center gap-3">
-                                    {step.done ? (
-                                        <div className="bg-emerald-500/10 p-1 rounded-full shrink-0">
-                                            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                                        </div>
-                                    ) : (
-                                        <div className="bg-muted p-1 rounded-full shrink-0">
-                                            <Clock className="h-4 w-4 text-muted-foreground" />
-                                        </div>
-                                    )}
-                                    <span className={`text-sm ${step.done ? "font-bold text-[#123C69]" : "font-medium text-muted-foreground"}`}>
-                                        {step.label}
-                                    </span>
-                                </div>
-                            ))}
+                            {completionSteps.map((step) => {
+                                const StepIcon = (step as any).icon;
+                                const inner = (
+                                    <div className="flex items-center gap-3 w-full">
+                                        {step.done ? (
+                                            <div className="bg-emerald-500/10 p-1 rounded-full shrink-0">
+                                                {StepIcon
+                                                    ? <StepIcon className="h-4 w-4 text-emerald-600" />
+                                                    : <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                                                }
+                                            </div>
+                                        ) : (
+                                            <div className="bg-muted p-1 rounded-full shrink-0">
+                                                {StepIcon
+                                                    ? <StepIcon className="h-4 w-4 text-muted-foreground" />
+                                                    : <Clock className="h-4 w-4 text-muted-foreground" />
+                                                }
+                                            </div>
+                                        )}
+                                        <span className={`text-sm ${step.done ? "font-bold text-[#123C69]" : "font-medium text-muted-foreground"}`}>
+                                            {step.label}
+                                        </span>
+                                        {!step.done && step.href && (
+                                            <span className="ml-auto text-xs text-[#AC3B61] font-bold">→</span>
+                                        )}
+                                    </div>
+                                );
+                                return (
+                                    <div key={step.label}>
+                                        {!step.done && step.href ? (
+                                            <Link href={step.href} className="flex items-center gap-3 hover:bg-muted/30 rounded-lg px-1 -mx-1 transition-colors">
+                                                {inner}
+                                            </Link>
+                                        ) : (
+                                            <div className="flex items-center gap-3 px-1">{inner}</div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                         <div className="mt-6 pt-5 border-t">
                             <Button variant="outline" className="w-full" asChild>

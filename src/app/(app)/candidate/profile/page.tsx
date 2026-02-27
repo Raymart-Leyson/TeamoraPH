@@ -1,12 +1,7 @@
 import { getUserProfile } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { CandidateProfileForm } from "./CandidateProfileForm";
-import { ExperienceSection } from "./ExperienceSection";
-import { EducationSection } from "./EducationSection";
-import { ProjectsSection } from "./ProjectsSection";
-import { CertificationsSection } from "./CertificationsSection";
-import { SkillsSection } from "./SkillsSection";
+import { CandidateProfileWrapper } from "./CandidateProfileWrapper";
 
 export default async function CandidateProfilePage() {
     const profile = await getUserProfile();
@@ -58,27 +53,20 @@ export default async function CandidateProfilePage() {
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-xl font-bold text-[#123C69]">Your Profile</h2>
-                    <p className="text-[#123C69]/70 mt-1 text-sm font-medium">
-                        Update your information to stand out to employers.
-                    </p>
-                </div>
+            <div>
+                <h2 className="text-xl font-bold text-[#123C69]">Your Profile</h2>
+                <p className="text-[#123C69]/70 mt-1 text-sm font-medium">
+                    Update your information to stand out to employers.
+                </p>
             </div>
-            <CandidateProfileForm defaults={defaults} />
-
-            <div className="space-y-6 pb-6">
-                <SkillsSection items={skills || []} />
-                <div className="h-px w-full bg-[#123C69]/10"></div>
-                <ExperienceSection items={experience || []} />
-                <div className="h-px w-full bg-[#123C69]/10"></div>
-                <EducationSection items={education || []} />
-                <div className="h-px w-full bg-[#123C69]/10"></div>
-                <ProjectsSection items={projects || []} />
-                <div className="h-px w-full bg-[#123C69]/10"></div>
-                <CertificationsSection items={certifications || []} />
-            </div>
+            <CandidateProfileWrapper
+                defaults={defaults}
+                experience={experience || []}
+                education={education || []}
+                projects={projects || []}
+                certifications={certifications || []}
+                skills={skills || []}
+            />
         </div>
     );
 }
