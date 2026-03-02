@@ -31,11 +31,26 @@ export default async function AdminVerificationsPage() {
         .from("verification_requests")
         .select(`
             *,
-            user:profiles(email, role),
-            employer_profile:employer_profiles(company_id)
+            user:profiles(email, role)
         `)
         .eq("status", "pending")
         .order("created_at", { ascending: false });
+
+    // Separate query for employer company IDs to avoid breaking the main join
+    const employerUserIds = requests
+        ?.filter((r: any) => r.user?.role === "employer")
+        .map((r: any) => r.user_id) ?? [];
+
+    const companyIdMap: Record<string, string> = {};
+    if (employerUserIds.length > 0) {
+        const { data: employerProfiles } = await supabase
+            .from("employer_profiles")
+            .select("id, company_id")
+            .in("id", employerUserIds);
+        employerProfiles?.forEach((ep: any) => {
+            companyIdMap[ep.id] = ep.company_id;
+        });
+    }
 
     return (
         <div className="space-y-10">
@@ -52,7 +67,7 @@ export default async function AdminVerificationsPage() {
                                 <div className="flex flex-col md:flex-row gap-8">
                                     {/* User Info */}
                                     <Link
-                                        href={request.user.role === "candidate" ? `/candidates/${request.user_id}` : `/companies/${request.employer_profile?.company_id}`}
+                                        href={request.user.role === "candidate" ? `/candidates/${request.user_id}` : `/companies/${companyIdMap[request.user_id]}`}
                                         target="_blank"
                                         className="flex flex-row md:flex-col items-center md:items-start gap-4 md:w-48 shrink-0 group"
                                     >
