@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { Suspense } from "react";
 import BillingClient from "./BillingClient";
 
 export default async function CandidateBillingPage() {
@@ -6,5 +7,9 @@ export default async function CandidateBillingPage() {
     const country = headersList.get("x-vercel-ip-country") || "PH";
     const currency = country === "PH" ? "php" : "usd";
 
-    return <BillingClient currency={currency} />;
+    return (
+        <Suspense>
+            <BillingClient currency={currency} />
+        </Suspense>
+    );
 }
