@@ -3,10 +3,7 @@ import Stripe from "stripe";
 const getStripe = () => {
     const key = process.env.STRIPE_SECRET_KEY;
     if (!key) {
-        // We log it but don't hard throw here to avoid breaking the build/startup
-        // We only throw if someone actually tries to use stripe
-        console.warn("STRIPE_SECRET_KEY is not set in environment variables");
-        return null;
+        throw new Error("STRIPE_SECRET_KEY is not set in environment variables");
     }
     return new Stripe(key, {
         apiVersion: "2026-02-25.clover" as any,
@@ -14,7 +11,7 @@ const getStripe = () => {
     });
 };
 
-export const stripe = getStripe()!;
+export const stripe = getStripe();
 
 
 // Pricing config — single source of truth. Update here to change the plan.
