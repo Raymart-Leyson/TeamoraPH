@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CREDIT_PACKAGES } from "@/lib/stripe";
+import { CREDIT_PACKAGES } from "@/lib/pricing";
 import { createCandidateCheckoutSession } from "./actions";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
