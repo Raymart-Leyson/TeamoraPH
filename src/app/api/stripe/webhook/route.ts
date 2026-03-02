@@ -35,6 +35,25 @@ export async function POST(request: Request) {
         return NextResponse.json({ received: true });
     }
 
+    // SECURITY: Idempotency — claim this event ID before doing any work.
+    // We INSERT first; if the row already exists (unique PK violation), another
+    // invocation already processed it (e.g. Stripe retry or concurrent delivery).
+    // This prevents double-crediting from webhook retries.
+    const { error: claimError } = await supabaseAdmin
+        .from("processed_stripe_events")
+        .insert({ stripe_event_id: event.id });
+
+    if (claimError) {
+        if (claimError.code === "23505") {
+            // Unique violation — event already processed. Acknowledge to Stripe.
+            console.log(`Webhook: event ${event.id} already processed, skipping.`);
+            return NextResponse.json({ received: true });
+        }
+        // Unexpected DB error — let Stripe retry
+        console.error("Webhook: failed to claim event", claimError);
+        return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    }
+
     try {
         switch (event.type) {
             case "checkout.session.completed": {
@@ -98,6 +117,12 @@ export async function POST(request: Request) {
             }
         }
     } catch (err) {
+        // Processing failed — remove the claim so Stripe can retry and succeed next time.
+        await supabaseAdmin
+            .from("processed_stripe_events")
+            .delete()
+            .eq("stripe_event_id", event.id);
+
         console.error("Webhook handler error:", err);
         return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
     }
@@ -136,30 +161,18 @@ async function upsertSubscription(
 }
 
 async function addCandidateCredits(candidateId: string, credits: number) {
-    // We use a RPC or a direct update with increment logic if possible, 
-    // but here we'll just do a select + update for simplicity in this MVP 
-    // (though a direct SQL update is safer for concurrency)
+    // SECURITY: Use atomic SQL increment via RPC — no SELECT + UPDATE race condition.
+    // The old pattern (SELECT then UPDATE) allowed double-crediting when Stripe
+    // retried a webhook concurrently: both reads saw the same balance, both
+    // wrote the same incremented value, and one increment was silently dropped
+    // (or doubled, depending on timing).
+    const { error } = await supabaseAdmin.rpc("increment_bought_credits", {
+        p_candidate_id: candidateId,
+        p_amount: credits,
+    });
 
-    const { data: current, error: fetchError } = await supabaseAdmin
-        .from("candidate_profiles")
-        .select("bought_credits")
-        .eq("id", candidateId)
-        .single();
-
-    if (fetchError) {
-        console.error("Webhook: failed to fetch candidate for credits", fetchError);
-        throw fetchError;
-    }
-
-    const { error: updateError } = await supabaseAdmin
-        .from("candidate_profiles")
-        .update({
-            bought_credits: (current.bought_credits || 0) + credits
-        })
-        .eq("id", candidateId);
-
-    if (updateError) {
-        console.error("Webhook: failed to update candidate credits", updateError);
-        throw updateError;
+    if (error) {
+        console.error("Webhook: failed to increment candidate credits", error);
+        throw error;
     }
 }

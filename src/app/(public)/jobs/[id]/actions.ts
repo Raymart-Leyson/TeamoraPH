@@ -12,7 +12,11 @@ export async function applyAction(formData: FormData) {
     const email = formData.get("email") as string;
     const subject = formData.get("subject") as string;
     const cover_letter = formData.get("cover_letter") as string;
-    const credits_allocated = parseInt(formData.get("credits_allocated") as string || "1");
+    // SECURITY: credits_allocated MUST be server-side only.
+    // Reading this from FormData allowed attackers to set it to 0 (free) or
+    // negative (which ADDED credits to the account on every application).
+    // Cost is always 1 credit per application, enforced here only.
+    const credits_allocated = 1;
 
     if (!job_id || !candidate_id || !email || !subject || !cover_letter) {
         return { error: "Missing required fields" };

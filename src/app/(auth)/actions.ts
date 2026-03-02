@@ -47,11 +47,21 @@ export async function signup(formData: FormData) {
 
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const role = formData.get("role") as "candidate" | "employer";
+    const roleRaw = formData.get("role") as string;
     const acceptTerms = formData.get("accept_terms") as string;
 
-    if (!email || !password || !role) {
-        return { error: "Email, password, and role are required" };
+    // Runtime allowlist — TypeScript casts are NOT runtime checks.
+    // Without this, an attacker can POST role=admin/owner and the DB trigger
+    // will cast it to that enum value, granting full platform access.
+    const ALLOWED_SIGNUP_ROLES = ["candidate", "employer"] as const;
+    type SignupRole = typeof ALLOWED_SIGNUP_ROLES[number];
+    if (!ALLOWED_SIGNUP_ROLES.includes(roleRaw as SignupRole)) {
+        return { error: "Invalid role" };
+    }
+    const role = roleRaw as SignupRole;
+
+    if (!email || !password) {
+        return { error: "Email and password are required" };
     }
 
     if (acceptTerms !== "yes") {
