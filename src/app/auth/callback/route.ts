@@ -6,7 +6,8 @@ import { createClient } from "@/utils/supabase/server";
 // - Password reset links from email
 // Supabase redirects to /auth/callback?code=...
 export async function GET(request: Request) {
-    const { searchParams, origin } = new URL(request.url);
+    const { searchParams } = new URL(request.url);
+    const origin = process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
     const code = searchParams.get("code");
     const type = searchParams.get("type");     // "recovery" for password reset
     const role = searchParams.get("role");      // "candidate" | "employer" from signup
