@@ -11,6 +11,7 @@ import {
     ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { adminReviewVerificationAction } from "@/app/(app)/verification/actions";
 import {
     Dialog,
@@ -49,15 +50,22 @@ export default async function AdminVerificationsPage() {
                             <CardContent className="p-8">
                                 <div className="flex flex-col md:flex-row gap-8">
                                     {/* User Info */}
-                                    <div className="flex flex-row md:flex-col items-center md:items-start gap-4 md:w-48 shrink-0">
-                                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#123C69]/5 flex items-center justify-center border border-[#123C69]/10">
+                                    <Link
+                                        href={request.user.role === "candidate" ? `/candidates/${request.user_id}` : `/companies/${request.user_id}`}
+                                        target="_blank"
+                                        className="flex flex-row md:flex-col items-center md:items-start gap-4 md:w-48 shrink-0 group"
+                                    >
+                                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#123C69]/5 flex items-center justify-center border border-[#123C69]/10 group-hover:bg-[#123C69]/10 transition-colors">
                                             <User className="w-8 h-8 text-[#123C69]/40" />
                                         </div>
                                         <div className="min-w-0">
                                             <p className="font-black text-[#123C69] truncate capitalize">{request.user.role}</p>
                                             <p className="text-xs font-bold text-[#123C69]/50 truncate">{request.user.email}</p>
+                                            <p className="text-xs font-bold text-[#AC3B61] mt-1 group-hover:underline flex items-center gap-1">
+                                                View Profile <ExternalLink className="w-3 h-3" />
+                                            </p>
                                         </div>
-                                    </div>
+                                    </Link>
 
                                     {/* Request Details */}
                                     <div className="flex-1 space-y-6">
