@@ -46,7 +46,7 @@ export default async function AdminJobsPage({
     return (
         <div className="space-y-10">
             <div>
-                <h1 className="text-4xl font-black text-[#123C69] tracking-tight">Job Moderation</h1>
+                <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">Job Moderation</h1>
                 <p className="text-[#123C69]/70 font-bold mt-2">Review and approve job postings before they go live.</p>
             </div>
 

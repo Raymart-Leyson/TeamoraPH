@@ -65,14 +65,14 @@ export default async function ApplicationsPage({ searchParams }: ApplicationsPag
     return (
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 className="text-xl font-bold tracking-tight">My Applications</h2>
                     <p className="text-muted-foreground mt-1">
                         Track the status of every job you&apos;ve applied to.
                     </p>
                 </div>
-                <Button asChild>
+                <Button size="sm" asChild>
                     <Link href="/jobs">Browse More Jobs</Link>
                 </Button>
             </div>

@@ -45,7 +45,7 @@ export default async function AdminVerificationsPage() {
     return (
         <div className="space-y-10">
             <div>
-                <h1 className="text-4xl font-black text-[#123C69] tracking-tight">User Verifications</h1>
+                <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">User Verifications</h1>
                 <p className="text-[#123C69]/70 font-bold mt-2">Verify identity documents and manage verification badges.</p>
             </div>
 

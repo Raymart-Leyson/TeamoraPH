@@ -49,7 +49,7 @@ function ProfilePreview({ data }: { data: Defaults }) {
             {/* Main Company Card */}
             <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2.5rem] overflow-hidden">
                 <div className="h-28 w-full bg-gradient-to-r from-[#123C69] to-[#123C69]/80" />
-                <div className="px-8 pb-8 pt-0">
+                <div className="px-4 sm:px-8 pb-6 sm:pb-8 pt-0">
                     <div className="flex justify-between items-end mt-[-3rem] mb-6">
                         <div className="h-24 w-24 rounded-3xl bg-white border-4 border-[#EEE2DC] shadow-lg flex items-center justify-center font-black text-2xl text-[#123C69] uppercase overflow-hidden relative">
                             {data.logo_url ? (
@@ -96,7 +96,7 @@ function ProfilePreview({ data }: { data: Defaults }) {
             </div>
 
             {/* About Section */}
-            <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-8">
+            <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-5 sm:p-8">
                 <h3 className="text-xl font-bold text-[#123C69] mb-4 flex items-center gap-2">
                     <Building2 className="h-5 w-5 text-[#AC3B61]" /> About the Company
                 </h3>
@@ -108,7 +108,7 @@ function ProfilePreview({ data }: { data: Defaults }) {
             </div>
 
             {/* Hiring Contact */}
-            <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-8">
+            <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-5 sm:p-8">
                 <h3 className="text-xl font-bold text-[#123C69] mb-4 flex items-center gap-2">
                     <User className="h-5 w-5 text-[#AC3B61]" /> Hiring Contact
                 </h3>
@@ -330,7 +330,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
 
                             <h3 className="font-bold text-xl text-[#123C69]">Your Information</h3>
 
-                            <div className="grid grid-cols-2 gap-5">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div className="space-y-2">
                                     <Label htmlFor="first_name" className="text-[#123C69] font-semibold">First Name *</Label>
                                     <Input

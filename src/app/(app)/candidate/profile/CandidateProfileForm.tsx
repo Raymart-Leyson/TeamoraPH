@@ -69,7 +69,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
         return (
             <Card className="border-0 shadow-lg bg-white/60 backdrop-blur-xl overflow-hidden rounded-[2rem]">
                 {/* Beautiful "Summary" UI Headings */}
-                <div className="relative pt-10 pb-6 px-10 border-b border-[#123C69]/10 bg-gradient-to-br from-white/90 to-white/40 shadow-sm flex flex-col md:flex-row gap-8 items-start justify-between">
+                <div className="relative pt-8 pb-6 px-4 sm:px-8 md:px-10 border-b border-[#123C69]/10 bg-gradient-to-br from-white/90 to-white/40 shadow-sm flex flex-col md:flex-row gap-6 md:gap-8 items-start justify-between">
                     <div className="flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left w-full">
                         <div className="h-32 w-32 shrink-0 rounded-[2rem] bg-white/80 flex items-center justify-center border-4 border-white shadow-xl overflow-hidden font-bold text-4xl text-[#123C69]">
                             {defaults.avatar_url ? (
@@ -105,7 +105,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                     </Button>
                 </div>
 
-                <CardContent className="space-y-10 p-10">
+                <CardContent className="space-y-8 p-4 sm:p-8 md:p-10">
                     {state?.success && (
                         <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-4 text-sm text-green-700 dark:text-green-400 font-bold tracking-wide flex items-center justify-center gap-2 shadow-sm">
                             <CheckCircle2 className="h-5 w-5 shrink-0" />
@@ -219,7 +219,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                         </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="first_name" className="text-[#123C69] font-semibold">First Name *</Label>
                             <Input
@@ -301,7 +301,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="location_country" className="text-[#123C69] font-semibold">Country</Label>
                             <Input

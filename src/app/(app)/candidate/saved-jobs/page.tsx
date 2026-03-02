@@ -37,12 +37,12 @@ export default async function SavedJobsPage() {
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 className="text-xl font-bold tracking-tight text-[#123C69]">Saved Jobs</h2>
                     <p className="text-muted-foreground mt-1 text-sm">Manage the jobs you've bookmarked to apply later.</p>
                 </div>
-                <Button asChild className="bg-[#123C69] hover:bg-[#123C69]/90 text-white rounded-xl shadow-md font-bold">
+                <Button size="sm" asChild className="bg-[#123C69] hover:bg-[#123C69]/90 text-white rounded-xl shadow-md font-bold">
                     <Link href="/jobs">Browse More Jobs</Link>
                 </Button>
             </div>

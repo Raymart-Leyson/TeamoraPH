@@ -31,7 +31,7 @@ export default function BillingClient({ currency }: BillingClientProps) {
     return (
         <div className="flex-1 space-y-8 p-4 md:p-8 max-w-5xl mx-auto pt-10">
             <div className="text-center space-y-3">
-                <h1 className="text-4xl font-black text-[#123C69] tracking-tight">Boost Your Visibility</h1>
+                <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">Boost Your Visibility</h1>
                 <p className="text-[#123C69]/70 text-lg font-medium max-w-2xl mx-auto">
                     Purchase Booster Credits to pin your applications at the top of the employer&apos;s list and stand out from the crowd.
                 </p>

@@ -77,16 +77,16 @@ export default async function CandidateDashboard() {
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
-            <div className="flex items-center justify-between space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 className="text-xl font-bold tracking-tight">Dashboard</h2>
                     <p className="text-muted-foreground">Keep track of your applications and profile views.</p>
                 </div>
-                <div className="flex items-center space-x-2">
-                    <Button variant="outline" asChild>
+                <div className="flex items-center gap-2 flex-wrap">
+                    <Button variant="outline" size="sm" asChild>
                         <Link href="/candidate/billing">Buy Credits</Link>
                     </Button>
-                    <Button asChild>
+                    <Button size="sm" asChild>
                         <Link href="/jobs">Browse Jobs</Link>
                     </Button>
                 </div>
@@ -136,7 +136,7 @@ export default async function CandidateDashboard() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
+                <Card className="md:col-span-2 lg:col-span-4">
                     <CardHeader>
                         <CardTitle>Recent Applications</CardTitle>
                         <CardDescription>Your 5 most recent job applications</CardDescription>
@@ -176,7 +176,7 @@ export default async function CandidateDashboard() {
                         )}
                     </CardContent>
                 </Card>
-                <Card className="col-span-3">
+                <Card className="md:col-span-2 lg:col-span-3">
                     <CardHeader className="pb-2">
                         <CardTitle>Profile Completion</CardTitle>
                         <CardDescription>Improve your chances of getting hired</CardDescription>

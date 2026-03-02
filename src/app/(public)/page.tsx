@@ -43,7 +43,7 @@ export default async function Home() {
                         The #1 Premium Job Marketplace
                     </Badge>
 
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-wide text-[#123C69] max-w-4xl leading-[1.15]">
+                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-wide text-[#123C69] max-w-4xl leading-[1.15]">
                         Discover Your Next <br className="hidden md:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#123C69] to-[#AC3B61]">Professional Journey</span>
                     </h1>
@@ -53,7 +53,7 @@ export default async function Home() {
                     </p>
 
                     {/* High-conversion search bar */}
-                    <form action="/jobs" method="GET" className="w-full max-w-4xl mx-auto mt-8 bg-white/40 backdrop-blur-xl border border-white/30 shadow-2xl rounded-full p-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-0 transition-transform hover:scale-[1.01] duration-300">
+                    <form action="/jobs" method="GET" className="w-full max-w-4xl mx-auto mt-8 bg-white/40 backdrop-blur-xl border border-white/30 shadow-2xl rounded-2xl sm:rounded-full p-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-0 transition-transform hover:scale-[1.01] duration-300">
                         <div className="flex-1 flex items-center w-full sm:w-auto px-4">
                             <BriefcaseBusiness className="h-6 w-6 text-[#123C69]/50 shrink-0" />
                             <input

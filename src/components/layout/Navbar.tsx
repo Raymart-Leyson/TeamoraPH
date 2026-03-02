@@ -8,7 +8,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BriefcaseBusiness, UserCircle2, LayoutDashboard } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { BriefcaseBusiness, UserCircle2, LayoutDashboard, Menu } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
 export async function Navbar() {
@@ -65,14 +66,14 @@ export async function Navbar() {
                         </Link>
                     </nav>
                 </div>
-                <div className="flex flex-1 items-center justify-end space-x-4">
+                <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4">
                     <nav className="flex items-center space-x-2">
                         {!profile ? (
                             <>
                                 <Button variant="ghost" asChild className="hidden md:inline-flex">
                                     <Link href="/login">Log in</Link>
                                 </Button>
-                                <Button asChild>
+                                <Button asChild className="hidden md:inline-flex">
                                     <Link href="/signup">Sign up</Link>
                                 </Button>
                             </>
@@ -107,6 +108,52 @@ export async function Navbar() {
                             </>
                         )}
                     </nav>
+
+                    {/* Mobile Hamburger */}
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="outline" size="icon" className="md:hidden shrink-0">
+                                <Menu className="h-5 w-5" />
+                                <span className="sr-only">Open menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="right" className="w-72 flex flex-col pt-10">
+                            <Link href="/" className="flex items-center space-x-2 mb-8">
+                                <BriefcaseBusiness className="h-6 w-6 text-primary" />
+                                <span className="font-bold text-lg">Teamora</span>
+                            </Link>
+                            <nav className="flex flex-col gap-1 flex-1">
+                                <Link href="/jobs" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+                                    Find Jobs
+                                </Link>
+                                <Link href="/companies" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+                                    Companies
+                                </Link>
+                                <Link href="/pricing" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+                                    Pricing
+                                </Link>
+                            </nav>
+                            <div className="border-t pt-4 flex flex-col gap-2">
+                                {!profile ? (
+                                    <>
+                                        <Button variant="outline" asChild className="w-full">
+                                            <Link href="/login">Log in</Link>
+                                        </Button>
+                                        <Button asChild className="w-full">
+                                            <Link href="/signup">Sign up</Link>
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <Button variant="outline" asChild className="w-full">
+                                        <Link href={getDashboardURL()}>
+                                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                                            Dashboard
+                                        </Link>
+                                    </Button>
+                                )}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
                 </div>
             </div>
         </header>

@@ -48,14 +48,14 @@ export default async function EmployerJobsPage() {
     return (
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 className="text-xl font-bold tracking-tight">My Job Posts</h2>
                     <p className="text-muted-foreground mt-1">
                         Manage and track all your job listings.
                     </p>
                 </div>
-                <Button asChild id="post-new-job-btn">
+                <Button size="sm" asChild id="post-new-job-btn">
                     <Link href="/employer/post-job">
                         <PlusCircle className="mr-2 h-4 w-4" /> Post New Job
                     </Link>

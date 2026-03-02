@@ -46,7 +46,7 @@ export default async function AdminDashboardPage() {
         <div className="space-y-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-4xl font-black text-[#123C69] tracking-tight">Overview</h1>
+                    <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">Overview</h1>
                     <p className="text-[#123C69]/70 font-bold mt-2">Welcome back! Here&apos;s what needs your attention today.</p>
                 </div>
                 {staffProfile && (

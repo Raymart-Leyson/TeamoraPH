@@ -89,7 +89,7 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
                         {/* Banner color block */}
                         <div className="h-32 w-full bg-gradient-to-r from-[#123C69] to-[#123C69]/80" />
 
-                        <CardContent className="px-8 pb-8 pt-0 flex flex-col items-start min-h-[inherit]">
+                        <CardContent className="px-4 sm:px-8 pb-6 sm:pb-8 pt-0 flex flex-col items-start min-h-[inherit]">
                             <div className="flex justify-between w-full mt-[-3rem]">
                                 <Avatar className="h-28 w-28 border-4 border-[#EEE2DC] shadow-lg bg-white">
                                     <AvatarImage src={profile.avatar_url || ""} alt={fullName} />
@@ -187,7 +187,7 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
                     <div className="lg:col-span-2 space-y-8">
                         {experience && experience.length > 0 && (
                             <Card className="bg-white/50 backdrop-blur-xl border-white/60 shadow-xl rounded-[2rem]">
-                                <CardContent className="p-8">
+                                <CardContent className="p-4 sm:p-8">
                                     <h3 className="text-2xl font-bold text-[#123C69] tracking-tight mb-8 border-b border-slate-200 pb-4 flex items-center">
                                         <BriefcaseBusiness className="w-6 h-6 mr-3 text-[#AC3B61]" /> Experience
                                     </h3>
@@ -212,7 +212,7 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
 
                         {education && education.length > 0 && (
                             <Card className="bg-white/50 backdrop-blur-xl border-white/60 shadow-xl rounded-[2rem]">
-                                <CardContent className="p-8">
+                                <CardContent className="p-4 sm:p-8">
                                     <h3 className="text-2xl font-bold text-[#123C69] tracking-tight mb-8 border-b border-slate-200 pb-4 flex items-center">
                                         <GraduationCap className="w-6 h-6 mr-3 text-[#AC3B61]" /> Education
                                     </h3>
@@ -238,7 +238,7 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
 
                         {projects && projects.length > 0 && (
                             <Card className="bg-white/50 backdrop-blur-xl border-white/60 shadow-xl rounded-[2rem]">
-                                <CardContent className="p-8">
+                                <CardContent className="p-4 sm:p-8">
                                     <h3 className="text-2xl font-bold text-[#123C69] tracking-tight mb-8 border-b border-slate-200 pb-4 flex items-center">
                                         <Code className="w-6 h-6 mr-3 text-[#AC3B61]" /> Highlighted Projects
                                     </h3>
@@ -267,7 +267,7 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
                     <div className="space-y-8">
                         {hasExtensiveSkills && (
                             <Card className="bg-white/50 backdrop-blur-xl border-white/60 shadow-xl rounded-[2rem]">
-                                <CardContent className="p-8">
+                                <CardContent className="p-4 sm:p-8">
                                     <h3 className="text-xl font-bold text-[#123C69] tracking-tight mb-6 border-b border-slate-200 pb-4">
                                         Skills & Expertise
                                     </h3>
@@ -301,7 +301,7 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
 
                         {certifications && certifications.length > 0 && (
                             <Card className="bg-white/50 backdrop-blur-xl border-white/60 shadow-xl rounded-[2rem]">
-                                <CardContent className="p-8">
+                                <CardContent className="p-4 sm:p-8">
                                     <h3 className="text-xl font-bold text-[#123C69] tracking-tight mb-6 border-b border-slate-200 pb-4">
                                         Licenses & Certifications
                                     </h3>

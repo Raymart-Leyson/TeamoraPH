@@ -68,13 +68,13 @@ export default async function EmployerDashboard() {
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
-            <div className="flex items-center justify-between space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 className="text-xl font-bold tracking-tight">Dashboard Overview</h2>
                     <p className="text-muted-foreground">Manage your job posts and incoming applicants.</p>
                 </div>
-                <div className="flex items-center space-x-2">
-                    <Button asChild>
+                <div className="flex items-center gap-2">
+                    <Button size="sm" asChild>
                         <Link href="/employer/post-job">Post New Job</Link>
                     </Button>
                 </div>
@@ -128,7 +128,7 @@ export default async function EmployerDashboard() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
+                <Card className="md:col-span-2 lg:col-span-4">
                     <CardHeader>
                         <CardTitle>Recent Job Posts</CardTitle>
                         <CardDescription>Performance of your latest listings</CardDescription>

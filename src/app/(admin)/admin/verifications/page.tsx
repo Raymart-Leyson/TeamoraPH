@@ -55,15 +55,15 @@ export default async function AdminVerificationsPage() {
     return (
         <div className="space-y-10">
             <div>
-                <h1 className="text-4xl font-black text-[#123C69] tracking-tight">User Verifications</h1>
+                <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">User Verifications</h1>
                 <p className="text-[#123C69]/70 font-bold mt-2">Verify identity documents and manage verification badges.</p>
             </div>
 
             <div className="grid gap-6">
                 {requests && requests.length > 0 ? (
                     requests.map((request: any) => (
-                        <Card key={request.id} className="border-none shadow-xl rounded-[2.5rem] overflow-hidden bg-white/60 backdrop-blur-md">
-                            <CardContent className="p-8">
+                        <Card key={request.id} className="border-none shadow-xl rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-white/60 backdrop-blur-md">
+                            <CardContent className="p-4 sm:p-8">
                                 <div className="flex flex-col md:flex-row gap-8">
                                     {/* User Info */}
                                     <Link
@@ -138,7 +138,7 @@ export default async function AdminVerificationsPage() {
                         </Card>
                     ))
                 ) : (
-                    <div className="bg-white/30 backdrop-blur-sm border-2 border-dashed border-white/40 rounded-[3rem] p-20 flex flex-col items-center justify-center text-center">
+                    <div className="bg-white/30 backdrop-blur-sm border-2 border-dashed border-white/40 rounded-[2rem] sm:rounded-[3rem] p-10 sm:p-20 flex flex-col items-center justify-center text-center">
                         <div className="bg-white/60 p-6 rounded-full mb-6">
                             <Info className="w-12 h-12 text-[#123C69]/20" />
                         </div>

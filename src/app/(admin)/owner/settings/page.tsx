@@ -46,7 +46,7 @@ export default async function AdminSettingsPage({
     return (
         <div className="space-y-10">
             <div>
-                <h1 className="text-4xl font-black text-[#123C69] tracking-tight">Platform Settings</h1>
+                <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">Platform Settings</h1>
                 <p className="text-[#123C69]/70 font-bold mt-2">Configure global platform parameters.</p>
             </div>
 

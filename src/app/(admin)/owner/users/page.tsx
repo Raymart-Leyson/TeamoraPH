@@ -65,7 +65,7 @@ export default async function AdminUsersPage({
         <div className="space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-4xl font-black text-[#123C69] tracking-tight">User Management</h1>
+                    <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">User Management</h1>
                     <p className="text-[#123C69]/70 font-bold mt-2">Manage user accounts, roles, and platform permissions.</p>
                 </div>
 

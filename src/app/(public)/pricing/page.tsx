@@ -89,7 +89,7 @@ function PlanCard({
     plan: typeof candidatePlans[0];
 }) {
     return (
-        <div className={`relative flex flex-col rounded-[2rem] border p-8 h-full ${plan.badge ? "bg-[#123C69] text-white border-[#123C69]" : "bg-white border-slate-200"}`}>
+        <div className={`relative flex flex-col rounded-[1.5rem] sm:rounded-[2rem] border p-5 sm:p-8 h-full ${plan.badge ? "bg-[#123C69] text-white border-[#123C69]" : "bg-white border-slate-200"}`}>
             {plan.badge && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Badge className="bg-[#AC3B61] text-white font-black px-4 py-1 rounded-full shadow-lg text-xs uppercase tracking-widest">
@@ -136,10 +136,10 @@ export default function PricingPage() {
                     <Badge className="bg-[#123C69]/10 text-[#123C69] font-black px-4 py-1.5 rounded-full text-xs uppercase tracking-widest">
                         Simple Pricing
                     </Badge>
-                    <h1 className="text-5xl font-black text-[#123C69] tracking-tight">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#123C69] tracking-tight">
                         Transparent Plans,<br />No Surprises
                     </h1>
-                    <p className="text-[#123C69]/60 text-lg font-medium">
+                    <p className="text-[#123C69]/60 text-base sm:text-lg font-medium">
                         Whether you&apos;re finding remote work or building a team — start free, upgrade when ready.
                     </p>
                 </div>
@@ -177,9 +177,9 @@ export default function PricingPage() {
 
             {/* FAQ / CTA */}
             <section className="max-w-3xl mx-auto px-4 pb-20 text-center">
-                <div className="bg-[#123C69] rounded-[2.5rem] p-12 text-white">
+                <div className="bg-[#123C69] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 md:p-12 text-white">
                     <Zap className="w-10 h-10 mx-auto mb-4 text-[#EDC7B7]" />
-                    <h3 className="text-3xl font-black">Ready to get started?</h3>
+                    <h3 className="text-2xl sm:text-3xl font-black">Ready to get started?</h3>
                     <p className="text-white/70 mt-3 font-medium">Create a free account in under 2 minutes. No credit card required.</p>
                     <div className="flex flex-wrap gap-4 justify-center mt-8">
                         <Button className="bg-white text-[#123C69] hover:bg-white/90 font-black rounded-xl px-8 h-12 text-base" asChild>
