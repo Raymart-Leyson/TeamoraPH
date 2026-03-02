@@ -14,8 +14,8 @@ export default async function EmployerDashboard() {
 
     const supabase = await createClient();
 
-    // Step 1: get this employer's job IDs, subscription, and company profile views in parallel
-    const [{ data: jobs }, { data: subscription }, { data: employerData }] = await Promise.all([
+    // Step 1: get this employer's job IDs, subscription, employer data, and profile views_count in parallel
+    const [{ data: jobs }, { data: subscription }, { data: employerData }, { data: profileViews }] = await Promise.all([
         supabase
             .from("job_posts")
             .select("id, status, title, views")
@@ -28,6 +28,11 @@ export default async function EmployerDashboard() {
         supabase
             .from("employer_profiles")
             .select("company_id")
+            .eq("id", profile.id)
+            .single(),
+        supabase
+            .from("profiles")
+            .select("views_count")
             .eq("id", profile.id)
             .single(),
     ]);
@@ -54,9 +59,9 @@ export default async function EmployerDashboard() {
         totalApplicants = count ?? 0;
     }
 
-    // Step 3: Calculate total impressions (company views + job views)
+    // Step 3: Calculate total impressions (profiles.views_count + company views + job views)
     const jobViews = (jobs ?? []).reduce((acc, job) => acc + (job.views ?? 0), 0);
-    const totalImpressions = companyViews + jobViews;
+    const totalImpressions = (profileViews?.views_count ?? 0) + companyViews + jobViews;
 
     const publishedCount = jobs?.filter((j) => j.status === "published").length ?? 0;
     const recentJobs = jobs?.slice(0, 5) ?? [];

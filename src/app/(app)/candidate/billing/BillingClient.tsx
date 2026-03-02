@@ -106,6 +106,17 @@ export default function BillingClient({ currency }: BillingClientProps) {
                 })}
             </div>
 
+            <div className="bg-[#AC3B61]/5 border border-[#AC3B61]/20 rounded-[3rem] p-10 text-center space-y-3 shadow-sm">
+                <div className="mx-auto bg-[#AC3B61]/10 p-4 rounded-3xl w-fit mb-2">
+                    <Coins className="h-8 w-8 text-[#AC3B61]" />
+                </div>
+                <h3 className="text-2xl font-black text-[#123C69]">You Already Get Free Credits</h3>
+                <p className="text-[#123C69]/70 font-semibold max-w-2xl mx-auto leading-relaxed">
+                    Every day, <span className="text-[#AC3B61] font-black">+10 free credits</span> are automatically added to your account — up to a lifetime maximum of <span className="text-[#AC3B61] font-black">50 free credits</span>. Free credits are spent first whenever you apply to a job.
+                </p>
+                <p className="text-xs text-[#123C69]/50 font-bold">Booster Credits are for when you want to go above and beyond.</p>
+            </div>
+
             <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-[3rem] p-10 text-center space-y-4 shadow-sm">
                 <h3 className="text-2xl font-black text-[#123C69]">Why use credits?</h3>
                 <p className="text-[#123C69]/70 font-semibold max-w-3xl mx-auto leading-relaxed">

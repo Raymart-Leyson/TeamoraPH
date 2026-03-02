@@ -1,31 +1,36 @@
 import { createClient } from "@/utils/supabase/server";
+import { getUserProfile } from "@/utils/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
     BriefcaseBusiness,
-    ShieldCheck,
     ArrowRight,
-    Search,
     Clock,
-    CheckCircle2,
-    XCircle
+    BadgeCheck
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default async function AdminDashboardPage() {
     const supabase = await createClient();
+    const profile = await getUserProfile();
 
     const [
         { count: pendingJobs },
-        { data: recentJobs }
+        { data: recentJobs },
+        { data: staffProfile }
     ] = await Promise.all([
         supabase.from("job_posts").select("*", { count: "exact", head: true }).eq("status", "pending_review"),
         supabase.from("job_posts")
             .select("id, title, created_at, company:companies(name)")
             .eq("status", "pending_review")
             .order("created_at", { ascending: false })
-            .limit(3)
+            .limit(3),
+        profile
+            ? supabase.from("staff_profiles").select("department, access_level").eq("id", profile.id).maybeSingle()
+            : Promise.resolve({ data: null })
     ]);
+
     const stats = [
         {
             label: "Pending Job Posts",
@@ -39,9 +44,24 @@ export default async function AdminDashboardPage() {
 
     return (
         <div className="space-y-10">
-            <div>
-                <h1 className="text-4xl font-black text-[#123C69] tracking-tight">Overview</h1>
-                <p className="text-[#123C69]/70 font-bold mt-2">Welcome back! Here&apos;s what needs your attention today.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div>
+                    <h1 className="text-4xl font-black text-[#123C69] tracking-tight">Overview</h1>
+                    <p className="text-[#123C69]/70 font-bold mt-2">Welcome back! Here&apos;s what needs your attention today.</p>
+                </div>
+                {staffProfile && (
+                    <div className="flex items-center gap-2 bg-white/60 backdrop-blur-md rounded-2xl px-5 py-3 shadow-md border border-white/40">
+                        <BadgeCheck className="h-5 w-5 text-[#AC3B61]" />
+                        <div>
+                            <div className="text-xs font-black text-[#123C69] uppercase tracking-widest">
+                                {staffProfile.department || "Moderation"}
+                            </div>
+                            <Badge variant="secondary" className="text-[10px] font-black uppercase tracking-wider mt-0.5">
+                                {staffProfile.access_level || "basic"} access
+                            </Badge>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6">
@@ -79,7 +99,7 @@ export default async function AdminDashboardPage() {
                                 <div key={job.id} className="bg-white/40 p-4 rounded-3xl border border-white/60 flex items-center justify-between shadow-sm">
                                     <div className="min-w-0 flex-1">
                                         <div className="font-bold text-[#123C69] truncate">{job.title}</div>
-                                        <div className="text-xs font-semibold text-[#123C69]/50 truncate">{job.company.name}</div>
+                                        <div className="text-xs font-semibold text-[#123C69]/50 truncate">{(job.company as any).name}</div>
                                     </div>
                                     <Button size="sm" variant="ghost" className="rounded-xl font-bold text-[#AC3B61]" asChild>
                                         <Link href={`/staff/jobs?id=${job.id}`}>Review</Link>
@@ -91,8 +111,6 @@ export default async function AdminDashboardPage() {
                         )}
                     </div>
                 </div>
-
-
             </div>
         </div>
     );

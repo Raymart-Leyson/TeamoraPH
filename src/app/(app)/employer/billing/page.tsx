@@ -11,7 +11,8 @@ import {
     CreditCard,
     Rocket,
     AlertCircle,
-    Crown
+    Crown,
+    Receipt
 } from "lucide-react";
 import { createCheckoutSession, createBillingPortalSession } from "./actions";
 
@@ -65,11 +66,22 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
         }
     }
 
-    const { data: subscription } = await supabase
-        .from("subscriptions")
-        .select("status, current_period_end, stripe_price_id")
-        .eq("employer_id", profile.id)
-        .maybeSingle();
+    const [
+        { data: subscription },
+        { data: paymentHistory }
+    ] = await Promise.all([
+        supabase
+            .from("subscriptions")
+            .select("status, current_period_end, stripe_price_id")
+            .eq("employer_id", profile.id)
+            .maybeSingle(),
+        supabase
+            .from("payment_transactions")
+            .select("id, amount, currency, status, created_at, billing_period_start, billing_period_end, stripe_invoice_id")
+            .eq("employer_id", profile.id)
+            .order("created_at", { ascending: false })
+            .limit(10)
+    ]);
 
     const isActive = subscription?.status === "active" || subscription?.status === "trialing";
 
@@ -222,6 +234,53 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                         Secure checkout via Stripe · Cancel anytime · 24/7 Priority Support
                     </p>
                 </div>
+
+                {/* Payment History */}
+                {paymentHistory && paymentHistory.length > 0 && (
+                    <div className="mt-6">
+                        <h3 className="text-lg font-black text-[#123C69] flex items-center gap-2 mb-3">
+                            <Receipt className="h-5 w-5 text-[#AC3B61]" /> Payment History
+                        </h3>
+                        <Card className="border-none shadow-xl bg-white/60 backdrop-blur-xl rounded-2xl overflow-hidden">
+                            <CardContent className="p-0">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead>
+                                            <tr className="bg-[#123C69]/5 text-[#123C69]/40 uppercase text-[10px] font-black tracking-widest">
+                                                <th className="px-6 py-4">Date</th>
+                                                <th className="px-6 py-4">Amount</th>
+                                                <th className="px-6 py-4">Status</th>
+                                                <th className="px-6 py-4">Period</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-[#123C69]/5">
+                                            {paymentHistory.map((tx: any) => (
+                                                <tr key={tx.id} className="hover:bg-[#123C69]/5 transition-colors">
+                                                    <td className="px-6 py-4 text-sm font-bold text-[#123C69]/60">
+                                                        {new Date(tx.created_at).toLocaleDateString()}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm font-black text-[#123C69]">
+                                                        {tx.currency?.toUpperCase()} {Number(tx.amount).toFixed(2)}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${tx.status === 'paid' ? 'bg-green-100 text-green-700' : tx.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                                                            {tx.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-xs font-semibold text-[#123C69]/50">
+                                                        {tx.billing_period_start && tx.billing_period_end
+                                                            ? `${new Date(tx.billing_period_start).toLocaleDateString()} – ${new Date(tx.billing_period_end).toLocaleDateString()}`
+                                                            : '—'}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
             </div>
         </div>
     );

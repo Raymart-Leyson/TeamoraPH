@@ -15,7 +15,8 @@ import {
     Users,
     ShieldCheck,
     Bookmark,
-    AlertTriangle
+    AlertTriangle,
+    Search
 } from "lucide-react";
 
 interface SidebarProps {
@@ -36,6 +37,8 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
 
     const candidateLinks: NavLink[] = [
         { name: "Dashboard", href: "/candidate/dashboard", icon: LayoutDashboard },
+        { name: "Browse Jobs", href: "/candidate/jobs", icon: Search },
+        { name: "Browse Companies", href: "/candidate/companies", icon: Building2 },
         { name: "My Profile", href: "/candidate/profile", icon: UserCircle2 },
         { name: "Applications", href: "/candidate/applications", icon: BriefcaseBusiness },
         { name: "Saved Jobs", href: "/candidate/saved-jobs", icon: Bookmark },
@@ -45,6 +48,8 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
 
     const employerLinks: NavLink[] = [
         { name: "Dashboard", href: "/employer/dashboard", icon: LayoutDashboard },
+        { name: "Browse Jobs", href: "/employer/browse-jobs", icon: Search },
+        { name: "Browse Companies", href: "/employer/browse-companies", icon: Building2 },
         { name: "My Company", href: "/employer/profile", icon: Building2 },
         { name: "My Jobs", href: "/employer/jobs", icon: BriefcaseBusiness },
         { name: "Messages", href: "/employer/messages", icon: MessageSquare, badge: unreadMessages },

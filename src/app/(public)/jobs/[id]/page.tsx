@@ -32,9 +32,9 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
         notFound();
     }
 
-    // Increment views if the user is not the author of this job post
-    if (!isAuthor && job.status === 'published') {
-        await supabase.from("job_posts").update({ views: (job.views ?? 0) + 1 }).eq("id", job.id);
+    // Atomically increment views — skip for the job author and admin reviewers
+    if (!isAuthor && !isAdminView && job.status === 'published') {
+        await supabase.rpc('increment_job_views', { job_id: id });
     }
 
     // Check if candidate already applied and has credits

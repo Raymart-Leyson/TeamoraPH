@@ -116,11 +116,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link href={
-                                    profile.role === "admin" || profile.role === "staff"
-                                        ? "/admin/settings"
-                                        : profile.role === "employer"
-                                            ? "/employer/profile"
-                                            : "/candidate/profile"
+                                    profile.role === "admin"
+                                        ? "/admin/dashboard"
+                                        : profile.role === "staff"
+                                            ? "/staff/dashboard"
+                                            : profile.role === "employer"
+                                                ? "/employer/profile"
+                                                : "/candidate/profile"
                                 }>Settings</Link>
                             </DropdownMenuItem>
                             <LogoutButton />

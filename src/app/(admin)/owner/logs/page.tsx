@@ -6,7 +6,8 @@ import {
     ShieldCheck,
     BriefcaseBusiness,
     AlertTriangle,
-    UserCog
+    UserCog,
+    ScrollText
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -35,6 +36,21 @@ export default async function AuditLogsPage({
     }
 
     const { data: logs } = await dbQuery;
+
+    let auditQuery = supabase
+        .from("audit_logs")
+        .select(`
+            *,
+            actor:profiles!audit_logs_actor_id_fkey(email, role)
+        `)
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+    if (query) {
+        auditQuery = auditQuery.ilike("action", `%${query}%`);
+    }
+
+    const { data: auditLogs } = await auditQuery;
 
     const getActionTypeIcon = (type: string) => {
         switch (type) {
@@ -131,6 +147,69 @@ export default async function AuditLogsPage({
                         <p className="text-[#123C69]/50 font-bold mt-2">There are currently no moderation actions recorded.</p>
                     </div>
                 )}
+            </div>
+
+            {/* Audit Logs */}
+            <div>
+                <h2 className="text-2xl font-black text-[#123C69] flex items-center gap-2 mb-4">
+                    <ScrollText className="w-6 h-6 text-purple-600" /> System Audit Logs
+                </h2>
+                <div className="grid gap-4">
+                    {auditLogs && auditLogs.length > 0 ? (
+                        <Card className="border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-white/40 backdrop-blur-xl">
+                            <CardContent className="p-0">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="bg-[#123C69]/5 text-[#123C69]/40 uppercase text-[10px] font-black tracking-widest">
+                                                <th className="px-8 py-5">Date</th>
+                                                <th className="px-8 py-5">Actor</th>
+                                                <th className="px-8 py-5">Type</th>
+                                                <th className="px-8 py-5">Action</th>
+                                                <th className="px-8 py-5">Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/20">
+                                            {auditLogs.map((log: any) => (
+                                                <tr key={log.id} className="hover:bg-white/40 transition-colors">
+                                                    <td className="px-8 py-5 text-sm font-bold text-[#123C69]/60">
+                                                        {new Date(log.created_at).toLocaleString()}
+                                                    </td>
+                                                    <td className="px-8 py-5">
+                                                        <div className="font-black text-[#123C69]">{log.actor?.email || 'System'}</div>
+                                                        <div className="text-[10px] font-bold text-[#123C69]/40 uppercase">{log.actor?.role || ''}</div>
+                                                    </td>
+                                                    <td className="px-8 py-5">
+                                                        <div className="font-bold text-[#123C69]/80 capitalize">{log.target_type || '—'}</div>
+                                                        {log.target_id && (
+                                                            <div className="text-[10px] font-bold text-[#123C69]/40 mt-1 truncate max-w-[120px]">
+                                                                {log.target_id.split('-')[0]}...
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-8 py-5">
+                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-700">
+                                                            {log.action}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-5 text-xs font-semibold text-[#123C69]/60 max-w-xs truncate">
+                                                        {log.details ? JSON.stringify(log.details) : <span className="text-slate-400 italic">—</span>}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="bg-white/30 backdrop-blur-sm border-2 border-dashed border-white/40 rounded-[3rem] p-12 flex flex-col items-center justify-center text-center">
+                            <ScrollText className="w-10 h-10 text-[#123C69]/20 mb-3" />
+                            <h2 className="text-xl font-black text-[#123C69]">No audit events</h2>
+                            <p className="text-[#123C69]/50 font-bold mt-1">System events will appear here.</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

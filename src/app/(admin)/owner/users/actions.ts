@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 export async function updateUserRoleAction(userId: string, newRole: 'candidate' | 'employer' | 'staff' | 'admin') {
     const admin = await getUserProfile();
-    if (!admin || admin.role !== 'admin') {
+    if (!admin || (admin.role !== 'admin' && admin.role !== 'owner')) {
         throw new Error("Unauthorized: Only admins can change roles.");
     }
 

@@ -44,7 +44,14 @@ export async function applyAction(formData: FormData) {
         return { error: `Insufficient credits. You only have ${totalAvailable} credits available (${currentProfile.free_credits} free, ${currentProfile.bought_credits} bought).` };
     }
 
-    // 2. Insert application
+    // 2. Fetch job info for notification (author + title)
+    const { data: jobInfo } = await supabase
+        .from("job_posts")
+        .select("author_id, title")
+        .eq("id", job_id)
+        .single();
+
+    // 3. Insert application
     const { error: appError } = await supabase.from("applications").insert({
         job_id,
         candidate_id,
@@ -60,7 +67,18 @@ export async function applyAction(formData: FormData) {
         return { error: appError.message };
     }
 
-    // 3. Deduct credits (Free first, then Bought)
+    // 4. Notify the employer about the new application
+    if (jobInfo?.author_id) {
+        await supabase.from("notifications").insert({
+            user_id: jobInfo.author_id,
+            type: "new_application",
+            title: "New Application Received",
+            content: `A candidate applied for your job: ${jobInfo.title}.`,
+            link: `/employer/jobs/${job_id}`,
+        });
+    }
+
+    // 5. Deduct credits (Free first, then Bought)
     let toDeduct = credits_allocated;
     let newFree = currentProfile.free_credits || 0;
     let newBought = currentProfile.bought_credits || 0;

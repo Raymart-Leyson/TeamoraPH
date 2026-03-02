@@ -10,10 +10,29 @@ export async function submitVerificationAction(formData: FormData) {
     if (!user) return { error: "Not authenticated" };
 
     const type = formData.get("type") as string;
-    const notes = formData.get("notes") as string;
+    const socialUrl = formData.get("social_url") as string | null;
     const documentFiles = formData.getAll("documents") as File[];
 
     if (!type) return { error: "Verification type is required" };
+
+    // ── Deduplication guard ──
+    // Reject if there's already a pending or verified request for this type
+    const { data: existingRequest } = await supabase
+        .from("verification_requests")
+        .select("id, status")
+        .eq("user_id", user.id)
+        .eq("type", type)
+        .in("status", ["pending", "verified"])
+        .maybeSingle();
+
+    if (existingRequest) {
+        if (existingRequest.status === "verified") {
+            return { error: "This verification step is already approved." };
+        }
+        if (existingRequest.status === "pending") {
+            return { error: "You already have a pending submission for this step. Please wait for it to be reviewed." };
+        }
+    }
 
     // Upload documents to Supabase Storage
     const uploadedUrls: string[] = [];
@@ -39,18 +58,23 @@ export async function submitVerificationAction(formData: FormData) {
         uploadedUrls.push(publicUrl);
     }
 
-    if (uploadedUrls.length === 0 && type !== 'social_link') {
+    // For social_link type, the URL is stored in the documents array directly
+    if (type === 'social_link') {
+        if (!socialUrl?.trim()) {
+            return { error: "Please provide a social profile URL." };
+        }
+        uploadedUrls.push(socialUrl.trim());
+    } else if (uploadedUrls.length === 0) {
         return { error: "Please upload at least one document for verification." };
     }
 
-    // Insert request
+    // Insert request (no 'notes' column in schema — social URL goes into documents[])
     const { error: requestError } = await supabase
         .from("verification_requests")
         .insert({
             user_id: user.id,
             type,
             documents: uploadedUrls,
-            notes: notes || null,
             status: 'pending'
         });
 
@@ -67,6 +91,7 @@ export async function submitVerificationAction(formData: FormData) {
     revalidatePath("/admin/dashboard");
     revalidatePath("/owner/dashboard");
     revalidatePath("/staff/dashboard");
+    revalidatePath("/verification");
 
     return { success: true };
 }
@@ -103,33 +128,56 @@ export async function adminReviewVerificationAction(requestId: string, status: '
         .update({
             status,
             updated_at: new Date().toISOString(),
-            reviewed_by: user.id,
-            reviewed_at: new Date().toISOString()
         })
         .eq("id", requestId);
 
     if (updateReqError) return { error: updateReqError.message };
 
-    // 3. Build profile update — set the individual flag when approved
-    const profileUpdate: Record<string, unknown> = {
-        verification_status: status,
-        verification_notes: notes || null,
-        verified_at: status === 'verified' ? new Date().toISOString() : null,
-        verified_by: status === 'verified' ? user.id : null,
-    };
+    // 3. Determine overall verification_status for the profile
+    // Query all requests for this user to compute overall status
+    const { data: allRequests } = await supabase
+        .from("verification_requests")
+        .select("status")
+        .eq("user_id", request.user_id);
 
-    if (status === 'verified') {
-        if (request.type === 'id_doc') profileUpdate.id_verified = true;
-        if (request.type === 'selfie') profileUpdate.selfie_verified = true;
-        if (request.type === 'social_link') profileUpdate.social_verified = true;
-    }
+    const hasAnyVerified = (allRequests ?? []).some((r: any) => r.status === 'verified');
+    const overallStatus = hasAnyVerified ? 'verified' : 'pending';
 
     const { error: updateUserError } = await supabase
         .from("profiles")
-        .update(profileUpdate)
+        .update({ verification_status: overallStatus })
         .eq("id", request.user_id);
 
     if (updateUserError) return { error: updateUserError.message };
+
+    // Notify the user of the verification outcome
+    const typeLabel = request.type === 'id_doc'
+        ? 'ID Document'
+        : request.type === 'selfie'
+            ? 'Selfie'
+            : 'Social Link';
+
+    if (status === 'verified') {
+        await supabase.from("notifications").insert({
+            user_id: request.user_id,
+            type: "application_update",
+            title: `${typeLabel} Verification Approved ✅`,
+            content: `Your ${typeLabel.toLowerCase()} verification has been approved. Your profile is now verified!`,
+            link: "/verification",
+            read_status: false,
+        });
+    } else {
+        await supabase.from("notifications").insert({
+            user_id: request.user_id,
+            type: "application_update",
+            title: `${typeLabel} Verification Rejected ❌`,
+            content: notes
+                ? `Your ${typeLabel.toLowerCase()} verification was rejected. Reason: ${notes}. Please resubmit with the correct documents.`
+                : `Your ${typeLabel.toLowerCase()} verification was rejected. Please resubmit with the correct documents.`,
+            link: "/verification",
+            read_status: false,
+        });
+    }
 
     revalidatePath("/admin/dashboard");
     revalidatePath("/owner/dashboard");

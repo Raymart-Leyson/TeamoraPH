@@ -3,9 +3,10 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MessageSquare, Check, X, Building, Briefcase, GraduationCap, Trophy, Layout, FileText, Globe, Linkedin, Github, ExternalLink, Star, Zap } from "lucide-react";
+import { ArrowLeft, MessageSquare, Check, X, Building, Briefcase, GraduationCap, Trophy, Layout, FileText, Globe, Linkedin, Github, ExternalLink, Star, Zap, StickyNote } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { revalidatePath } from "next/cache";
 
 export default async function ApplicationDetailPage({ params }: { params: Promise<{ id: string, applicationId: string }> }) {
@@ -38,11 +39,13 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
     const [
         { data: experience },
         { data: education },
-        { data: projects }
+        { data: projects },
+        { data: notes }
     ] = await Promise.all([
         supabase.from("candidate_experience").select("*").eq("candidate_id", candidateData.id).order("start_date", { ascending: false }),
         supabase.from("candidate_education").select("*").eq("candidate_id", candidateData.id).order("start_year", { ascending: false }),
-        supabase.from("candidate_projects").select("*").eq("candidate_id", candidateData.id).order("created_at", { ascending: false })
+        supabase.from("candidate_projects").select("*").eq("candidate_id", candidateData.id).order("created_at", { ascending: false }),
+        supabase.from("application_notes").select("*").eq("application_id", applicationId).order("created_at", { ascending: false })
     ]);
 
     const candidate = {
@@ -303,6 +306,66 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                                 </Button>
                             </form>
                         )}
+                        {/* Notes Section */}
+                        <div className="pt-4 border-t border-[#123C69]/10 space-y-3">
+                            <h4 className="text-sm font-bold text-[#123C69] flex items-center gap-2">
+                                <StickyNote className="h-4 w-4" /> Private Notes
+                            </h4>
+
+                            {/* Existing notes */}
+                            {notes && notes.length > 0 && (
+                                <div className="space-y-2 max-h-48 overflow-y-auto">
+                                    {notes.map((n: any) => (
+                                        <div key={n.id} className="bg-[#123C69]/5 rounded-xl p-3 text-xs">
+                                            {n.rating && (
+                                                <div className="flex gap-0.5 mb-1">
+                                                    {Array.from({ length: 5 }).map((_, i) => (
+                                                        <Star key={i} className={`h-3 w-3 ${i < n.rating ? "fill-amber-400 text-amber-400" : "text-[#123C69]/20"}`} />
+                                                    ))}
+                                                </div>
+                                            )}
+                                            <p className="text-[#123C69]/80 font-medium leading-snug">{n.note}</p>
+                                            <p className="text-[#123C69]/40 font-bold mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Add note form */}
+                            <form action={async (fd: FormData) => {
+                                "use server";
+                                const client = await createClient();
+                                const noteText = fd.get("note") as string;
+                                const ratingRaw = fd.get("rating") as string;
+                                const rating = ratingRaw ? parseInt(ratingRaw) : null;
+                                if (!noteText?.trim()) return;
+                                await client.from("application_notes").insert({
+                                    application_id: applicationId,
+                                    employer_id: profile.id,
+                                    note: noteText.trim(),
+                                    ...(rating && rating >= 1 && rating <= 5 ? { rating } : {})
+                                });
+                                revalidatePath(`/employer/jobs/${id}/applications/${applicationId}`);
+                            }} className="space-y-2">
+                                <Textarea
+                                    name="note"
+                                    placeholder="Add a private note about this applicant..."
+                                    className="min-h-[80px] text-xs rounded-xl border-[#123C69]/10 bg-white resize-none"
+                                    required
+                                />
+                                <div className="flex items-center gap-2">
+                                    <select name="rating" className="flex-1 text-xs rounded-xl border border-[#123C69]/10 bg-white px-3 py-2 font-bold text-[#123C69]/60 focus:outline-none">
+                                        <option value="">No rating</option>
+                                        {[1, 2, 3, 4, 5].map(r => (
+                                            <option key={r} value={r}>{"★".repeat(r)} {["Poor", "Fair", "Good", "Great", "Excellent"][r - 1]}</option>
+                                        ))}
+                                    </select>
+                                    <Button type="submit" size="sm" className="rounded-xl bg-[#123C69] text-white font-bold text-xs px-4">
+                                        Save
+                                    </Button>
+                                </div>
+                            </form>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

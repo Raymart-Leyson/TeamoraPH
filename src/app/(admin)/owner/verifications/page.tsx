@@ -8,9 +8,11 @@ import {
     Calendar,
     User,
     FileText,
-    ExternalLink
+    ExternalLink,
+    Eye
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { adminReviewVerificationAction } from "@/app/(app)/verification/actions";
 import {
     Dialog,
@@ -30,7 +32,12 @@ export default async function AdminVerificationsPage() {
         .from("verification_requests")
         .select(`
             *,
-            user:profiles(email, role)
+            user:profiles(
+                id,
+                email,
+                role,
+                employer_profiles(company_id)
+            )
         `)
         .eq("status", "pending")
         .order("created_at", { ascending: false });
@@ -53,9 +60,23 @@ export default async function AdminVerificationsPage() {
                                         <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#123C69]/5 flex items-center justify-center border border-[#123C69]/10">
                                             <User className="w-8 h-8 text-[#123C69]/40" />
                                         </div>
-                                        <div className="min-w-0">
+                                        <div className="min-w-0 space-y-2">
                                             <p className="font-black text-[#123C69] truncate capitalize">{request.user.role}</p>
                                             <p className="text-xs font-bold text-[#123C69]/50 truncate">{request.user.email}</p>
+                                            {/* View Profile Link */}
+                                            {request.user.role === 'candidate' ? (
+                                                <Button asChild variant="outline" size="sm" className="rounded-xl font-bold text-xs h-8 border-[#123C69]/20 hover:bg-[#123C69] hover:text-white">
+                                                    <Link href={`/candidates/${request.user.id}`} target="_blank">
+                                                        <Eye className="w-3 h-3 mr-1.5" /> View Profile
+                                                    </Link>
+                                                </Button>
+                                            ) : request.user.role === 'employer' && request.user.employer_profiles?.[0]?.company_id ? (
+                                                <Button asChild variant="outline" size="sm" className="rounded-xl font-bold text-xs h-8 border-[#123C69]/20 hover:bg-[#123C69] hover:text-white">
+                                                    <Link href={`/companies/${request.user.employer_profiles[0].company_id}`} target="_blank">
+                                                        <Eye className="w-3 h-3 mr-1.5" /> View Company
+                                                    </Link>
+                                                </Button>
+                                            ) : null}
                                         </div>
                                     </div>
 
@@ -74,26 +95,41 @@ export default async function AdminVerificationsPage() {
 
                                         {/* Documents */}
                                         <div className="space-y-3">
-                                            <p className="text-xs font-black uppercase tracking-widest text-[#123C69]/40">Attached Documents</p>
-                                            <div className="flex flex-wrap gap-3">
-                                                {request.documents && request.documents.length > 0 ? (
-                                                    request.documents.map((doc: string, idx: number) => (
-                                                        <a
-                                                            key={idx}
-                                                            href={doc}
-                                                            target="_blank"
-                                                            rel="noreferrer"
-                                                            className="flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow text-sm font-bold text-[#123C69]"
-                                                        >
-                                                            <FileText className="w-4 h-4 text-blue-500" />
-                                                            Document {idx + 1}
-                                                            <ExternalLink className="w-3 h-3 text-slate-300" />
-                                                        </a>
-                                                    ))
+                                            <p className="text-xs font-black uppercase tracking-widest text-[#123C69]/40">
+                                                {request.type === 'social_link' ? 'Submitted Link' : 'Submitted Photos'}
+                                            </p>
+                                            {request.documents && request.documents.length > 0 ? (
+                                                request.type === 'social_link' ? (
+                                                    <a
+                                                        href={request.documents[0]}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow text-sm font-bold text-[#123C69] w-fit"
+                                                    >
+                                                        <ExternalLink className="w-4 h-4 text-blue-500" />
+                                                        {request.documents[0]}
+                                                    </a>
                                                 ) : (
-                                                    <p className="text-sm font-bold text-[#123C69]/40 italic">No documents provided.</p>
-                                                )}
-                                            </div>
+                                                    <div className="flex flex-wrap gap-3">
+                                                        {request.documents.map((doc: string, idx: number) => {
+                                                            const labels = request.type === 'id_doc'
+                                                                ? ['Front of ID', 'Back of ID', 'Selfie w/ ID']
+                                                                : [`Photo ${idx + 1}`];
+                                                            const label = labels[idx] ?? `Photo ${idx + 1}`;
+                                                            return (
+                                                                <a key={idx} href={doc} target="_blank" rel="noreferrer" className="group flex flex-col gap-1">
+                                                                    <div className="w-40 h-28 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 group-hover:border-[#123C69]/40 transition-colors">
+                                                                        <img src={doc} alt={label} className="w-full h-full object-cover" />
+                                                                    </div>
+                                                                    <p className="text-[10px] font-bold text-center text-[#123C69]/50">{label}</p>
+                                                                </a>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                )
+                                            ) : (
+                                                <p className="text-sm font-bold text-[#123C69]/40 italic">No documents provided.</p>
+                                            )}
                                         </div>
 
                                         <div className="flex flex-wrap gap-4 pt-4 border-t border-white/40">

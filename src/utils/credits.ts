@@ -5,7 +5,7 @@ export async function refreshCreditsIfNeeded(candidateId: string) {
 
     const { data: candidate, error } = await supabase
         .from("candidate_profiles")
-        .select("free_credits, last_credit_refresh")
+        .select("free_credits, bought_credits, last_credit_refresh, profile_views")
         .eq("id", candidateId)
         .single();
 

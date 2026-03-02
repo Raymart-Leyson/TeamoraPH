@@ -1,25 +1,27 @@
 import { createClient } from "@/utils/supabase/server";
+import { getUserProfile } from "@/utils/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
     BriefcaseBusiness,
     ShieldCheck,
     ArrowRight,
-    Search,
     Clock,
-    CheckCircle2,
-    XCircle
+    Crown
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default async function AdminDashboardPage() {
     const supabase = await createClient();
+    const profile = await getUserProfile();
 
     const [
         { count: pendingJobs },
         { count: pendingVerifs },
         { data: recentJobs },
-        { data: recentVerifs }
+        { data: recentVerifs },
+        { data: adminProfile }
     ] = await Promise.all([
         supabase.from("job_posts").select("*", { count: "exact", head: true }).eq("status", "pending_review"),
         supabase.from("verification_requests").select("*", { count: "exact", head: true }).eq("status", "pending"),
@@ -32,7 +34,10 @@ export default async function AdminDashboardPage() {
             .select("id, type, created_at")
             .eq("status", "pending")
             .order("created_at", { ascending: false })
-            .limit(3)
+            .limit(3),
+        profile
+            ? supabase.from("admin_profiles").select("access_level").eq("id", profile.id).maybeSingle()
+            : Promise.resolve({ data: null })
     ]);
 
     const stats = [
@@ -56,9 +61,19 @@ export default async function AdminDashboardPage() {
 
     return (
         <div className="space-y-10">
-            <div>
-                <h1 className="text-4xl font-black text-[#123C69] tracking-tight">Overview</h1>
-                <p className="text-[#123C69]/70 font-bold mt-2">Welcome back! Here&apos;s what needs your attention today.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div>
+                    <h1 className="text-4xl font-black text-[#123C69] tracking-tight">Overview</h1>
+                    <p className="text-[#123C69]/70 font-bold mt-2">Welcome back! Here&apos;s what needs your attention today.</p>
+                </div>
+                {adminProfile && (
+                    <div className="flex items-center gap-2 bg-white/60 backdrop-blur-md rounded-2xl px-5 py-3 shadow-md border border-white/40">
+                        <Crown className="h-5 w-5 text-amber-500" />
+                        <Badge variant="secondary" className="text-[10px] font-black uppercase tracking-wider">
+                            {adminProfile.access_level || "super"} admin
+                        </Badge>
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">

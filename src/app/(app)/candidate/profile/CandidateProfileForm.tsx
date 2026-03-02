@@ -22,6 +22,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Loader2, CheckCircle2, AlertCircle, Pencil, BriefcaseBusiness, Mail, Globe, Github, Linkedin, MapPin, FileText } from "lucide-react";
+import { TIMEZONES, formatTimezone } from "@/utils/timezones";
 
 interface Defaults {
     first_name: string;
@@ -86,7 +87,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                             </p>
                             <p className="text-[#123C69]/60 font-medium flex flex-wrap justify-center md:justify-start items-center gap-x-2 gap-y-1 text-sm pt-2">
                                 <span className="flex items-center gap-1 bg-[#123C69]/5 px-3 py-1 rounded-full"><MapPin className="h-4 w-4" /> {defaults.location_city || "City"}, {defaults.location_country || "Country"}</span>
-                                <span className="bg-[#123C69]/5 px-3 py-1 rounded-full">{defaults.timezone || "Timezone"}</span>
+                                <span className="bg-[#123C69]/5 px-3 py-1 rounded-full">{formatTimezone(defaults.timezone)}</span>
                                 <span className="bg-[#123C69]/5 px-3 py-1 rounded-full font-bold">{defaults.primary_role || "Role"}</span>
                             </p>
                         </div>
@@ -278,30 +279,11 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                                     <SelectValue placeholder="Select your timezone" />
                                 </SelectTrigger>
                                 <SelectContent className="max-h-[300px] bg-white shadow-xl border-[#123C69]/20">
-                                    <SelectItem value="Pacific/Midway">Midway Island, Samoa (UTC-11)</SelectItem>
-                                    <SelectItem value="Pacific/Honolulu">Hawaii (UTC-10)</SelectItem>
-                                    <SelectItem value="America/Anchorage">Alaska (UTC-9)</SelectItem>
-                                    <SelectItem value="America/Los_Angeles">Pacific Time (UTC-8)</SelectItem>
-                                    <SelectItem value="America/Denver">Mountain Time (UTC-7)</SelectItem>
-                                    <SelectItem value="America/Chicago">Central Time (UTC-6)</SelectItem>
-                                    <SelectItem value="America/New_York">Eastern Time (UTC-5)</SelectItem>
-                                    <SelectItem value="America/Caracas">Caracas (UTC-4)</SelectItem>
-                                    <SelectItem value="America/Buenos_Aires">Buenos Aires (UTC-3)</SelectItem>
-                                    <SelectItem value="Atlantic/South_Georgia">Mid-Atlantic (UTC-2)</SelectItem>
-                                    <SelectItem value="Atlantic/Azores">Azores (UTC-1)</SelectItem>
-                                    <SelectItem value="Europe/London">London, UK (UTC)</SelectItem>
-                                    <SelectItem value="Europe/Paris">Central Europe (UTC+1)</SelectItem>
-                                    <SelectItem value="Europe/Athens">Eastern Europe (UTC+2)</SelectItem>
-                                    <SelectItem value="Europe/Moscow">Moscow (UTC+3)</SelectItem>
-                                    <SelectItem value="Asia/Dubai">Dubai (UTC+4)</SelectItem>
-                                    <SelectItem value="Asia/Karachi">Karachi, Islamabad (UTC+5)</SelectItem>
-                                    <SelectItem value="Asia/Dhaka">Dhaka, Almaty (UTC+6)</SelectItem>
-                                    <SelectItem value="Asia/Jakarta">Jakarta, Bangkok (UTC+7)</SelectItem>
-                                    <SelectItem value="Asia/Manila">Manila, Singapore, Beijing (UTC+8)</SelectItem>
-                                    <SelectItem value="Asia/Tokyo">Tokyo, Seoul (UTC+9)</SelectItem>
-                                    <SelectItem value="Australia/Sydney">Sydney, Melbourne (UTC+10)</SelectItem>
-                                    <SelectItem value="Pacific/Noumea">New Caledonia (UTC+11)</SelectItem>
-                                    <SelectItem value="Pacific/Auckland">Auckland, Wellington (UTC+12)</SelectItem>
+                                    {TIMEZONES.map((tz) => (
+                                        <SelectItem key={tz.value} value={tz.value}>
+                                            {tz.label}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>

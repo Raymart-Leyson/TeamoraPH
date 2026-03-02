@@ -19,7 +19,7 @@ export default async function CandidateDashboard() {
 
     // Fetch all data in parallel
     const [
-        { data: candidateProfile },
+        candidateProfile,
         { data: profileData },
         { data: authProfile },
         { count: skillsCount },
@@ -29,12 +29,12 @@ export default async function CandidateDashboard() {
         refreshCreditsIfNeeded(profile.id),
         supabase
             .from("candidate_profiles")
-            .select("avatar_url, headline, resume_url")
+            .select("avatar_url, headline, resume_url, profile_views")
             .eq("id", profile.id)
             .single(),
         supabase
             .from("profiles")
-            .select("verification_status")
+            .select("verification_status, views_count")
             .eq("id", profile.id)
             .single(),
         supabase
@@ -110,7 +110,7 @@ export default async function CandidateDashboard() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{candidateProfile?.free_credits ?? 0} / 50</div>
-                        <p className="text-xs text-muted-foreground">Daily allowance (Refreshes task daily)</p>
+                        <p className="text-xs text-muted-foreground">+10 per day · Max 50 credits</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -129,7 +129,7 @@ export default async function CandidateDashboard() {
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{candidateProfile?.profile_views ?? 0}</div>
+                        <div className="text-2xl font-bold">{(authProfile?.views_count ?? 0) + (candidateProfile?.profile_views ?? 0)}</div>
                         <p className="text-xs text-muted-foreground">Total profile visits</p>
                     </CardContent>
                 </Card>

@@ -18,7 +18,7 @@ import Link from "next/link";
 interface Notification {
     id: string;
     title: string;
-    body: string;
+    content: string;
     link: string;
     read_status: boolean;
     created_at: string;
@@ -121,7 +121,7 @@ export function NotificationDropdown({ initialCount }: { initialCount: number })
                                         {notif.title}
                                     </span>
                                     <span className={`text-sm ${notif.read_status ? 'text-muted-foreground/80' : 'text-muted-foreground'}`}>
-                                        {notif.body}
+                                        {notif.content}
                                     </span>
                                     <span className="text-xs text-muted-foreground/60 mt-1">
                                         {new Date(notif.created_at).toLocaleDateString()} at {new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

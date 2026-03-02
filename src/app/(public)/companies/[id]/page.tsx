@@ -13,6 +13,7 @@ import {
     Users,
     Activity,
     Building2,
+    ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -48,8 +49,17 @@ export default async function CompanyDetailPage({ params }: Props) {
 
     if (error || !company) notFound();
 
-    // Increment profile views
-    await supabase.from("companies").update({ profile_views: (company.profile_views ?? 0) + 1 }).eq("id", company.id);
+    // Fetch employer's verification status from profiles via employer_profiles
+    const { data: employerProfile } = await supabase
+        .from("employer_profiles")
+        .select("profiles(verification_status)")
+        .eq("company_id", company.id)
+        .maybeSingle();
+
+    const isVerified = (employerProfile as any)?.profiles?.verification_status === 'verified';
+
+    // Increment profile views atomically (also updates employer's profiles.views_count)
+    await supabase.rpc('increment_company_views', { company_id: company.id });
 
     const { data: jobs } = await supabase
         .from("job_posts")
@@ -90,6 +100,12 @@ export default async function CompanyDetailPage({ params }: Props) {
                             <h1 className="text-3xl font-extrabold tracking-tight">{company.name}</h1>
 
                             <div className="flex flex-wrap items-center gap-3 mt-2">
+                                {isVerified && (
+                                    <Badge className="flex items-center gap-1 bg-emerald-500/10 text-emerald-700 border border-emerald-200 font-bold">
+                                        <ShieldCheck className="h-3.5 w-3.5" />
+                                        Verified Business
+                                    </Badge>
+                                )}
                                 <Badge variant="secondary" className="flex items-center gap-1 bg-[#123C69]/5 text-[#123C69] border-none font-bold">
                                     <BriefcaseBusiness className="h-3 w-3" />
                                     {openJobs.length} open {openJobs.length === 1 ? "role" : "roles"}

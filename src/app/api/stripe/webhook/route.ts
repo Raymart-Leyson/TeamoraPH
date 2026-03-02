@@ -69,6 +69,24 @@ export async function POST(request: Request) {
                         session.subscription as string
                     );
                     await upsertSubscription(userId, subscription);
+                    // Record in payment_transactions
+                    const amountTotal = session.amount_total ?? 0;
+                    if (amountTotal > 0) {
+                        const item = subscription.items.data[0];
+                        await supabaseAdmin.from("payment_transactions").insert({
+                            employer_id: userId,
+                            stripe_invoice_id: typeof session.invoice === "string" ? session.invoice : null,
+                            amount: amountTotal / 100,
+                            currency: session.currency ?? "usd",
+                            status: "paid",
+                            billing_period_start: item?.current_period_start
+                                ? new Date(item.current_period_start * 1000).toISOString()
+                                : null,
+                            billing_period_end: item?.current_period_end
+                                ? new Date(item.current_period_end * 1000).toISOString()
+                                : null,
+                        });
+                    }
                 } else if (session.mode === "payment" && session.metadata?.purchase_type === "credits") {
                     const creditsToAdd = parseInt(session.metadata.credits_to_add || "0");
                     if (creditsToAdd > 0) {
