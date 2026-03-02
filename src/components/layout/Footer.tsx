@@ -9,7 +9,7 @@ export function Footer() {
                     <div className="md:col-span-1 space-y-4">
                         <Link href="/" className="flex items-center space-x-2">
                             <BriefcaseBusiness className="h-6 w-6 text-primary" />
-                            <span className="inline-block font-bold">Teamora</span>
+                            <span className="inline-block font-bold">Teamora<span className="text-[#AC3B61]">PH</span></span>
                         </Link>
                         <p className="text-sm text-muted-foreground">
                             Empowering remote teams with the best global talent. Secure, fast, and transparent.

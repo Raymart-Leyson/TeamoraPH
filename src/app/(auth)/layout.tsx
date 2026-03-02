@@ -10,7 +10,7 @@ export default function AuthLayout({
         <div className="flex min-h-screen flex-col items-center justify-center bg-muted/30 p-4">
             <Link href="/" className="mb-8 flex items-center space-x-2">
                 <BriefcaseBusiness className="h-8 w-8 text-primary" />
-                <span className="text-2xl font-bold">Teamora</span>
+                <span className="text-2xl font-bold">Teamora<span className="text-[#AC3B61]">PH</span></span>
             </Link>
             <div className="w-full max-w-md">
                 {children}

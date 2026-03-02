@@ -49,7 +49,7 @@ export async function Navbar() {
                 <div className="flex gap-6 md:gap-10">
                     <Link href="/" className="flex items-center space-x-2">
                         <BriefcaseBusiness className="h-6 w-6 text-primary" />
-                        <span className="inline-block font-bold">Teamora</span>
+                        <span className="inline-block font-bold">Teamora<span className="text-[#AC3B61]">PH</span></span>
                     </Link>
                     <nav className="hidden md:flex gap-6">
                         <Link
@@ -120,7 +120,7 @@ export async function Navbar() {
                         <SheetContent side="right" className="w-72 flex flex-col pt-10">
                             <Link href="/" className="flex items-center space-x-2 mb-8">
                                 <BriefcaseBusiness className="h-6 w-6 text-primary" />
-                                <span className="font-bold text-lg">Teamora</span>
+                                <span className="font-bold text-lg">Teamora<span className="text-[#AC3B61]">PH</span></span>
                             </Link>
                             <nav className="flex flex-col gap-1 flex-1">
                                 <Link href="/jobs" className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">

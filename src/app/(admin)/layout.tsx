@@ -100,7 +100,7 @@ export default async function AdminLayout({
                         <div className="w-6 h-6 bg-[#123C69] rounded flex items-center justify-center">
                             <span className="text-white font-black text-sm">T</span>
                         </div>
-                        <span className="font-black text-[#123C69]">Teamora Admin</span>
+                        <span className="font-black text-[#123C69]">Teamora<span className="text-[#AC3B61]">PH</span> Admin</span>
                     </Link>
                     <Sheet>
                         <SheetTrigger asChild>

@@ -91,7 +91,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                         </SheetContent>
                     </Sheet>
                     <div className="w-full flex-1">
-                        <h1 className="font-semibold text-lg lg:hidden">Teamora App</h1>
+                        <h1 className="font-semibold text-lg lg:hidden">Teamora<span className="text-[#AC3B61]">PH</span></h1>
                     </div>
                     <NotificationDropdown initialCount={unreadNotifications ?? 0} />
                     <DropdownMenu>
