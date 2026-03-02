@@ -31,7 +31,8 @@ export default async function AdminVerificationsPage() {
         .from("verification_requests")
         .select(`
             *,
-            user:profiles(email, role)
+            user:profiles(email, role),
+            employer_profile:employer_profiles(company_id)
         `)
         .eq("status", "pending")
         .order("created_at", { ascending: false });
@@ -51,7 +52,7 @@ export default async function AdminVerificationsPage() {
                                 <div className="flex flex-col md:flex-row gap-8">
                                     {/* User Info */}
                                     <Link
-                                        href={request.user.role === "candidate" ? `/candidates/${request.user_id}` : `/companies/${request.user_id}`}
+                                        href={request.user.role === "candidate" ? `/candidates/${request.user_id}` : `/companies/${request.employer_profile?.company_id}`}
                                         target="_blank"
                                         className="flex flex-row md:flex-col items-center md:items-start gap-4 md:w-48 shrink-0 group"
                                     >
