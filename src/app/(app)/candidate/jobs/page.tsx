@@ -49,7 +49,9 @@ async function JobList({
 
     const [jobRes, appRes] = await Promise.all([
         query,
-        supabase.from("applications").select("job_id").eq("candidate_id", profile!.id),
+        profile
+            ? supabase.from("applications").select("job_id").eq("candidate_id", profile.id)
+            : Promise.resolve({ data: [] }),
     ]);
 
     const { data: jobs, count } = jobRes;
