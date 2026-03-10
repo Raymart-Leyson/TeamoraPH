@@ -16,11 +16,13 @@ import {
     Clock,
     Award,
     Code,
-    User
+    User,
+    Phone
 } from "lucide-react";
 import Link from "next/link";
 import { getUserProfile } from "@/utils/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { startDirectConversation } from "./actions";
 
 export default async function PublicCandidatePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -168,10 +170,24 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
                                     {profile.bio || "This candidate prefers to let their experience speak for itself."}
                                 </p>
 
+                                {currentUser?.role === 'employer' && (profile as any).phone_number && (
+                                    <div className="mt-5 flex items-center gap-3 p-3 rounded-xl bg-[#1B3FA0]/5 border border-[#1B3FA0]/10">
+                                        <Phone className="w-4 h-4 text-[#1B3FA0] shrink-0" />
+                                        <a
+                                            href={`tel:${(profile as any).phone_number.replace(/\s/g, "")}`}
+                                            className="text-sm font-semibold text-[#1B3FA0] hover:underline"
+                                        >
+                                            {(profile as any).phone_number}
+                                        </a>
+                                    </div>
+                                )}
+
                                 {currentUser?.role === 'employer' ? (
-                                    <Button className="w-full mt-6 bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-bold rounded-2xl py-6 text-lg shadow-md transition-all hover:scale-[1.02]">
-                                        Message Candidate
-                                    </Button>
+                                    <form action={startDirectConversation.bind(null, id)} className="mt-4">
+                                        <Button type="submit" className="w-full bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-bold rounded-2xl py-6 text-lg shadow-md transition-all hover:scale-[1.02]">
+                                            Message Candidate
+                                        </Button>
+                                    </form>
                                 ) : (
                                     <div className="mt-6 p-4 rounded-xl bg-[#1B3FA0]/5 border border-[#1B3FA0]/10 text-center">
                                         <p className="text-xs font-bold text-[#1B3FA0]/60">Employers can direct message this candidate.</p>

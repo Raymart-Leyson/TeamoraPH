@@ -22,11 +22,12 @@ export async function InboxList({ role, sidebar = false }: { role: "employer" | 
             employer:employer_profiles(
                 subscriptions(status)
             ),
-            application:applications!inner(
+            application:applications(
                 status,
                 job:job_posts!inner(title, company:companies(name, logo_url)),
                 candidate:candidate_profiles(first_name, last_name, avatar_url)
-            )
+            ),
+            direct_candidate:candidate_profiles(first_name, last_name, avatar_url)
         `);
 
     if (role === "employer") {
@@ -96,13 +97,16 @@ export async function InboxList({ role, sidebar = false }: { role: "employer" | 
             <div className={`divide-y divide-[#1B3FA0]/5 ${sidebar ? "overflow-y-auto flex-1" : ""}`}>
                 {conversations.map((conv: any) => {
                     const app = Array.isArray(conv.application) ? conv.application[0] : conv.application;
-                    const candidate = Array.isArray(app?.candidate) ? app.candidate[0] : app?.candidate;
+                    const isDirect = !app;
+
+                    const directCandidate = Array.isArray(conv.direct_candidate) ? conv.direct_candidate[0] : conv.direct_candidate;
+                    const candidate = isDirect ? directCandidate : (Array.isArray(app?.candidate) ? app.candidate[0] : app?.candidate);
                     const company = Array.isArray(app?.job?.company) ? app.job.company[0] : app?.job?.company;
 
                     const candidateName = candidate?.first_name
                         ? `${candidate.first_name} ${candidate.last_name ?? ""}`.trim()
                         : "Anonymous";
-                    const jobTitle = app?.job?.title ?? "Unknown Job";
+                    const jobTitle = isDirect ? "Direct Message" : (app?.job?.title ?? "Unknown Job");
                     const companyName = company?.name ?? "Company";
 
                     const avatar = role === "employer" ? candidate?.avatar_url : company?.logo_url;

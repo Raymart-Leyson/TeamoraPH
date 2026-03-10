@@ -9,6 +9,24 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, X, ChevronRight, ChevronLeft, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const COUNTRY_CODES = [
+    { code: "+63", flag: "🇵🇭", name: "Philippines" },
+    { code: "+1",  flag: "🇺🇸", name: "United States" },
+    { code: "+44", flag: "🇬🇧", name: "United Kingdom" },
+    { code: "+61", flag: "🇦🇺", name: "Australia" },
+    { code: "+65", flag: "🇸🇬", name: "Singapore" },
+    { code: "+60", flag: "🇲🇾", name: "Malaysia" },
+    { code: "+62", flag: "🇮🇩", name: "Indonesia" },
+    { code: "+91", flag: "🇮🇳", name: "India" },
+    { code: "+81", flag: "🇯🇵", name: "Japan" },
+    { code: "+82", flag: "🇰🇷", name: "South Korea" },
+    { code: "+64", flag: "🇳🇿", name: "New Zealand" },
+    { code: "+971", flag: "🇦🇪", name: "UAE" },
+    { code: "+49", flag: "🇩🇪", name: "Germany" },
+    { code: "+33", flag: "🇫🇷", name: "France" },
+    { code: "+86", flag: "🇨🇳", name: "China" },
+];
+
 const SKILL_SUGGESTIONS = [
     "JavaScript", "TypeScript", "React", "Vue.js", "Node.js",
     "Python", "Go", "PHP", "Java", "UI/UX Design",
@@ -48,6 +66,8 @@ export default function OnboardingClient({ role }: Props) {
         primaryRole: "",
         locationCity: "",
         locationCountry: "",
+        phoneCountryCode: "+63",
+        phoneNumber: "",
         skills: [] as string[],
         companyName: "",
         industry: "",
@@ -82,7 +102,10 @@ export default function OnboardingClient({ role }: Props) {
 
     function handleSubmit() {
         startTransition(async () => {
-            await completeOnboarding(data);
+            const phoneNumber = data.phoneNumber.trim()
+                ? `${data.phoneCountryCode} ${data.phoneNumber.trim()}`
+                : undefined;
+            await completeOnboarding({ ...data, phoneNumber });
         });
     }
 
@@ -140,6 +163,35 @@ export default function OnboardingClient({ role }: Props) {
                                 value={data.lastName}
                                 onChange={e => update("lastName", e.target.value)}
                                 placeholder="dela Cruz"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Phone number — both roles */}
+                    <div className="space-y-2">
+                        <Label htmlFor="phoneNumber">
+                            Phone Number
+                            <span className="text-muted-foreground font-normal ml-1">(optional)</span>
+                        </Label>
+                        <div className="flex gap-2">
+                            <select
+                                value={data.phoneCountryCode}
+                                onChange={e => update("phoneCountryCode", e.target.value)}
+                                className="h-9 rounded-md border border-input bg-background px-2 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring shrink-0"
+                            >
+                                {COUNTRY_CODES.map(({ code, flag, name }) => (
+                                    <option key={`${code}-${name}`} value={code}>
+                                        {flag} {code} {name}
+                                    </option>
+                                ))}
+                            </select>
+                            <Input
+                                id="phoneNumber"
+                                type="tel"
+                                value={data.phoneNumber}
+                                onChange={e => update("phoneNumber", e.target.value)}
+                                placeholder="912 345 6789"
+                                className="flex-1"
                             />
                         </div>
                     </div>

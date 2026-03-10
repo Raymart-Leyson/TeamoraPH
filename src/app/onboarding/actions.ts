@@ -10,6 +10,7 @@ interface OnboardingData {
     primaryRole?: string;
     locationCity?: string;
     locationCountry?: string;
+    phoneNumber?: string;
     skills?: string[];
     companyName?: string;
     industry?: string;
@@ -38,6 +39,7 @@ export async function completeOnboarding(data: OnboardingData) {
             primary_role: data.primaryRole || null,
             location_city: data.locationCity || null,
             location_country: data.locationCountry || null,
+            phone_number: data.phoneNumber || null,
         });
 
         if (data.skills && data.skills.length > 0) {
