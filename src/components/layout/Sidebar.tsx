@@ -16,7 +16,8 @@ import {
     ShieldCheck,
     Bookmark,
     AlertTriangle,
-    Search
+    Search,
+    Clock
 } from "lucide-react";
 
 interface SidebarProps {
@@ -53,6 +54,7 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
         { name: "Browse Companies", href: "/employer/browse-companies", icon: Building2 },
         { name: "My Company", href: "/employer/profile", icon: Building2 },
         { name: "My Jobs", href: "/employer/jobs", icon: BriefcaseBusiness },
+        { name: "Time Reports", href: "/employer/time-reports", icon: Clock },
         { name: "Messages", href: "/employer/messages", icon: MessageSquare, badge: unreadMessages },
         { name: "Billing", href: "/employer/billing", icon: Settings },
         { name: "Verification", href: "/verification", icon: ShieldCheck },
