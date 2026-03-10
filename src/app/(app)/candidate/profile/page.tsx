@@ -13,7 +13,7 @@ export default async function CandidateProfilePage() {
 
     const { data: candidateData } = await supabase
         .from("candidate_profiles")
-        .select("first_name, last_name, bio, skills, avatar_url, headline, location_country, location_city, timezone, primary_role, availability, portfolio_url, linkedin_url, github_url, resume_url")
+        .select("first_name, last_name, bio, skills, avatar_url, headline, location_country, location_city, timezone, primary_role, availability, portfolio_url, linkedin_url, github_url, resume_url, phone_number")
         .eq("id", profile.id)
         .single();
 
@@ -35,6 +35,7 @@ export default async function CandidateProfilePage() {
             ? candidateData.skills.join(", ")
             : "",
         resume_url: candidateData?.resume_url ?? "",
+        phone_number: candidateData?.phone_number ?? "",
     };
 
     const [

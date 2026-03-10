@@ -57,6 +57,7 @@ export async function updateCandidateProfile(formData: FormData) {
     const portfolio_url = formData.get("portfolio_url") as string;
     const linkedin_url = formData.get("linkedin_url") as string;
     const github_url = formData.get("github_url") as string;
+    const phone_number = formData.get("phone_number") as string;
     const skillsString = formData.get("skills") as string;
 
     const skills = skillsString ? skillsString.split(',').map(s => s.trim()).filter(s => s) : [];
@@ -78,6 +79,7 @@ export async function updateCandidateProfile(formData: FormData) {
             portfolio_url,
             linkedin_url,
             github_url,
+            phone_number: phone_number || null,
             skills,
             resume_url,
             updated_at: new Date().toISOString()

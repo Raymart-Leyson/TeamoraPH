@@ -21,7 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Loader2, CheckCircle2, AlertCircle, Pencil, BriefcaseBusiness, Mail, Globe, Github, Linkedin, MapPin, FileText } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, Pencil, BriefcaseBusiness, Mail, Globe, Github, Linkedin, MapPin, FileText, Phone } from "lucide-react";
 import { TIMEZONES, formatTimezone } from "@/utils/timezones";
 
 interface Defaults {
@@ -40,6 +40,7 @@ interface Defaults {
     github_url: string;
     skills: string; // comma-separated string
     resume_url: string;
+    phone_number: string;
 }
 
 export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
@@ -132,6 +133,19 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                             <p className="text-lg text-[#1B3FA0] font-bold">{defaults.location_city || "City"}, {defaults.location_country || "Country"}</p>
                         </div>
                     </div>
+
+                    {/* Phone */}
+                    {defaults.phone_number && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white/40 shadow-sm border border-white/50 p-6 rounded-[2rem] space-y-2">
+                                <h4 className="text-xs font-bold text-[#1B3FA0]/50 uppercase tracking-widest">Phone Number</h4>
+                                <p className="text-lg text-[#1B3FA0] font-bold flex items-center gap-2">
+                                    <Phone className="h-4 w-4 text-[#3D6EFF]" />
+                                    <a href={`tel:${defaults.phone_number}`} className="hover:underline">{defaults.phone_number}</a>
+                                </p>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Links */}
                     <div className="border-t border-[#1B3FA0]/10 pt-8 flex gap-4 w-full flex-wrap">
@@ -244,6 +258,22 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                                 className="shadow-inner"
                             />
                         </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="phone_number" className="text-[#1B3FA0] font-semibold flex items-center gap-1.5">
+                            <Phone className="h-4 w-4" /> Phone Number *
+                        </Label>
+                        <Input
+                            id="phone_number"
+                            name="phone_number"
+                            type="tel"
+                            placeholder="+63 912 345 6789"
+                            required
+                            defaultValue={defaults.phone_number}
+                            disabled={isPending}
+                            className="shadow-inner"
+                        />
                     </div>
 
                     <div className="space-y-2">

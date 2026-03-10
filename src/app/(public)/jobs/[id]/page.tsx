@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Building2, CalendarDays, Users, Activity, Clock } from "lucide-react";
+import { MapPin, Globe, Building2, CalendarDays, Users, Activity, Clock, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getUserProfile } from "@/utils/auth";
@@ -41,15 +41,25 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
     let hasApplied = false;
     let candidateData = null;
     let isSaved = false;
+    let missingProfileFields: string[] = [];
     if (profile?.role === 'candidate') {
-        const [appRes, candidateRes, savedRes] = await Promise.all([
+        const [appRes, candidateRes, savedRes, profileRes] = await Promise.all([
             supabase.from('applications').select('id').eq('job_id', job.id).eq('candidate_id', profile.id).single(),
             refreshCreditsIfNeeded(profile.id),
-            supabase.from('saved_jobs').select('id').eq('job_id', job.id).eq('candidate_id', profile.id).single()
+            supabase.from('saved_jobs').select('id').eq('job_id', job.id).eq('candidate_id', profile.id).single(),
+            supabase.from('candidate_profiles').select('first_name, last_name, headline, primary_role, phone_number').eq('id', profile.id).single(),
         ]);
         if (appRes.data) hasApplied = true;
         if (savedRes.data) isSaved = true;
         candidateData = candidateRes;
+
+        const p = profileRes.data;
+        if (!profile.email) missingProfileFields.push("Email Address");
+        if (!p?.first_name) missingProfileFields.push("First Name");
+        if (!p?.last_name) missingProfileFields.push("Last Name");
+        if (!p?.headline) missingProfileFields.push("Professional Headline");
+        if (!p?.primary_role) missingProfileFields.push("Primary Role");
+        if (!p?.phone_number) missingProfileFields.push("Phone Number");
     }
 
     const company = job.company?.[0] || job.company;
@@ -159,6 +169,21 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                                         <Button disabled className="w-full rounded-full py-6 text-lg tracking-wider font-bold bg-[#1B3FA0]/50 text-white">
                                             Application Sent
                                         </Button>
+                                    ) : missingProfileFields.length > 0 ? (
+                                        <div className="w-full space-y-3">
+                                            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm">
+                                                <div className="flex items-center gap-2 font-bold text-amber-700 mb-2">
+                                                    <AlertCircle className="h-4 w-4 shrink-0" />
+                                                    Complete your profile to apply
+                                                </div>
+                                                <ul className="text-amber-600 font-medium space-y-0.5 pl-6 list-disc text-xs">
+                                                    {missingProfileFields.map(f => <li key={f}>{f}</li>)}
+                                                </ul>
+                                            </div>
+                                            <Button asChild className="w-full rounded-full py-6 text-lg tracking-wider font-bold bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white shadow-xl hover:-translate-y-1 transition-transform">
+                                                <Link href="/candidate/profile">Update Profile</Link>
+                                            </Button>
+                                        </div>
                                     ) : (
                                         <div className="w-full space-y-3">
                                             <ApplyButton

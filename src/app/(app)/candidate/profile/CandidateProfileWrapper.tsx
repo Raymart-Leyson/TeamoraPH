@@ -33,6 +33,7 @@ interface Defaults {
     github_url: string;
     skills: string;
     resume_url: string;
+    phone_number: string;
 }
 
 interface WrapperProps {
