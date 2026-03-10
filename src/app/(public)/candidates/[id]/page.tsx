@@ -17,7 +17,8 @@ import {
     Award,
     Code,
     User,
-    Phone
+    Phone,
+    Star
 } from "lucide-react";
 import Link from "next/link";
 import { getUserProfile } from "@/utils/auth";
@@ -54,14 +55,20 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
         { data: education },
         { data: projects },
         { data: certifications },
-        { data: ratedSkills }
+        { data: ratedSkills },
+        { data: ratingData }
     ] = await Promise.all([
         supabase.from("candidate_experience").select("*").eq("candidate_id", id).order("start_date", { ascending: false }),
         supabase.from("candidate_education").select("*").eq("candidate_id", id).order("start_year", { ascending: false }),
         supabase.from("candidate_projects").select("*").eq("candidate_id", id).order("created_at", { ascending: false }),
         supabase.from("candidate_certifications").select("*").eq("candidate_id", id).order("issue_date", { ascending: false }),
-        supabase.from("candidate_skills").select("*").eq("candidate_id", id).order("rating", { ascending: false })
+        supabase.from("candidate_skills").select("*").eq("candidate_id", id).order("rating", { ascending: false }),
+        supabase.rpc("get_candidate_avg_rating", { p_candidate_id: id }),
     ]);
+
+    const ratingRow = ratingData?.[0];
+    const avgRating = ratingRow?.avg_rating ? Number(ratingRow.avg_rating) : null;
+    const ratingCount = ratingRow?.rating_count ? Number(ratingRow.rating_count) : 0;
 
     const fullName = profile.first_name && profile.last_name
         ? `${profile.first_name} ${profile.last_name}`
@@ -163,6 +170,28 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
                     <div className="w-full lg:w-96 shrink-0 flex flex-col gap-6">
                         <Card className="bg-white/60 backdrop-blur-md border-white/60 shadow-lg rounded-[2rem] flex-1">
                             <CardContent className="p-8 h-full flex flex-col">
+                                {/* Employer Rating */}
+                                {avgRating !== null && ratingCount > 0 && (
+                                    <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-100">
+                                        <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-2">Employer Rating</p>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-2xl font-extrabold text-amber-500">{avgRating.toFixed(1)}</span>
+                                            <div className="flex items-center gap-0.5">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <Star
+                                                        key={star}
+                                                        className={`h-4 w-4 ${avgRating >= star ? "fill-amber-400 text-amber-400" : avgRating >= star - 0.5 ? "fill-amber-200 text-amber-400" : "text-amber-200"}`}
+                                                    />
+                                                ))}
+                                            </div>
+                                            <span className="text-xs font-semibold text-amber-500/80">/ 5</span>
+                                        </div>
+                                        <p className="text-[11px] text-amber-500/70 font-medium mt-1">
+                                            Based on {ratingCount} employer {ratingCount === 1 ? "rating" : "ratings"}
+                                        </p>
+                                    </div>
+                                )}
+
                                 <h3 className="text-xl font-bold text-[#1B3FA0] mb-4 flex items-center">
                                     <User className="w-5 h-5 mr-2" /> About
                                 </h3>
