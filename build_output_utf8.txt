@@ -1,0 +1,81 @@
+﻿
+> teamora-ph@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 3.5s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/50) ...
+  Generating static pages using 15 workers (12/50) 
+  Generating static pages using 15 workers (24/50) 
+  Generating static pages using 15 workers (37/50) 
+Γ£ô Generating static pages using 15 workers (50/50) in 392.9ms
+  Finalizing page optimization ...
+
+Route (app)
+Γöî ╞Æ /
+Γö£ Γùï /_not-found
+Γö£ ╞Æ /admin
+Γö£ ╞Æ /admin/dashboard
+Γö£ ╞Æ /admin/jobs
+Γö£ ╞Æ /admin/reports
+Γö£ ╞Æ /admin/verifications
+Γö£ ╞Æ /api/stripe/webhook
+Γö£ ╞Æ /auth/callback
+Γö£ ╞Æ /candidate/applications
+Γö£ ╞Æ /candidate/billing
+Γö£ ╞Æ /candidate/companies
+Γö£ ╞Æ /candidate/dashboard
+Γö£ ╞Æ /candidate/jobs
+Γö£ ╞Æ /candidate/messages
+Γö£ ╞Æ /candidate/messages/[id]
+Γö£ ╞Æ /candidate/profile
+Γö£ ╞Æ /candidate/saved-jobs
+Γö£ ╞Æ /candidates/[id]
+Γö£ ╞Æ /companies
+Γö£ ╞Æ /companies/[id]
+Γö£ ╞Æ /employer/billing
+Γö£ ╞Æ /employer/browse-companies
+Γö£ ╞Æ /employer/browse-jobs
+Γö£ ╞Æ /employer/dashboard
+Γö£ ╞Æ /employer/jobs
+Γö£ ╞Æ /employer/jobs/[id]
+Γö£ ╞Æ /employer/jobs/[id]/applications/[applicationId]
+Γö£ ╞Æ /employer/messages
+Γö£ ╞Æ /employer/messages/[id]
+Γö£ ╞Æ /employer/post-job
+Γö£ ╞Æ /employer/profile
+Γö£ ╞Æ /jobs
+Γö£ ╞Æ /jobs/[id]
+Γö£ Γùï /login
+Γö£ Γùï /login/forgot-password
+Γö£ Γùï /login/reset-password
+Γö£ ╞Æ /onboarding
+Γö£ ╞Æ /owner
+Γö£ ╞Æ /owner/dashboard
+Γö£ ╞Æ /owner/jobs
+Γö£ ╞Æ /owner/logs
+Γö£ ╞Æ /owner/reports
+Γö£ ╞Æ /owner/settings
+Γö£ ╞Æ /owner/users
+Γö£ ╞Æ /owner/verifications
+Γö£ ╞Æ /pricing
+Γö£ ╞Æ /privacy
+Γö£ Γùï /signup
+Γö£ ╞Æ /staff
+Γö£ ╞Æ /staff/dashboard
+Γö£ ╞Æ /staff/jobs
+Γö£ ╞Æ /staff/reports
+Γö£ ╞Æ /terms
+Γöö ╞Æ /verification
+
+
+╞Æ Proxy (Middleware)
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+
