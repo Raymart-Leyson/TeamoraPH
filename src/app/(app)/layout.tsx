@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu, UserCircle2, Bell } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -100,6 +100,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                         <DropdownMenuTrigger asChild>
                             <Button variant="secondary" size="icon" className="rounded-full relative">
                                 <Avatar className="h-9 w-9">
+                                    <AvatarImage src={profile.avatar_url || ""} />
                                     <AvatarFallback className="bg-primary/10 text-primary">
                                         <UserCircle2 className="h-5 w-5" />
                                     </AvatarFallback>
@@ -112,13 +113,21 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                                 <span className="sr-only">Toggle user menu</span>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56 shadow-lg border-muted">
+                        <DropdownMenuContent align="end" className="w-64 shadow-lg border-muted">
                             <DropdownMenuLabel className="font-normal">
-                                <div className="flex flex-col space-y-1">
-                                    <p className="text-sm font-medium leading-none truncate">{profile.email}</p>
-                                    <p className="text-xs leading-none text-muted-foreground capitalize">
-                                        {profile.role}
-                                    </p>
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="h-10 w-10">
+                                        <AvatarImage src={profile.avatar_url || ""} />
+                                        <AvatarFallback className="bg-primary/10 text-primary">
+                                            <UserCircle2 className="h-5 w-5" />
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col space-y-1">
+                                        <p className="text-sm font-medium leading-none truncate">{profile.full_name}</p>
+                                        <p className="text-xs leading-none text-muted-foreground truncate">
+                                            {profile.email}
+                                        </p>
+                                    </div>
                                 </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
