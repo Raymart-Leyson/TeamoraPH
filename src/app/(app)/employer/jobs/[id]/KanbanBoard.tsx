@@ -191,6 +191,7 @@ export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
                                                             );
 
                                                             // Use portal to fix transform/fixed positioning offsets during drag
