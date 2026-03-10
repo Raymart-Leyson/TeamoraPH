@@ -39,7 +39,19 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     const isAuthRoute = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/signup");
+    const isOnboardingRoute = request.nextUrl.pathname.startsWith("/onboarding");
     const isAppRoute = request.nextUrl.pathname.startsWith("/app") || request.nextUrl.pathname.startsWith("/candidate/") || request.nextUrl.pathname.startsWith("/employer") || request.nextUrl.pathname.startsWith("/admin") || request.nextUrl.pathname.startsWith("/owner") || request.nextUrl.pathname.startsWith("/staff");
+
+    // Protect /onboarding — require auth
+    if (!user && isOnboardingRoute) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/login";
+        const redirectResponse = NextResponse.redirect(url);
+        supabaseResponse.cookies.getAll().forEach(cookie => {
+            redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+        });
+        return redirectResponse;
+    }
 
     if (
         !user &&

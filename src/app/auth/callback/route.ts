@@ -44,7 +44,18 @@ export async function GET(request: Request) {
                             .update({ role })
                             .eq("id", user.id);
 
-                        // Route to the right dashboard
+                        // Check if they've completed onboarding (have a first_name)
+                        const profileTable = role === "employer" ? "employer_profiles" : "candidate_profiles";
+                        const { data: roleProfile } = await supabase
+                            .from(profileTable)
+                            .select("first_name")
+                            .eq("id", user.id)
+                            .maybeSingle();
+
+                        if (!roleProfile?.first_name) {
+                            return NextResponse.redirect(`${origin}/onboarding`);
+                        }
+
                         const dashboardUrl = role === "employer"
                             ? `${origin}/employer/dashboard`
                             : `${origin}/candidate/dashboard`;
@@ -52,7 +63,21 @@ export async function GET(request: Request) {
                     }
                 }
 
-                // Existing user — route to their existing dashboard
+                // Existing user — check if onboarding is still needed
+                if (existingRole === "candidate" || existingRole === "employer") {
+                    const profileTable = existingRole === "employer" ? "employer_profiles" : "candidate_profiles";
+                    const { data: roleProfile } = await supabase
+                        .from(profileTable)
+                        .select("first_name")
+                        .eq("id", user.id)
+                        .maybeSingle();
+
+                    if (!roleProfile?.first_name) {
+                        return NextResponse.redirect(`${origin}/onboarding`);
+                    }
+                }
+
+                // Route to their existing dashboard
                 const dashboardMap: Record<string, string> = {
                     employer: `${origin}/employer/dashboard`,
                     owner: `${origin}/owner/dashboard`,
