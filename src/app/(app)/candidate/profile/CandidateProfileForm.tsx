@@ -41,6 +41,7 @@ interface Defaults {
     skills: string; // comma-separated string
     resume_url: string;
     phone_number: string;
+    email: string;
 }
 
 export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {

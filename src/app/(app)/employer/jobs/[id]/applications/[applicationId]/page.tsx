@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MessageSquare, Check, X, Building, Briefcase, GraduationCap, Trophy, Layout, FileText, Globe, Linkedin, Github, ExternalLink, Star, Zap, StickyNote } from "lucide-react";
+import { ArrowLeft, MessageSquare, Check, X, Building, Briefcase, GraduationCap, Trophy, Layout, FileText, Globe, Linkedin, Github, ExternalLink, Star, Zap, StickyNote, Mail } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,7 +23,7 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
         .select(`
       *,
       job:job_posts!inner(id, title, author_id),
-      candidate:candidate_profiles(*)
+      candidate:candidate_profiles(*, auth_profile:profiles(email))
     `)
         .eq("id", applicationId)
         .single();
@@ -134,8 +134,13 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                             </div>
                         )}
 
-                        {/* Social Links */}
+                        {/* Contact & Social Links */}
                         <div className="flex flex-wrap gap-3 pt-4 border-t border-[#1B3FA0]/10">
+                            {(candidate as any)?.auth_profile?.email && (
+                                <Button variant="ghost" size="sm" asChild className="text-[#1B3FA0]/60 hover:text-[#1B3FA0]">
+                                    <a href={`mailto:${(candidate as any).auth_profile.email}`}><Mail className="h-4 w-4 mr-2" /> {(candidate as any).auth_profile.email}</a>
+                                </Button>
+                            )}
                             {candidate?.portfolio_url && (
                                 <Button variant="ghost" size="sm" asChild className="text-[#1B3FA0]/60 hover:text-[#1B3FA0]">
                                     <a href={candidate.portfolio_url} target="_blank" rel="noreferrer"><Globe className="h-4 w-4 mr-2" /> Portfolio</a>

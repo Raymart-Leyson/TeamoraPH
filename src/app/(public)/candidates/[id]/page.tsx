@@ -16,9 +16,10 @@ import {
     Clock,
     Award,
     Code,
-    User,
     Phone,
-    Star
+    Star,
+    Mail,
+    User
 } from "lucide-react";
 import Link from "next/link";
 import { getUserProfile } from "@/utils/auth";
@@ -35,7 +36,7 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
         .from("candidate_profiles")
         .select(`
             *,
-            auth_profile:profiles(verification_status)
+            auth_profile:profiles(verification_status, email)
         `)
         .eq("id", id)
         .single();
@@ -199,8 +200,20 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
                                     {profile.bio || "This candidate prefers to let their experience speak for itself."}
                                 </p>
 
-                                {currentUser?.role === 'employer' && (profile as any).phone_number && (
+                                {currentUser?.role === 'employer' && (profile.auth_profile as any)?.email && (
                                     <div className="mt-5 flex items-center gap-3 p-3 rounded-xl bg-[#1B3FA0]/5 border border-[#1B3FA0]/10">
+                                        <Mail className="w-4 h-4 text-[#1B3FA0] shrink-0" />
+                                        <a
+                                            href={`mailto:${(profile.auth_profile as any).email}`}
+                                            className="text-sm font-semibold text-[#1B3FA0] hover:underline"
+                                        >
+                                            {(profile.auth_profile as any).email}
+                                        </a>
+                                    </div>
+                                )}
+
+                                {currentUser?.role === 'employer' && (profile as any).phone_number && (
+                                    <div className="mt-3 flex items-center gap-3 p-3 rounded-xl bg-[#1B3FA0]/5 border border-[#1B3FA0]/10">
                                         <Phone className="w-4 h-4 text-[#1B3FA0] shrink-0" />
                                         <a
                                             href={`tel:${(profile as any).phone_number.replace(/\s/g, "")}`}

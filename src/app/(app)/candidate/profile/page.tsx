@@ -11,6 +11,8 @@ export default async function CandidateProfilePage() {
 
     const supabase = await createClient();
 
+    const { data: { user } } = await supabase.auth.getUser();
+
     const { data: candidateData } = await supabase
         .from("candidate_profiles")
         .select("first_name, last_name, bio, skills, avatar_url, headline, location_country, location_city, timezone, primary_role, availability, portfolio_url, linkedin_url, github_url, resume_url, phone_number")
@@ -36,6 +38,7 @@ export default async function CandidateProfilePage() {
             : "",
         resume_url: candidateData?.resume_url ?? "",
         phone_number: candidateData?.phone_number ?? "",
+        email: user?.email ?? "",
     };
 
     const [

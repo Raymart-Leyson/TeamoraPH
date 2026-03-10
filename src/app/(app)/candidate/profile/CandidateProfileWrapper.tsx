@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
     Eye, Pencil, MapPin, Clock, BriefcaseBusiness, Globe, Github, Linkedin,
-    Calendar, GraduationCap, Code, Award, Link as LinkIcon, Star, User
+    Calendar, GraduationCap, Code, Award, Link as LinkIcon, Star, User, Mail
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +34,7 @@ interface Defaults {
     skills: string;
     resume_url: string;
     phone_number: string;
+    email: string;
 }
 
 interface WrapperProps {
@@ -132,6 +133,17 @@ function CandidateProfilePreview({ defaults, experience, education, projects, ce
                             <p className="text-sm font-medium text-slate-600 leading-relaxed whitespace-pre-wrap flex-1">
                                 {defaults.bio || "This candidate prefers to let their experience speak for itself."}
                             </p>
+                            {defaults.email && (
+                                <div className="mt-5 flex items-center gap-3 p-3 rounded-xl bg-[#1B3FA0]/5 border border-[#1B3FA0]/10">
+                                    <Mail className="w-4 h-4 text-[#1B3FA0] shrink-0" />
+                                    <a
+                                        href={`mailto:${defaults.email}`}
+                                        className="text-sm font-semibold text-[#1B3FA0] hover:underline"
+                                    >
+                                        {defaults.email}
+                                    </a>
+                                </div>
+                            )}
                             <div className="mt-6 p-4 rounded-xl bg-[#1B3FA0]/5 border border-[#1B3FA0]/10 text-center">
                                 <p className="text-xs font-bold text-[#1B3FA0]/60">Employers can direct message this candidate.</p>
                             </div>
@@ -318,22 +330,20 @@ export function CandidateProfileWrapper({ defaults, experience, education, proje
                 <button
                     type="button"
                     onClick={() => setMode("edit")}
-                    className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 ${
-                        mode === "edit"
+                    className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 ${mode === "edit"
                             ? "bg-[#1B3FA0] text-white shadow-md"
                             : "text-[#1B3FA0]/60 hover:text-[#1B3FA0] hover:bg-white/60"
-                    }`}
+                        }`}
                 >
                     <Pencil className="h-4 w-4" /> Edit Profile
                 </button>
                 <button
                     type="button"
                     onClick={() => setMode("preview")}
-                    className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 ${
-                        mode === "preview"
+                    className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 ${mode === "preview"
                             ? "bg-[#1B3FA0] text-white shadow-md"
                             : "text-[#1B3FA0]/60 hover:text-[#1B3FA0] hover:bg-white/60"
-                    }`}
+                        }`}
                 >
                     <Eye className="h-4 w-4" /> Preview
                 </button>

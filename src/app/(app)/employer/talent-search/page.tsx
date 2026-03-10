@@ -4,7 +4,7 @@ import { getUserProfile } from "@/utils/auth";
 import { hasActiveSubscription } from "@/lib/entitlements";
 import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Lock, Users, Search as SearchIcon, MapPin, Briefcase } from "lucide-react";
+import { Lock, Users, Search as SearchIcon, MapPin, Briefcase, Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -71,6 +71,10 @@ export default async function TalentSearchPage({
             skills,
             profiles!inner(email)
         `)
+        .not("first_name", "is", null)
+        .neq("first_name", "")
+        .not("last_name", "is", null)
+        .neq("last_name", "")
         .order("created_at", { ascending: false })
         .limit(20);
 
@@ -128,6 +132,12 @@ export default async function TalentSearchPage({
                                 {(candidate.location_city || candidate.location_country)
                                     ? [candidate.location_city, candidate.location_country].filter(Boolean).join(", ")
                                     : "Anywhere"}
+                            </span>
+                        </div>
+                        <div className="flex items-center text-muted-foreground text-xs font-medium mb-3 w-full justify-center">
+                            <Mail className="w-3 h-3 mr-1 shrink-0" />
+                            <span className="truncate max-w-full">
+                                {Array.isArray(candidate.profiles) ? candidate.profiles[0]?.email : (candidate.profiles as any)?.email}
                             </span>
                         </div>
 
