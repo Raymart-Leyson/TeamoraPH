@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, UserCircle2, Bell, LayoutDashboard, User, FileText, Bookmark, Settings, Briefcase, FilePlus, CreditCard } from "lucide-react";
+import { Menu, UserCircle2, Bell, LayoutDashboard, User, FileText, Bookmark, Settings, Briefcase, FilePlus, CreditCard, Users } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -176,6 +176,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                                         <Link href="/employer/post-job">
                                             <FilePlus className="mr-2 h-4 w-4" />
                                             Post a Job
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/employer/talent-search">
+                                            <Users className="mr-2 h-4 w-4" />
+                                            Talent Search
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>

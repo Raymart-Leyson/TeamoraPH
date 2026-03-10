@@ -11,7 +11,7 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { BriefcaseBusiness, UserCircle2, LayoutDashboard, Menu, User, FileText, Bookmark, Settings, Briefcase, FilePlus, CreditCard } from "lucide-react";
+import { BriefcaseBusiness, UserCircle2, LayoutDashboard, Menu, User, FileText, Bookmark, Settings, Briefcase, FilePlus, CreditCard, Users } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
 export async function Navbar() {
@@ -150,6 +150,12 @@ export async function Navbar() {
                                                     <Link href="/employer/post-job">
                                                         <FilePlus className="mr-2 h-4 w-4" />
                                                         Post a Job
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/employer/talent-search">
+                                                        <Users className="mr-2 h-4 w-4" />
+                                                        Talent Search
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem asChild>

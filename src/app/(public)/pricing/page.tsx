@@ -70,6 +70,7 @@ const employerPlans = [
         description: "Scale your hiring with unlimited posts and tools.",
         badge: "Best Value",
         features: [
+            "Full Employer Talent Search Access",
             "Unlimited job posts",
             "Instant post publishing",
             "Applicant rating & notes",

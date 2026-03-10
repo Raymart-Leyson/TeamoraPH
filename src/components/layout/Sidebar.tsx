@@ -48,6 +48,7 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
 
     const employerLinks: NavLink[] = [
         { name: "Dashboard", href: "/employer/dashboard", icon: LayoutDashboard },
+        { name: "Talent Search", href: "/employer/talent-search", icon: Users },
         { name: "Browse Jobs", href: "/employer/browse-jobs", icon: Search },
         { name: "Browse Companies", href: "/employer/browse-companies", icon: Building2 },
         { name: "My Company", href: "/employer/profile", icon: Building2 },
