@@ -11,7 +11,7 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { BriefcaseBusiness, UserCircle2, LayoutDashboard, Menu, User, FileText, Bookmark, Settings } from "lucide-react";
+import { BriefcaseBusiness, UserCircle2, LayoutDashboard, Menu, User, FileText, Bookmark, Settings, Briefcase, FilePlus, CreditCard } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
 export async function Navbar() {
@@ -140,6 +140,28 @@ export async function Navbar() {
                                                     <Link href="/candidate/saved-jobs">
                                                         <Bookmark className="mr-2 h-4 w-4" />
                                                         Saved Jobs
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            </>
+                                        )}
+                                        {profile.role === 'employer' && (
+                                            <>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/employer/post-job">
+                                                        <FilePlus className="mr-2 h-4 w-4" />
+                                                        Post a Job
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/employer/jobs">
+                                                        <Briefcase className="mr-2 h-4 w-4" />
+                                                        My Jobs
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/employer/billing">
+                                                        <CreditCard className="mr-2 h-4 w-4" />
+                                                        Billing
                                                     </Link>
                                                 </DropdownMenuItem>
                                             </>
