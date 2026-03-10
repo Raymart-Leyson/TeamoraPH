@@ -23,7 +23,7 @@ export async function refreshCreditsIfNeeded(candidateId: string) {
         // Add 10 credits, cap at 50
         const newFreeCredits = Math.min(50, (candidate.free_credits || 0) + 10);
 
-        const { data: updated, error: updateError } = await supabase
+        const { data: updated } = await supabase
             .from("candidate_profiles")
             .update({
                 free_credits: newFreeCredits,

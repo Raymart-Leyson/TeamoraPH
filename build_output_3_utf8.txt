@@ -1,0 +1,50 @@
+﻿
+> teamora-ph@0.1.0 build
+> next build
+
+node.exe : ΓÜá `eslint` configuration in 
+next.config.ts is no longer supported. See 
+more info here: https://nextjs.org/docs/app/api
+-reference/cli/next#next-lint-options
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Γ 
+   Üá `eslint` co...xt-lint-options:String) [  
+  ], RemoteException
+    + FullyQualifiedErrorId : NativeCommandErr 
+   or
+ 
+ΓÜá Invalid next.config.ts options detected: 
+ΓÜá     Unrecognized key(s) in object: 'eslint'
+ΓÜá See more info here: https://nextjs.org/docs
+/messages/invalid-next-config
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 3.7s
+  Running TypeScript ...
+Failed to compile.
+
+./next.config.ts:7:3
+Type error: Object literal may only specify 
+known properties, and 'eslint' does not exist 
+in type 'NextConfig'.
+
+[0m [90m  5 |[39m
+ [90m  6 |[39m [36mconst[39m 
+nextConfig[33m:[39m [33mNextConfig[39m 
+[33m=[39m {
+[31m[1m>[22m[39m[90m  7 |[39m   
+eslint[33m:[39m {
+ [90m    |[39m   [31m[1m^[22m[39m
+ [90m  8 |[39m     
+ignoreDuringBuilds[33m:[39m 
+[36mtrue[39m[33m,[39m
+ [90m  9 |[39m   }[33m,[39m
+ [90m 10 |[39m   images[33m:[39m {[0m
+Next.js build worker exited with code: 1 and 
+signal: null
