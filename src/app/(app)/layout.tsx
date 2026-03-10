@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, UserCircle2, Bell } from "lucide-react";
+import { Menu, UserCircle2, Bell, LayoutDashboard, User, FileText, Bookmark, Settings } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -133,14 +133,59 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                             <DropdownMenuSeparator />
                             <DropdownMenuItem asChild>
                                 <Link href={
+                                    profile.role === "admin" ? "/admin/dashboard" :
+                                        profile.role === "staff" ? "/staff/dashboard" :
+                                            profile.role === "owner" ? "/owner/dashboard" :
+                                                profile.role === "employer" ? "/employer/dashboard" :
+                                                    "/candidate/dashboard"
+                                }>
+                                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                                    Dashboard
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link href={profile.role === 'employer' && (profile as any).company_id ? `/companies/${(profile as any).company_id}` : profile.role === 'candidate' ? `/candidates/${profile.id}` :
+                                    (profile.role === "admin" ? "/admin/dashboard" :
+                                        profile.role === "staff" ? "/staff/dashboard" :
+                                            profile.role === "owner" ? "/owner/dashboard" :
+                                                "/candidate/profile")
+                                }>
+                                    <User className="mr-2 h-4 w-4" />
+                                    View Profile
+                                </Link>
+                            </DropdownMenuItem>
+                            {profile.role === 'candidate' && (
+                                <>
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/candidate/applications">
+                                            <FileText className="mr-2 h-4 w-4" />
+                                            Job Application
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/candidate/saved-jobs">
+                                            <Bookmark className="mr-2 h-4 w-4" />
+                                            Saved Jobs
+                                        </Link>
+                                    </DropdownMenuItem>
+                                </>
+                            )}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                                <Link href={
                                     profile.role === "admin"
                                         ? "/admin/dashboard"
                                         : profile.role === "staff"
                                             ? "/staff/dashboard"
-                                            : profile.role === "employer"
-                                                ? "/employer/profile"
-                                                : "/candidate/profile"
-                                }>Settings</Link>
+                                            : profile.role === "owner"
+                                                ? "/owner/settings"
+                                                : profile.role === "employer"
+                                                    ? "/employer/profile"
+                                                    : "/candidate/profile"
+                                }>
+                                    <Settings className="mr-2 h-4 w-4" />
+                                    Account Settings
+                                </Link>
                             </DropdownMenuItem>
                             <LogoutButton />
                         </DropdownMenuContent>

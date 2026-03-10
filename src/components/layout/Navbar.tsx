@@ -11,7 +11,7 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { BriefcaseBusiness, UserCircle2, LayoutDashboard, Menu } from "lucide-react";
+import { BriefcaseBusiness, UserCircle2, LayoutDashboard, Menu, User, FileText, Bookmark, Settings } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
 export async function Navbar() {
@@ -117,11 +117,41 @@ export async function Navbar() {
                                         </DropdownMenuLabel>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem asChild>
-                                            <Link href={getDashboardURL()}>Dashboard</Link>
+                                            <Link href={getDashboardURL()}>
+                                                <LayoutDashboard className="mr-2 h-4 w-4" />
+                                                Dashboard
+                                            </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href={getProfileURL()}>Profile Settings</Link>
+                                            <Link href={profile.role === 'employer' && (profile as any).company_id ? `/companies/${(profile as any).company_id}` : profile.role === 'candidate' ? `/candidates/${profile.id}` : getProfileURL()}>
+                                                <User className="mr-2 h-4 w-4" />
+                                                View Profile
+                                            </Link>
                                         </DropdownMenuItem>
+                                        {profile.role === 'candidate' && (
+                                            <>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/candidate/applications">
+                                                        <FileText className="mr-2 h-4 w-4" />
+                                                        Job Application
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/candidate/saved-jobs">
+                                                        <Bookmark className="mr-2 h-4 w-4" />
+                                                        Saved Jobs
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            </>
+                                        )}
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem asChild>
+                                            <Link href={getProfileURL()}>
+                                                <Settings className="mr-2 h-4 w-4" />
+                                                Account Settings
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
                                         <LogoutButton />
                                     </DropdownMenuContent>
                                 </DropdownMenu>
