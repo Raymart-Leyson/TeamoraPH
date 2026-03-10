@@ -7,6 +7,8 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { BriefcaseBusiness, UserCircle2, LayoutDashboard, Menu } from "lucide-react";
@@ -96,6 +98,15 @@ export async function Navbar() {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="w-56" align="end" forceMount>
+                                        <DropdownMenuLabel className="font-normal">
+                                            <div className="flex flex-col space-y-1">
+                                                <p className="text-sm font-medium leading-none truncate">{profile.email}</p>
+                                                <p className="text-xs leading-none text-muted-foreground capitalize">
+                                                    {profile.role}
+                                                </p>
+                                            </div>
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
                                         <DropdownMenuItem asChild>
                                             <Link href={getDashboardURL()}>Dashboard</Link>
                                         </DropdownMenuItem>

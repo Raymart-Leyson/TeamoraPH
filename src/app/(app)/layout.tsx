@@ -12,6 +12,8 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { NotificationDropdown } from "@/components/layout/NotificationDropdown";
@@ -110,10 +112,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                                 <span className="sr-only">Toggle user menu</span>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="shadow-lg border-muted">
-                            <DropdownMenuItem className="opacity-50 pointer-events-none truncate max-w-[200px]">
-                                {profile.email} - {profile.role}
-                            </DropdownMenuItem>
+                        <DropdownMenuContent align="end" className="w-56 shadow-lg border-muted">
+                            <DropdownMenuLabel className="font-normal">
+                                <div className="flex flex-col space-y-1">
+                                    <p className="text-sm font-medium leading-none truncate">{profile.email}</p>
+                                    <p className="text-xs leading-none text-muted-foreground capitalize">
+                                        {profile.role}
+                                    </p>
+                                </div>
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
                             <DropdownMenuItem asChild>
                                 <Link href={
                                     profile.role === "admin"
