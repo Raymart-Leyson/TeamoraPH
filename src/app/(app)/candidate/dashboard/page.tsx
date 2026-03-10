@@ -3,7 +3,7 @@ import { getUserProfile } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BriefcaseBusiness, CheckCircle2, Clock, MapPin, Coins, Star, ShieldCheck } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, Clock, MapPin, Coins, Star, ShieldCheck, Download } from "lucide-react";
 import { refreshCreditsIfNeeded } from "@/utils/credits";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -83,6 +83,12 @@ export default async function CandidateDashboard() {
                     <p className="text-muted-foreground">Keep track of your applications and profile views.</p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
+                    <Button variant="outline" size="sm" className="border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 hover:text-blue-800" asChild>
+                        <a href="https://drive.google.com/uc?export=download&id=121o9fzduhDRTs9oOOAcYe3AmoisyQtPc" download="TeamoraPH-Tracker-Setup.exe">
+                            <Download className="w-4 h-4 mr-2" />
+                            Download Tracker App
+                        </a>
+                    </Button>
                     <Button variant="outline" size="sm" asChild>
                         <Link href="/candidate/billing">Buy Credits</Link>
                     </Button>
