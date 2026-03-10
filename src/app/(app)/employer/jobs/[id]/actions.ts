@@ -50,3 +50,19 @@ export async function updateApplicationStatus(applicationId: string, newStatus: 
     revalidatePath(`/employer/jobs/${jobId}`);
     return { success: true };
 }
+
+export async function rateApplication(applicationId: string, rating: number, jobId: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "Not authenticated" };
+
+    const { error } = await supabase
+        .from('applications')
+        .update({ rating })
+        .eq('id', applicationId);
+
+    if (error) return { error: error.message };
+
+    revalidatePath(`/employer/jobs/${jobId}`);
+    return { success: true };
+}

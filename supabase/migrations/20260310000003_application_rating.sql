@@ -1,0 +1,2 @@
+ALTER TABLE public.applications
+ADD COLUMN IF NOT EXISTS rating INTEGER CHECK (rating BETWEEN 1 AND 5);

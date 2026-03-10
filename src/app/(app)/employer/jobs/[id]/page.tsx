@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, User, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { KanbanBoard } from "./KanbanBoard";
+import { ApplicantsView } from "./ApplicantsView";
 
 export default async function EmployerJobDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -37,17 +37,21 @@ export default async function EmployerJobDetailPage({ params }: { params: Promis
       id,
       status,
       created_at,
+      subject,
+      credits_allocated,
+      rating,
       candidate:candidate_profiles(
         id,
         first_name,
         last_name,
         bio,
         skills,
+        avatar_url,
         profile:profiles(verification_status)
       )
     `)
         .eq("job_id", job.id)
-        .order("created_at", { ascending: false });
+        .order("credits_allocated", { ascending: false });
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-6 w-full max-w-[1600px] mx-auto">
@@ -94,17 +98,7 @@ export default async function EmployerJobDetailPage({ params }: { params: Promis
                         <CardDescription>Review and manage incoming applications</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {!applicants || applicants.length === 0 ? (
-                            <div className="text-center p-8 bg-muted/20 border border-dashed rounded-lg">
-                                <User className="w-10 h-10 mx-auto text-muted-foreground mb-4 opacity-50" />
-                                <p className="font-medium">No applicants yet.</p>
-                                <p className="text-sm text-muted-foreground mt-1">When candidates apply, they will appear here.</p>
-                            </div>
-                        ) : (
-                            <div className="w-full">
-                                <KanbanBoard jobId={job.id} initialApplicants={applicants} />
-                            </div>
-                        )}
+                        <ApplicantsView jobId={job.id} applicants={applicants || []} />
                     </CardContent>
                 </Card>
             </div>

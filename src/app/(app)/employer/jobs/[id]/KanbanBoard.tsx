@@ -7,9 +7,10 @@ import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, MapPin, Briefcase, FileText, User } from "lucide-react";
+import { ShieldCheck, MapPin, Briefcase, FileText, User, Star } from "lucide-react";
 import Link from "next/link";
-import { updateApplicationStatus } from "./actions";
+import { updateApplicationStatus, rateApplication } from "./actions";
+import { cn } from "@/lib/utils";
 
 // The possible statuses based on DB enum
 const COLUMNS = [
@@ -24,12 +25,39 @@ interface Applicant {
     id: string;
     status: string;
     created_at: string;
+    rating?: number | null;
     candidate: any;
 }
 
 interface KanbanBoardProps {
     jobId: string;
     initialApplicants: Applicant[];
+}
+
+function KanbanStarRating({ appId, jobId, initial }: { appId: string; jobId: string; initial: number | null | undefined }) {
+    const [rating, setRating] = useState<number>(initial ?? 0);
+    const [hovered, setHovered] = useState(0);
+    const [saving, setSaving] = useState(false);
+
+    async function handleRate(star: number) {
+        const newRating = rating === star ? 0 : star;
+        setRating(newRating);
+        setSaving(true);
+        await rateApplication(appId, newRating, jobId);
+        setSaving(false);
+    }
+
+    const display = hovered || rating;
+
+    return (
+        <div className="flex items-center gap-0.5" onMouseLeave={() => setHovered(0)} onClick={e => e.stopPropagation()}>
+            {[1, 2, 3, 4, 5].map((star) => (
+                <button key={star} type="button" onClick={() => handleRate(star)} onMouseEnter={() => setHovered(star)} disabled={saving} className="transition-transform hover:scale-110 disabled:opacity-50">
+                    <Star className={cn("h-3 w-3 transition-colors", display >= star ? "fill-amber-400 text-amber-400" : "text-slate-200 hover:text-amber-300")} />
+                </button>
+            ))}
+        </div>
+    );
 }
 
 export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
@@ -143,7 +171,9 @@ export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
                                                                         {candidate?.bio || "No summary provided."}
                                                                     </p>
 
-                                                                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                                                                    <div className="pt-3 border-t border-slate-100 space-y-2">
+                                                                        <KanbanStarRating appId={app.id} jobId={jobId} initial={app.rating} />
+                                                                        <div className="flex items-center justify-between">
                                                                         <span className="text-[10px] text-slate-400 font-medium">
                                                                             {new Date(app.created_at).toLocaleDateString()}
                                                                         </span>
