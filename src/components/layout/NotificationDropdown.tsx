@@ -81,7 +81,7 @@ export function NotificationDropdown({ initialCount }: { initialCount: number })
                 <Button variant="ghost" size="icon" className="relative shrink-0">
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#AC3B61] text-[9px] font-bold text-white">
+                        <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#3D6EFF] text-[9px] font-bold text-white">
                             {unreadCount > 9 ? "9+" : unreadCount}
                         </span>
                     )}

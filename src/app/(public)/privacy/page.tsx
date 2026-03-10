@@ -10,21 +10,21 @@ const CONTACT_EMAIL = "privacy@teamoraph.com";
 
 export default function PrivacyPolicyPage() {
     return (
-        <div className="min-h-screen bg-[#EEE2DC]">
+        <div className="min-h-screen bg-[#F8F9FF]">
             <div className="max-w-4xl mx-auto px-6 py-16">
                 {/* Header */}
                 <div className="mb-12">
-                    <p className="text-sm font-bold text-[#AC3B61] uppercase tracking-widest mb-3">Legal</p>
-                    <h1 className="text-5xl font-black text-[#123C69] tracking-tight mb-4">Privacy Policy</h1>
-                    <p className="text-[#123C69]/60 font-medium">
+                    <p className="text-sm font-bold text-[#3D6EFF] uppercase tracking-widest mb-3">Legal</p>
+                    <h1 className="text-5xl font-black text-[#1B3FA0] tracking-tight mb-4">Privacy Policy</h1>
+                    <p className="text-[#1B3FA0]/60 font-medium">
                         Effective Date: {EFFECTIVE_DATE} &nbsp;·&nbsp; Last Updated: {EFFECTIVE_DATE}
                     </p>
                 </div>
 
-                <div className="bg-white/60 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-10 space-y-10 text-[#123C69]">
+                <div className="bg-white/60 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-10 space-y-10 text-[#1B3FA0]">
 
                     {/* Intro */}
-                    <p className="text-base leading-relaxed font-medium text-[#123C69]/80">
+                    <p className="text-base leading-relaxed font-medium text-[#1B3FA0]/80">
                         At <strong>TeamoraPH</strong> ("we", "us", or "our"), your privacy is a core commitment — not an afterthought. This Privacy Policy explains what personal data we collect, how we use it, and your rights under the <strong>Philippine Data Privacy Act of 2012 (R.A. 10173)</strong> and applicable international standards. By using TeamoraPH, you consent to the practices described here.
                     </p>
 
@@ -127,7 +127,7 @@ export default function PrivacyPolicyPage() {
                             <li><strong>Object</strong> — object to processing based on legitimate interests</li>
                             <li><strong>Withdraw consent</strong> — for any processing based on consent, at any time</li>
                         </ul>
-                        <p>To exercise any of these rights, email us at <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#AC3B61] hover:underline font-bold">{CONTACT_EMAIL}</a>. We will respond within <strong>15 business days</strong>.</p>
+                        <p>To exercise any of these rights, email us at <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#3D6EFF] hover:underline font-bold">{CONTACT_EMAIL}</a>. We will respond within <strong>15 business days</strong>.</p>
                     </Section>
 
                     <Section title="9. Children's Privacy">
@@ -147,14 +147,14 @@ export default function PrivacyPolicyPage() {
                         <p className="mt-2">
                             <strong>TeamoraPH — Data Protection Officer</strong><br />
                             Cebu City, Philippines<br />
-                            <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#AC3B61] hover:underline font-bold">{CONTACT_EMAIL}</a>
+                            <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#3D6EFF] hover:underline font-bold">{CONTACT_EMAIL}</a>
                         </p>
-                        <p className="mt-3">You also have the right to file a complaint with the <strong>National Privacy Commission (NPC)</strong> of the Philippines at <a href="https://www.privacy.gov.ph" target="_blank" rel="noopener noreferrer" className="text-[#AC3B61] hover:underline font-bold">privacy.gov.ph</a> if you believe your data rights have been violated.</p>
+                        <p className="mt-3">You also have the right to file a complaint with the <strong>National Privacy Commission (NPC)</strong> of the Philippines at <a href="https://www.privacy.gov.ph" target="_blank" rel="noopener noreferrer" className="text-[#3D6EFF] hover:underline font-bold">privacy.gov.ph</a> if you believe your data rights have been violated.</p>
                     </Section>
 
-                    <div className="pt-6 border-t border-[#123C69]/10 flex flex-wrap gap-4 text-sm font-semibold">
-                        <Link href="/terms" className="text-[#AC3B61] hover:underline">Terms of Service</Link>
-                        <Link href="/" className="text-[#123C69]/60 hover:underline">← Back to Home</Link>
+                    <div className="pt-6 border-t border-[#1B3FA0]/10 flex flex-wrap gap-4 text-sm font-semibold">
+                        <Link href="/terms" className="text-[#3D6EFF] hover:underline">Terms of Service</Link>
+                        <Link href="/" className="text-[#1B3FA0]/60 hover:underline">← Back to Home</Link>
                     </div>
                 </div>
             </div>
@@ -165,8 +165,8 @@ export default function PrivacyPolicyPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <section className="space-y-3">
-            <h2 className="text-xl font-extrabold text-[#123C69] tracking-tight">{title}</h2>
-            <div className="text-[#123C69]/75 leading-relaxed font-medium space-y-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ul_li]:leading-relaxed">
+            <h2 className="text-xl font-extrabold text-[#1B3FA0] tracking-tight">{title}</h2>
+            <div className="text-[#1B3FA0]/75 leading-relaxed font-medium space-y-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ul_li]:leading-relaxed">
                 {children}
             </div>
         </section>

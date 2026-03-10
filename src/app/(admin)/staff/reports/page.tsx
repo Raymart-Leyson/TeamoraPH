@@ -56,8 +56,8 @@ export default async function AdminReportsPage() {
     return (
         <div className="space-y-10">
             <div>
-                <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">System Reports</h1>
-                <p className="text-[#123C69]/70 font-bold mt-2">Manage user flags and content moderation requests.</p>
+                <h1 className="text-2xl sm:text-4xl font-black text-[#1B3FA0] tracking-tight">System Reports</h1>
+                <p className="text-[#1B3FA0]/70 font-bold mt-2">Manage user flags and content moderation requests.</p>
             </div>
 
             <div className="grid gap-6">
@@ -72,7 +72,7 @@ export default async function AdminReportsPage() {
                                             {report.target_type === 'job' ? <BriefcaseBusiness className="w-8 h-8" /> : <User className="w-8 h-8" />}
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="text-xs font-black uppercase tracking-widest text-[#123C69]/40">{report.target_type}</p>
+                                            <p className="text-xs font-black uppercase tracking-widest text-[#1B3FA0]/40">{report.target_type}</p>
                                         </div>
                                     </div>
 
@@ -81,23 +81,23 @@ export default async function AdminReportsPage() {
                                         <div className="flex justify-between items-start gap-4">
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <h3 className="text-2xl font-black text-[#123C69] leading-tight">{report.target_name}</h3>
-                                                    <Button variant="ghost" size="icon" className="h-6 w-6 text-[#123C69]/30 hover:text-[#123C69]" asChild>
+                                                    <h3 className="text-2xl font-black text-[#1B3FA0] leading-tight">{report.target_name}</h3>
+                                                    <Button variant="ghost" size="icon" className="h-6 w-6 text-[#1B3FA0]/30 hover:text-[#1B3FA0]" asChild>
                                                         <Link href={report.target_link} target="_blank">
                                                             <ArrowUpRight className="w-4 h-4" />
                                                         </Link>
                                                     </Button>
                                                 </div>
-                                                <div className="flex items-center gap-4 mt-2 text-xs font-bold text-[#123C69]/60">
+                                                <div className="flex items-center gap-4 mt-2 text-xs font-bold text-[#1B3FA0]/60">
                                                     <span className="flex items-center gap-1.5"><Flag className="w-3.5 h-3.5 text-red-500" /> Reason: {report.reason}</span>
                                                     <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {new Date(report.created_at).toLocaleDateString()}</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="bg-[#123C69]/5 p-4 rounded-2xl border border-[#123C69]/10">
-                                            <p className="text-sm font-bold text-[#123C69]/70">
-                                                <span className="text-[#123C69]/40 uppercase text-[10px] block mb-1">Reporter</span>
+                                        <div className="bg-[#1B3FA0]/5 p-4 rounded-2xl border border-[#1B3FA0]/10">
+                                            <p className="text-sm font-bold text-[#1B3FA0]/70">
+                                                <span className="text-[#1B3FA0]/40 uppercase text-[10px] block mb-1">Reporter</span>
                                                 {report.reporter?.email || 'Unknown User'}
                                             </p>
                                         </div>
@@ -106,7 +106,7 @@ export default async function AdminReportsPage() {
                                                 "use server";
                                                 await resolveReportAction(report.id, 'dismiss');
                                             }}>
-                                                <Button type="submit" variant="outline" className="text-[#123C69] border-[#123C69]/20 hover:bg-white font-bold rounded-2xl px-8 transition-all">
+                                                <Button type="submit" variant="outline" className="text-[#1B3FA0] border-[#1B3FA0]/20 hover:bg-white font-bold rounded-2xl px-8 transition-all">
                                                     <CheckCircle2 className="w-4 h-4 mr-2" /> Dismiss
                                                 </Button>
                                             </form>
@@ -139,10 +139,10 @@ export default async function AdminReportsPage() {
                 ) : (
                     <div className="bg-white/30 backdrop-blur-sm border-2 border-dashed border-white/40 rounded-[3rem] p-20 flex flex-col items-center justify-center text-center">
                         <div className="bg-white/60 p-6 rounded-full mb-6">
-                            <Flag className="w-12 h-12 text-[#123C69]/20" />
+                            <Flag className="w-12 h-12 text-[#1B3FA0]/20" />
                         </div>
-                        <h2 className="text-2xl font-black text-[#123C69]">Platform is Clean!</h2>
-                        <p className="text-[#123C69]/50 font-bold mt-2">There are no reported items to review.</p>
+                        <h2 className="text-2xl font-black text-[#1B3FA0]">Platform is Clean!</h2>
+                        <p className="text-[#1B3FA0]/50 font-bold mt-2">There are no reported items to review.</p>
                     </div>
                 )}
             </div>

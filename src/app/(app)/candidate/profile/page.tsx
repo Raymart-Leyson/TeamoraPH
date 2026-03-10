@@ -54,8 +54,8 @@ export default async function CandidateProfilePage() {
     return (
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
             <div>
-                <h2 className="text-xl font-bold text-[#123C69]">Your Profile</h2>
-                <p className="text-[#123C69]/70 mt-1 text-sm font-medium">
+                <h2 className="text-xl font-bold text-[#1B3FA0]">Your Profile</h2>
+                <p className="text-[#1B3FA0]/70 mt-1 text-sm font-medium">
                     Update your information to stand out to employers.
                 </p>
             </div>

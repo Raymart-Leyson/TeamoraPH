@@ -23,7 +23,7 @@ export function ChatInput({ conversationId, role }: { conversationId: string, ro
     );
 
     return (
-        <div className="p-4 bg-white/80 backdrop-blur-md border-t border-[#123C69]/10">
+        <div className="p-4 bg-white/80 backdrop-blur-md border-t border-[#1B3FA0]/10">
             <form action={formAction} ref={formRef} className="flex items-end gap-3 max-w-5xl mx-auto relative group">
                 <input type="hidden" name="conversation_id" value={conversationId} />
                 <input type="hidden" name="role" value={role} />
@@ -34,7 +34,7 @@ export function ChatInput({ conversationId, role }: { conversationId: string, ro
                         placeholder="Type a message..."
                         rows={1}
                         required
-                        className="min-h-[44px] max-h-32 py-3 px-4 rounded-[1.5rem] bg-[#123C69]/5 border-transparent focus-visible:ring-[#123C69]/20 focus-visible:bg-white focus-visible:border-[#123C69]/10 transition-all resize-none shadow-inner pr-12"
+                        className="min-h-[44px] max-h-32 py-3 px-4 rounded-[1.5rem] bg-[#1B3FA0]/5 border-transparent focus-visible:ring-[#1B3FA0]/20 focus-visible:bg-white focus-visible:border-[#1B3FA0]/10 transition-all resize-none shadow-inner pr-12"
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault();
@@ -46,7 +46,7 @@ export function ChatInput({ conversationId, role }: { conversationId: string, ro
                         type="submit"
                         size="icon"
                         disabled={isPending}
-                        className="absolute right-1.5 bottom-1.5 h-8 w-8 rounded-full bg-[#123C69] hover:bg-[#123C69]/90 text-white shadow-lg transition-transform hover:scale-110 active:scale-95 disabled:opacity-50"
+                        className="absolute right-1.5 bottom-1.5 h-8 w-8 rounded-full bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white shadow-lg transition-transform hover:scale-110 active:scale-95 disabled:opacity-50"
                     >
                         {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                     </Button>
@@ -118,11 +118,11 @@ export function ChatMessages({ initialMessages, conversationId, currentUserId, r
         <div className="flex-1 overflow-y-auto p-6 space-y-6 max-w-5xl mx-auto w-full scrollbar-hide">
             {messages.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-40 py-20">
-                    <div className="h-20 w-20 rounded-full bg-[#123C69]/10 flex items-center justify-center">
-                        <MessageSquare className="h-10 w-10 text-[#123C69]" />
+                    <div className="h-20 w-20 rounded-full bg-[#1B3FA0]/10 flex items-center justify-center">
+                        <MessageSquare className="h-10 w-10 text-[#1B3FA0]" />
                     </div>
                     <div>
-                        <p className="font-bold text-[#123C69]">No messages yet</p>
+                        <p className="font-bold text-[#1B3FA0]">No messages yet</p>
                         <p className="text-sm">Start the conversation below.</p>
                     </div>
                 </div>
@@ -138,7 +138,7 @@ export function ChatMessages({ initialMessages, conversationId, currentUserId, r
                         <div key={msg.id} className="space-y-1">
                             {showTime && (
                                 <div className="text-center py-4">
-                                    <span className="text-[10px] font-bold text-[#123C69]/40 bg-[#123C69]/5 px-3 py-1 rounded-full uppercase tracking-widest">
+                                    <span className="text-[10px] font-bold text-[#1B3FA0]/40 bg-[#1B3FA0]/5 px-3 py-1 rounded-full uppercase tracking-widest">
                                         {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', weekday: 'short' })}
                                     </span>
                                 </div>
@@ -146,8 +146,8 @@ export function ChatMessages({ initialMessages, conversationId, currentUserId, r
                             <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
                                 <div
                                     className={`relative group max-w-[75%] md:max-w-[65%] px-4 py-2.5 text-sm md:text-base leading-relaxed tracking-wide shadow-sm transition-all hover:shadow-md ${isMe
-                                        ? 'bg-gradient-to-br from-[#123C69] to-[#123C69]/90 text-white rounded-[1.25rem] rounded-br-[0.25rem]'
-                                        : 'bg-white text-[#123C69] border border-[#123C69]/10 rounded-[1.25rem] rounded-bl-[0.25rem]'
+                                        ? 'bg-gradient-to-br from-[#1B3FA0] to-[#1B3FA0]/90 text-white rounded-[1.25rem] rounded-br-[0.25rem]'
+                                        : 'bg-white text-[#1B3FA0] border border-[#1B3FA0]/10 rounded-[1.25rem] rounded-bl-[0.25rem]'
                                         }`}
                                 >
                                     {msg.body}

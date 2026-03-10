@@ -106,18 +106,18 @@ export default async function CompanyDetailPage({ params }: Props) {
                                         Verified Business
                                     </Badge>
                                 )}
-                                <Badge variant="secondary" className="flex items-center gap-1 bg-[#123C69]/5 text-[#123C69] border-none font-bold">
+                                <Badge variant="secondary" className="flex items-center gap-1 bg-[#1B3FA0]/5 text-[#1B3FA0] border-none font-bold">
                                     <BriefcaseBusiness className="h-3 w-3" />
                                     {openJobs.length} open {openJobs.length === 1 ? "role" : "roles"}
                                 </Badge>
                                 {company.industry && (
-                                    <Badge variant="outline" className="flex items-center gap-1 border-[#123C69]/20 text-[#123C69]/70">
+                                    <Badge variant="outline" className="flex items-center gap-1 border-[#1B3FA0]/20 text-[#1B3FA0]/70">
                                         <Activity className="h-3 w-3" />
                                         {company.industry}
                                     </Badge>
                                 )}
                                 {company.company_size && (
-                                    <Badge variant="outline" className="flex items-center gap-1 border-[#123C69]/20 text-[#123C69]/70">
+                                    <Badge variant="outline" className="flex items-center gap-1 border-[#1B3FA0]/20 text-[#1B3FA0]/70">
                                         <Users className="h-3 w-3" />
                                         {company.company_size} employees
                                     </Badge>
@@ -133,7 +133,7 @@ export default async function CompanyDetailPage({ params }: Props) {
                                         href={company.website}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center gap-1 text-sm text-[#AC3B61] hover:underline font-bold"
+                                        className="flex items-center gap-1 text-sm text-[#3D6EFF] hover:underline font-bold"
                                     >
                                         <Globe className="h-3.5 w-3.5" />
                                         {new URL(company.website).hostname.replace("www.", "")}

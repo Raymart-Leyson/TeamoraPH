@@ -29,54 +29,54 @@ export default async function Home() {
     return (
         <div className="flex flex-col min-h-[calc(100vh-4rem)]">
             {/* ── Anti-Gravity Hero ─────────────────────────────────────────── */}
-            <section className="relative flex flex-col items-center justify-center text-center px-4 py-12 bg-[#EEE2DC] overflow-hidden min-h-[70vh]">
-                {/* Floating Blobs (Peach & Ruby) */}
-                <div className="absolute top-[-10%] left-[-10%] w-[30rem] h-[30rem] bg-[#EDC7B7] rounded-full mix-blend-multiply blur-3xl opacity-70 animate-float" style={{ animationDuration: '8s' }} />
-                <div className="absolute top-[20%] right-[-5%] w-[35rem] h-[35rem] bg-[#AC3B61] rounded-full mix-blend-multiply blur-[120px] opacity-40 animate-float" style={{ animationDuration: '10s', animationDelay: '2s' }} />
-                <div className="absolute bottom-[-10%] left-[20%] w-[25rem] h-[25rem] bg-[#EDC7B7] rounded-full mix-blend-multiply blur-3xl opacity-60 animate-float" style={{ animationDuration: '7s', animationDelay: '1s' }} />
+            <section className="relative flex flex-col items-center justify-center text-center px-4 py-12 bg-[#F8F9FF] overflow-hidden min-h-[70vh]">
+                {/* Floating Blobs (Blue & Platinum) */}
+                <div className="absolute top-[-10%] left-[-10%] w-[30rem] h-[30rem] bg-[#A8C4FF] rounded-full mix-blend-multiply blur-3xl opacity-70 animate-float" style={{ animationDuration: '8s' }} />
+                <div className="absolute top-[20%] right-[-5%] w-[35rem] h-[35rem] bg-[#3D6EFF] rounded-full mix-blend-multiply blur-[120px] opacity-30 animate-float" style={{ animationDuration: '10s', animationDelay: '2s' }} />
+                <div className="absolute bottom-[-10%] left-[20%] w-[25rem] h-[25rem] bg-[#C8D8FF] rounded-full mix-blend-multiply blur-3xl opacity-60 animate-float" style={{ animationDuration: '7s', animationDelay: '1s' }} />
 
                 <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                     <Badge
                         variant="secondary"
-                        className="px-5 py-2 rounded-full border border-white/40 bg-white/40 backdrop-blur-md text-[#123C69] font-semibold tracking-wide mb-2 mx-auto inline-flex shadow-sm"
+                        className="px-5 py-2 rounded-full border border-white/40 bg-white/40 backdrop-blur-md text-[#1B3FA0] font-semibold tracking-wide mb-2 mx-auto inline-flex shadow-sm"
                     >
                         The #1 Premium Job Marketplace
                     </Badge>
 
-                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-wide text-[#123C69] max-w-4xl leading-[1.15]">
+                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-wide text-[#0D1B4B] max-w-4xl leading-[1.15]">
                         Discover Your Next <br className="hidden md:block" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#123C69] to-[#AC3B61]">Professional Journey</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B3FA0] to-[#3D6EFF]">Professional Journey</span>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-[#123C69]/80 max-w-2xl mx-auto tracking-wide font-medium leading-relaxed">
+                    <p className="text-lg md:text-xl text-[#0D1B4B]/80 max-w-2xl mx-auto tracking-wide font-medium leading-relaxed">
                         Join an exclusive network of top-tier talent and forward-thinking companies. Step into a world of curated opportunities designed to elevate your career.
                     </p>
 
                     {/* High-conversion search bar */}
                     <form action="/jobs" method="GET" className="w-full max-w-4xl mx-auto mt-8 bg-white/40 backdrop-blur-xl border border-white/30 shadow-2xl rounded-2xl sm:rounded-full p-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-0 transition-transform hover:scale-[1.01] duration-300">
                         <div className="flex-1 flex items-center w-full sm:w-auto px-4">
-                            <BriefcaseBusiness className="h-6 w-6 text-[#123C69]/50 shrink-0" />
+                            <BriefcaseBusiness className="h-6 w-6 text-[#1B3FA0]/50 shrink-0" />
                             <input
                                 type="text"
                                 name="q"
                                 placeholder="Job title, skill, or keyword..."
-                                className="w-full bg-transparent px-4 py-4 outline-none text-[#123C69] placeholder:text-[#123C69]/60 font-medium tracking-wide text-lg"
+                                className="w-full bg-transparent px-4 py-4 outline-none text-[#0D1B4B] placeholder:text-[#0D1B4B]/60 font-medium tracking-wide text-lg"
                             />
                         </div>
                         <div className="h-10 w-px bg-white/40 hidden sm:block mx-4"></div>
                         <div className="flex-1 flex items-center w-full sm:w-auto px-4">
-                            <MapPin className="h-6 w-6 text-[#123C69]/50 shrink-0" />
+                            <MapPin className="h-6 w-6 text-[#1B3FA0]/50 shrink-0" />
                             <input
                                 type="text"
                                 name="location"
                                 placeholder="City, state, or Remote"
-                                className="w-full bg-transparent px-4 py-4 outline-none text-[#123C69] placeholder:text-[#123C69]/60 font-medium tracking-wide text-lg"
+                                className="w-full bg-transparent px-4 py-4 outline-none text-[#0D1B4B] placeholder:text-[#0D1B4B]/60 font-medium tracking-wide text-lg"
                             />
                         </div>
                         <Button
                             type="submit"
                             size="lg"
-                            className="w-full sm:w-auto bg-[#123C69] hover:bg-[#123C69]/90 text-white rounded-full px-10 py-7 text-lg tracking-wider font-semibold shadow-xl shrink-0 transition-transform hover:-translate-y-1"
+                            className="w-full sm:w-auto bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white rounded-full px-10 py-7 text-lg tracking-wider font-semibold shadow-xl shrink-0 transition-transform hover:-translate-y-1"
                         >
                             Search Roles
                         </Button>
@@ -89,29 +89,29 @@ export default async function Home() {
                                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 const company = Array.isArray(job.company) ? job.company[0] : (job.company as any);
                                 return (
-                                    <Link key={job.id} href={`/jobs/${job.id}`} className="block focus:outline-none focus:ring-2 focus:ring-[#123C69] rounded-3xl">
+                                    <Link key={job.id} href={`/jobs/${job.id}`} className="block focus:outline-none focus:ring-2 focus:ring-[#1B3FA0] rounded-3xl">
                                         <div className="h-full bg-white/40 backdrop-blur-xl border border-white/30 shadow-2xl rounded-3xl p-6 hover:bg-white/50 transition-colors group relative overflow-hidden">
                                             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                                             <div className="flex items-start justify-between mb-5 relative z-10">
-                                                <div className="h-14 w-14 rounded-2xl bg-white/60 shadow-sm flex items-center justify-center text-[#123C69]">
+                                                <div className="h-14 w-14 rounded-2xl bg-white/60 shadow-sm flex items-center justify-center text-[#1B3FA0]">
                                                     <Building2 className="h-7 w-7" />
                                                 </div>
                                                 {job.job_type && (
-                                                    <Badge variant="outline" className="border-white/50 text-[#123C69] bg-white/30 backdrop-blur-md rounded-full px-3 py-1 tracking-wide font-medium shadow-sm">
+                                                    <Badge variant="outline" className="border-white/50 text-[#1B3FA0] bg-white/30 backdrop-blur-md rounded-full px-3 py-1 tracking-wide font-medium shadow-sm">
                                                         {job.job_type}
                                                     </Badge>
                                                 )}
                                             </div>
-                                            <h3 className="text-xl font-bold tracking-wide text-[#123C69] mb-2 group-hover:text-[#AC3B61] transition-colors line-clamp-1 relative z-10">{job.title}</h3>
-                                            <p className="text-[#123C69]/80 font-medium tracking-wide mb-6 flex items-center gap-2 relative z-10">
+                                            <h3 className="text-xl font-bold tracking-wide text-[#0D1B4B] mb-2 group-hover:text-[#3D6EFF] transition-colors line-clamp-1 relative z-10">{job.title}</h3>
+                                            <p className="text-[#0D1B4B]/80 font-medium tracking-wide mb-6 flex items-center gap-2 relative z-10">
                                                 {company?.name ?? "Company"}
-                                                {job.location && <span className="text-sm border-l border-[#123C69]/20 pl-2 line-clamp-1">{job.location}</span>}
+                                                {job.location && <span className="text-sm border-l border-[#0D1B4B]/20 pl-2 line-clamp-1">{job.location}</span>}
                                             </p>
                                             <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/30 relative z-10">
-                                                <span className="text-[15px] font-bold tracking-wide text-[#AC3B61]">
+                                                <span className="text-[15px] font-bold tracking-wide text-[#1B3FA0]">
                                                     {job.salary_range || 'Competitive'}
                                                 </span>
-                                                <span className="text-[#123C69] font-bold tracking-wide text-[15px] flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
+                                                <span className="text-[#0D1B4B] font-bold tracking-wide text-[15px] flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
                                                     Apply <ArrowRight className="h-4 w-4" />
                                                 </span>
                                             </div>

@@ -69,9 +69,9 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
         return (
             <Card className="border-0 shadow-lg bg-white/60 backdrop-blur-xl overflow-hidden rounded-[2rem]">
                 {/* Beautiful "Summary" UI Headings */}
-                <div className="relative pt-8 pb-6 px-4 sm:px-8 md:px-10 border-b border-[#123C69]/10 bg-gradient-to-br from-white/90 to-white/40 shadow-sm flex flex-col md:flex-row gap-6 md:gap-8 items-start justify-between">
+                <div className="relative pt-8 pb-6 px-4 sm:px-8 md:px-10 border-b border-[#1B3FA0]/10 bg-gradient-to-br from-white/90 to-white/40 shadow-sm flex flex-col md:flex-row gap-6 md:gap-8 items-start justify-between">
                     <div className="flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left w-full">
-                        <div className="h-32 w-32 shrink-0 rounded-[2rem] bg-white/80 flex items-center justify-center border-4 border-white shadow-xl overflow-hidden font-bold text-4xl text-[#123C69]">
+                        <div className="h-32 w-32 shrink-0 rounded-[2rem] bg-white/80 flex items-center justify-center border-4 border-white shadow-xl overflow-hidden font-bold text-4xl text-[#1B3FA0]">
                             {defaults.avatar_url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img src={defaults.avatar_url} alt="Avatar" className="object-cover w-full h-full" />
@@ -80,27 +80,27 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                             )}
                         </div>
                         <div className="space-y-1.5 flex-1 pt-2">
-                            <h3 className="text-3xl font-extrabold text-[#123C69] tracking-tight">{defaults.first_name || "New Candidate"} {defaults.last_name || ""}</h3>
-                            <p className="text-xl text-[#AC3B61] font-semibold flex items-center justify-center md:justify-start gap-2">
+                            <h3 className="text-3xl font-extrabold text-[#1B3FA0] tracking-tight">{defaults.first_name || "New Candidate"} {defaults.last_name || ""}</h3>
+                            <p className="text-xl text-[#3D6EFF] font-semibold flex items-center justify-center md:justify-start gap-2">
                                 <BriefcaseBusiness className="h-5 w-5" />
                                 {defaults.headline || "Professional Headline Not Set"}
                             </p>
-                            <p className="text-[#123C69]/60 font-medium flex flex-wrap justify-center md:justify-start items-center gap-x-2 gap-y-1 text-sm pt-2">
-                                <span className="flex items-center gap-1 bg-[#123C69]/5 px-3 py-1 rounded-full"><MapPin className="h-4 w-4" /> {defaults.location_city || "City"}, {defaults.location_country || "Country"}</span>
-                                <span className="bg-[#123C69]/5 px-3 py-1 rounded-full">{formatTimezone(defaults.timezone)}</span>
-                                <span className="bg-[#123C69]/5 px-3 py-1 rounded-full font-bold">{defaults.primary_role || "Role"}</span>
+                            <p className="text-[#1B3FA0]/60 font-medium flex flex-wrap justify-center md:justify-start items-center gap-x-2 gap-y-1 text-sm pt-2">
+                                <span className="flex items-center gap-1 bg-[#1B3FA0]/5 px-3 py-1 rounded-full"><MapPin className="h-4 w-4" /> {defaults.location_city || "City"}, {defaults.location_country || "Country"}</span>
+                                <span className="bg-[#1B3FA0]/5 px-3 py-1 rounded-full">{formatTimezone(defaults.timezone)}</span>
+                                <span className="bg-[#1B3FA0]/5 px-3 py-1 rounded-full font-bold">{defaults.primary_role || "Role"}</span>
                             </p>
                         </div>
                     </div>
 
-                    <Button onClick={() => setIsEditing(true)} variant="outline" className="border-[#123C69]/20 text-[#123C69] font-bold hover:bg-[#123C69]/5 rounded-xl px-6 h-12 shadow-sm shrink-0 whitespace-nowrap hidden sm:flex">
+                    <Button onClick={() => setIsEditing(true)} variant="outline" className="border-[#1B3FA0]/20 text-[#1B3FA0] font-bold hover:bg-[#1B3FA0]/5 rounded-xl px-6 h-12 shadow-sm shrink-0 whitespace-nowrap hidden sm:flex">
                         <Pencil className="h-4 w-4 mr-2" />
                         Edit Profile
                     </Button>
                 </div>
                 {/* Mobile edit button */}
-                <div className="p-4 sm:hidden bg-white/40 flex justify-center border-b border-[#123C69]/10">
-                    <Button onClick={() => setIsEditing(true)} variant="outline" className="w-full text-[#123C69] font-bold border-[#123C69]/20">
+                <div className="p-4 sm:hidden bg-white/40 flex justify-center border-b border-[#1B3FA0]/10">
+                    <Button onClick={() => setIsEditing(true)} variant="outline" className="w-full text-[#1B3FA0] font-bold border-[#1B3FA0]/20">
                         <Pencil className="h-4 w-4 mr-2" /> Edit Profile
                     </Button>
                 </div>
@@ -115,8 +115,8 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
 
                     {/* About */}
                     <div className="space-y-4">
-                        <h4 className="text-sm font-bold text-[#123C69]/50 uppercase tracking-widest flex items-center gap-2"><Globe className="h-4 w-4" /> Professional Summary</h4>
-                        <p className="text-[#123C69]/80 leading-relaxed whitespace-pre-wrap font-medium text-lg bg-white/30 p-6 rounded-[2rem] shadow-inner border border-white/40">
+                        <h4 className="text-sm font-bold text-[#1B3FA0]/50 uppercase tracking-widest flex items-center gap-2"><Globe className="h-4 w-4" /> Professional Summary</h4>
+                        <p className="text-[#1B3FA0]/80 leading-relaxed whitespace-pre-wrap font-medium text-lg bg-white/30 p-6 rounded-[2rem] shadow-inner border border-white/40">
                             {defaults.bio || "Write a quick bio about your experience..."}
                         </p>
                     </div>
@@ -124,19 +124,19 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                     {/* Meta Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="bg-white/40 shadow-sm border border-white/50 p-6 rounded-[2rem] space-y-2">
-                            <h4 className="text-xs font-bold text-[#123C69]/50 uppercase tracking-widest">Availability</h4>
-                            <p className="text-lg text-[#123C69] font-bold">{defaults.availability || "Not specificed"}</p>
+                            <h4 className="text-xs font-bold text-[#1B3FA0]/50 uppercase tracking-widest">Availability</h4>
+                            <p className="text-lg text-[#1B3FA0] font-bold">{defaults.availability || "Not specificed"}</p>
                         </div>
                         <div className="bg-white/40 shadow-sm border border-white/50 p-6 rounded-[2rem] space-y-2">
-                            <h4 className="text-xs font-bold text-[#123C69]/50 uppercase tracking-widest">Location</h4>
-                            <p className="text-lg text-[#123C69] font-bold">{defaults.location_city || "City"}, {defaults.location_country || "Country"}</p>
+                            <h4 className="text-xs font-bold text-[#1B3FA0]/50 uppercase tracking-widest">Location</h4>
+                            <p className="text-lg text-[#1B3FA0] font-bold">{defaults.location_city || "City"}, {defaults.location_country || "Country"}</p>
                         </div>
                     </div>
 
                     {/* Links */}
-                    <div className="border-t border-[#123C69]/10 pt-8 flex gap-4 w-full flex-wrap">
+                    <div className="border-t border-[#1B3FA0]/10 pt-8 flex gap-4 w-full flex-wrap">
                         {defaults.portfolio_url && (
-                            <a href={defaults.portfolio_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#123C69] text-white px-5 py-2.5 rounded-full font-bold tracking-wide shadow-md hover:scale-105 transition-transform">
+                            <a href={defaults.portfolio_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#1B3FA0] text-white px-5 py-2.5 rounded-full font-bold tracking-wide shadow-md hover:scale-105 transition-transform">
                                 <Globe className="h-4 w-4" /> Portfolio
                             </a>
                         )}
@@ -151,7 +151,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                             </a>
                         )}
                         {defaults.resume_url && (
-                            <a href={defaults.resume_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#AC3B61] text-white px-5 py-2.5 rounded-full font-bold tracking-wide shadow-md hover:scale-105 transition-transform">
+                            <a href={defaults.resume_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#3D6EFF] text-white px-5 py-2.5 rounded-full font-bold tracking-wide shadow-md hover:scale-105 transition-transform">
                                 <FileText className="h-4 w-4" /> View Resume
                             </a>
                         )}
@@ -165,17 +165,17 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
         <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden">
             <form action={formAction}>
                 <CardHeader>
-                    <CardTitle className="text-2xl text-[#123C69]">Personal Details</CardTitle>
-                    <CardDescription className="text-[#123C69]/70 text-base">
+                    <CardTitle className="text-2xl text-[#1B3FA0]">Personal Details</CardTitle>
+                    <CardDescription className="text-[#1B3FA0]/70 text-base">
                         This information is visible to employers when you apply.
                     </CardDescription>
                 </CardHeader>
 
                 <CardContent className="space-y-6">
                     {/* Avatar Upload / Preview Section */}
-                    <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-white/40 border border-[#123C69]/10 rounded-2xl shadow-sm">
+                    <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-white/40 border border-[#1B3FA0]/10 rounded-2xl shadow-sm">
                         <div className="relative group cursor-pointer" onClick={() => document.getElementById("avatar_upload")?.click()}>
-                            <div className="h-28 w-28 rounded-full bg-white/60 flex items-center justify-center border-2 border-dashed border-[#123C69]/30 font-bold text-4xl text-[#123C69] uppercase shadow-inner overflow-hidden relative">
+                            <div className="h-28 w-28 rounded-full bg-white/60 flex items-center justify-center border-2 border-dashed border-[#1B3FA0]/30 font-bold text-4xl text-[#1B3FA0] uppercase shadow-inner overflow-hidden relative">
                                 {avatarUrl ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={avatarUrl} alt="Avatar Preview" className="object-cover w-full h-full absolute inset-0" />
@@ -183,14 +183,14 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                                     defaults.first_name ? defaults.first_name.substring(0, 2) : "ME"
                                 )}
                                 {/* Edit Overlay */}
-                                <div className="absolute inset-0 bg-[#123C69]/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
+                                <div className="absolute inset-0 bg-[#1B3FA0]/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
                                     <Pencil className="h-6 w-6 mb-1" />
                                     <span className="text-xs font-bold tracking-wider">EDIT</span>
                                 </div>
                             </div>
                         </div>
                         <div className="flex-1 space-y-2 w-full">
-                            <Label htmlFor="avatar_upload" className="text-[#123C69] font-semibold">Upload Profile Photo</Label>
+                            <Label htmlFor="avatar_upload" className="text-[#1B3FA0] font-semibold">Upload Profile Photo</Label>
                             <Input
                                 id="avatar_upload"
                                 name="avatar_upload"
@@ -198,9 +198,9 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                                 accept="image/*"
                                 disabled={isPending}
                                 onChange={handleImageChange}
-                                className="shadow-inner cursor-pointer file:text-[#123C69] file:font-semibold file:bg-[#123C69]/10 file:rounded-md file:border-0 hover:file:bg-[#123C69]/20"
+                                className="shadow-inner cursor-pointer file:text-[#1B3FA0] file:font-semibold file:bg-[#1B3FA0]/10 file:rounded-md file:border-0 hover:file:bg-[#1B3FA0]/20"
                             />
-                            <p className="text-xs text-[#123C69]/60 font-medium pt-1">Upload a professional headshot (JPG, PNG)</p>
+                            <p className="text-xs text-[#1B3FA0]/60 font-medium pt-1">Upload a professional headshot (JPG, PNG)</p>
 
                             {/* Hidden input to pass existing avatar_url if no new file is selected */}
                             <input type="hidden" name="avatar_url" value={defaults.avatar_url} />
@@ -221,7 +221,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="first_name" className="text-[#123C69] font-semibold">First Name *</Label>
+                            <Label htmlFor="first_name" className="text-[#1B3FA0] font-semibold">First Name *</Label>
                             <Input
                                 id="first_name"
                                 name="first_name"
@@ -233,7 +233,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="last_name" className="text-[#123C69] font-semibold">Last Name *</Label>
+                            <Label htmlFor="last_name" className="text-[#1B3FA0] font-semibold">Last Name *</Label>
                             <Input
                                 id="last_name"
                                 name="last_name"
@@ -247,7 +247,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="headline" className="text-[#123C69] font-semibold">Professional Headline *</Label>
+                        <Label htmlFor="headline" className="text-[#1B3FA0] font-semibold">Professional Headline *</Label>
                         <Input
                             id="headline"
                             name="headline"
@@ -261,7 +261,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="primary_role" className="text-[#123C69] font-semibold">Primary Role *</Label>
+                            <Label htmlFor="primary_role" className="text-[#1B3FA0] font-semibold">Primary Role *</Label>
                             <Input
                                 id="primary_role"
                                 name="primary_role"
@@ -273,12 +273,12 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="timezone" className="text-[#123C69] font-semibold">Timezone *</Label>
+                            <Label htmlFor="timezone" className="text-[#1B3FA0] font-semibold">Timezone *</Label>
                             <Select name="timezone" defaultValue={defaults.timezone || undefined} disabled={isPending} required>
                                 <SelectTrigger id="timezone" className="shadow-inner bg-white">
                                     <SelectValue placeholder="Select your timezone" />
                                 </SelectTrigger>
-                                <SelectContent className="max-h-[300px] bg-white shadow-xl border-[#123C69]/20">
+                                <SelectContent className="max-h-[300px] bg-white shadow-xl border-[#1B3FA0]/20">
                                     {TIMEZONES.map((tz) => (
                                         <SelectItem key={tz.value} value={tz.value}>
                                             {tz.label}
@@ -288,7 +288,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="availability" className="text-[#123C69] font-semibold">Availability *</Label>
+                            <Label htmlFor="availability" className="text-[#1B3FA0] font-semibold">Availability *</Label>
                             <Input
                                 id="availability"
                                 name="availability"
@@ -303,7 +303,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="location_country" className="text-[#123C69] font-semibold">Country</Label>
+                            <Label htmlFor="location_country" className="text-[#1B3FA0] font-semibold">Country</Label>
                             <Input
                                 id="location_country"
                                 name="location_country"
@@ -314,7 +314,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="location_city" className="text-[#123C69] font-semibold">City</Label>
+                            <Label htmlFor="location_city" className="text-[#1B3FA0] font-semibold">City</Label>
                             <Input
                                 id="location_city"
                                 name="location_city"
@@ -327,7 +327,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="bio" className="text-[#123C69] font-semibold">Professional Summary</Label>
+                        <Label htmlFor="bio" className="text-[#1B3FA0] font-semibold">Professional Summary</Label>
                         <Textarea
                             id="bio"
                             name="bio"
@@ -339,10 +339,10 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                     </div>
 
                     <div className="space-y-4 pt-4">
-                        <Label htmlFor="resume_upload" className="text-[#123C69] font-semibold text-lg flex items-center gap-2">
+                        <Label htmlFor="resume_upload" className="text-[#1B3FA0] font-semibold text-lg flex items-center gap-2">
                             Resume / CV
                         </Label>
-                        <div className="flex flex-col md:flex-row items-center gap-4 bg-[#AC3B61]/5 p-6 rounded-2xl border border-[#AC3B61]/10">
+                        <div className="flex flex-col md:flex-row items-center gap-4 bg-[#3D6EFF]/5 p-6 rounded-2xl border border-[#3D6EFF]/10">
                             <Input
                                 id="resume_upload"
                                 name="resume_upload"
@@ -352,12 +352,12 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                                 className="shadow-inner cursor-pointer bg-white"
                             />
                             <div className="flex flex-col flex-1">
-                                <p className="text-sm font-bold text-[#AC3B61]">Upload PDF or Word Document</p>
-                                <p className="text-xs text-[#123C69]/60">Max size 5MB. This will replace your current resume.</p>
+                                <p className="text-sm font-bold text-[#3D6EFF]">Upload PDF or Word Document</p>
+                                <p className="text-xs text-[#1B3FA0]/60">Max size 5MB. This will replace your current resume.</p>
                             </div>
                         </div>
                         {defaults.resume_url && (
-                            <p className="text-xs text-[#123C69]/60 flex items-center gap-2">
+                            <p className="text-xs text-[#1B3FA0]/60 flex items-center gap-2">
                                 <CheckCircle2 className="h-3 w-3 text-green-500" /> Current resume is on file.
                             </p>
                         )}
@@ -366,11 +366,11 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
 
 
 
-                    <div className="pt-6 mt-6 border-t border-[#123C69]/10 space-y-4">
-                        <h3 className="text-xl font-bold tracking-tight text-[#123C69]">Links & Socials</h3>
+                    <div className="pt-6 mt-6 border-t border-[#1B3FA0]/10 space-y-4">
+                        <h3 className="text-xl font-bold tracking-tight text-[#1B3FA0]">Links & Socials</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="portfolio_url" className="text-[#123C69] font-semibold">Portfolio Site</Label>
+                                <Label htmlFor="portfolio_url" className="text-[#1B3FA0] font-semibold">Portfolio Site</Label>
                                 <Input
                                     id="portfolio_url"
                                     name="portfolio_url"
@@ -382,7 +382,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="linkedin_url" className="text-[#123C69] font-semibold">LinkedIn</Label>
+                                <Label htmlFor="linkedin_url" className="text-[#1B3FA0] font-semibold">LinkedIn</Label>
                                 <Input
                                     id="linkedin_url"
                                     name="linkedin_url"
@@ -394,7 +394,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="github_url" className="text-[#123C69] font-semibold">GitHub</Label>
+                                <Label htmlFor="github_url" className="text-[#1B3FA0] font-semibold">GitHub</Label>
                                 <Input
                                     id="github_url"
                                     name="github_url"
@@ -409,11 +409,11 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                     </div>
                 </CardContent>
 
-                <CardFooter className="flex justify-end gap-3 border-t border-[#123C69]/10 pt-6 pb-6 bg-white/40">
-                    <Button type="button" variant="outline" className="border-[#123C69]/20 text-[#123C69] font-bold shadow-sm" onClick={() => setIsEditing(false)} disabled={isPending}>
+                <CardFooter className="flex justify-end gap-3 border-t border-[#1B3FA0]/10 pt-6 pb-6 bg-white/40">
+                    <Button type="button" variant="outline" className="border-[#1B3FA0]/20 text-[#1B3FA0] font-bold shadow-sm" onClick={() => setIsEditing(false)} disabled={isPending}>
                         Cancel
                     </Button>
-                    <Button type="submit" disabled={isPending} id="save-candidate-profile-btn" className="bg-[#123C69] hover:bg-[#123C69]/90 text-white shadow-md hover:-translate-y-0.5 transition-transform font-bold tracking-wide px-8">
+                    <Button type="submit" disabled={isPending} id="save-candidate-profile-btn" className="bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white shadow-md hover:-translate-y-0.5 transition-transform font-bold tracking-wide px-8">
                         {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Save Changes
                     </Button>

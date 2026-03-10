@@ -46,14 +46,14 @@ export default async function AdminJobsPage({
     return (
         <div className="space-y-10">
             <div>
-                <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">Job Moderation</h1>
-                <p className="text-[#123C69]/70 font-bold mt-2">Review and approve job postings before they go live.</p>
+                <h1 className="text-2xl sm:text-4xl font-black text-[#1B3FA0] tracking-tight">Job Moderation</h1>
+                <p className="text-[#1B3FA0]/70 font-bold mt-2">Review and approve job postings before they go live.</p>
             </div>
 
             <div className="grid gap-6">
                 {jobs && jobs.length > 0 ? (
                     jobs.map((job: any) => (
-                        <Card key={job.id} className={`border-none shadow-xl rounded-[2.5rem] overflow-hidden backdrop-blur-md transition-all ${selectedId === job.id ? 'ring-4 ring-[#AC3B61]' : ''} ${job.status === 'flagged' ? 'bg-red-50/80 ring-2 ring-red-500/30' : 'bg-white/60'}`}>
+                        <Card key={job.id} className={`border-none shadow-xl rounded-[2.5rem] overflow-hidden backdrop-blur-md transition-all ${selectedId === job.id ? 'ring-4 ring-[#3D6EFF]' : ''} ${job.status === 'flagged' ? 'bg-red-50/80 ring-2 ring-red-500/30' : 'bg-white/60'}`}>
                             <CardContent className="p-8">
                                 <div className="flex flex-col md:flex-row gap-8">
                                     {/* Company Info */}
@@ -66,8 +66,8 @@ export default async function AdminJobsPage({
                                             )}
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="font-black text-[#123C69] truncate">{job.company.name}</p>
-                                            <p className="text-xs font-bold text-[#123C69]/50 truncate">{job.author?.email || 'Unknown User'}</p>
+                                            <p className="font-black text-[#1B3FA0] truncate">{job.company.name}</p>
+                                            <p className="text-xs font-bold text-[#1B3FA0]/50 truncate">{job.author?.email || 'Unknown User'}</p>
                                         </div>
                                     </div>
 
@@ -75,7 +75,7 @@ export default async function AdminJobsPage({
                                     <div className="flex-1 space-y-4">
                                         <div className="flex justify-between items-start gap-4">
                                             <div>
-                                                <h3 className="text-2xl font-black text-[#123C69] leading-tight flex items-center gap-3">
+                                                <h3 className="text-2xl font-black text-[#1B3FA0] leading-tight flex items-center gap-3">
                                                     {job.title}
                                                     {job.status === 'flagged' && (
                                                         <Badge className="bg-red-500 text-white font-black rounded-lg px-3 py-1 animate-pulse">
@@ -83,7 +83,7 @@ export default async function AdminJobsPage({
                                                         </Badge>
                                                     )}
                                                 </h3>
-                                                <div className="flex flex-wrap items-center gap-4 mt-2 text-xs font-bold text-[#123C69]/60">
+                                                <div className="flex flex-wrap items-center gap-4 mt-2 text-xs font-bold text-[#1B3FA0]/60">
                                                     <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {job.location || 'Remote'}</span>
                                                     <span className="flex items-center gap-1.5"><BriefcaseBusiness className="w-3.5 h-3.5" /> {job.job_type || 'Full-time'}</span>
                                                     <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {new Date(job.created_at).toLocaleDateString()}</span>
@@ -105,7 +105,7 @@ export default async function AdminJobsPage({
                                                 "use server";
                                                 await approveJobAction(job.id);
                                             }}>
-                                                <Button type="submit" className="bg-[#123C69] hover:bg-[#123C69]/90 text-white font-bold rounded-2xl px-8 shadow-md">
+                                                <Button type="submit" className="bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-bold rounded-2xl px-8 shadow-md">
                                                     <CheckCircle2 className="w-4 h-4 mr-2" /> Approve Post
                                                 </Button>
                                             </form>
@@ -120,10 +120,10 @@ export default async function AdminJobsPage({
                 ) : (
                     <div className="bg-white/30 backdrop-blur-sm border-2 border-dashed border-white/40 rounded-[3rem] p-20 flex flex-col items-center justify-center text-center">
                         <div className="bg-white/60 p-6 rounded-full mb-6">
-                            <Info className="w-12 h-12 text-[#123C69]/20" />
+                            <Info className="w-12 h-12 text-[#1B3FA0]/20" />
                         </div>
-                        <h2 className="text-2xl font-black text-[#123C69]">All caught up!</h2>
-                        <p className="text-[#123C69]/50 font-bold mt-2">There are no job postings waiting for review.</p>
+                        <h2 className="text-2xl font-black text-[#1B3FA0]">All caught up!</h2>
+                        <p className="text-[#1B3FA0]/50 font-bold mt-2">There are no job postings waiting for review.</p>
                     </div>
                 )}
             </div>
@@ -145,10 +145,10 @@ function RejectDialog({ jobId }: { jobId: string }) {
                     <XCircle className="w-4 h-4 mr-2" /> Reject
                 </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-[2rem] border-none shadow-2xl bg-[#EEE2DC]">
+            <DialogContent className="rounded-[2rem] border-none shadow-2xl bg-[#F8F9FF]">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-black text-[#123C69]">Reject Job Posting</DialogTitle>
-                    <DialogDescription className="font-bold text-[#123C69]/60">
+                    <DialogTitle className="text-2xl font-black text-[#1B3FA0]">Reject Job Posting</DialogTitle>
+                    <DialogDescription className="font-bold text-[#1B3FA0]/60">
                         Please provide a reason for the rejection. This will be shown to the employer.
                     </DialogDescription>
                 </DialogHeader>

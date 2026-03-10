@@ -74,17 +74,17 @@ export default async function AuditLogsPage({
         <div className="space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">Audit Logs</h1>
-                    <p className="text-[#123C69]/70 font-bold mt-2">Track all moderation actions across the platform.</p>
+                    <h1 className="text-2xl sm:text-4xl font-black text-[#1B3FA0] tracking-tight">Audit Logs</h1>
+                    <p className="text-[#1B3FA0]/70 font-bold mt-2">Track all moderation actions across the platform.</p>
                 </div>
 
                 <form className="relative group w-full md:w-96">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#123C69] transition-colors" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#1B3FA0] transition-colors" />
                     <Input
                         name="q"
                         defaultValue={query}
                         placeholder="Search by action (approve, reject)..."
-                        className="pl-12 h-14 bg-white/60 backdrop-blur-md border-none shadow-xl rounded-2xl font-bold placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-[#123C69]/20 transition-all"
+                        className="pl-12 h-14 bg-white/60 backdrop-blur-md border-none shadow-xl rounded-2xl font-bold placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-[#1B3FA0]/20 transition-all"
                     />
                 </form>
             </div>
@@ -96,7 +96,7 @@ export default async function AuditLogsPage({
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
-                                        <tr className="bg-[#123C69]/5 text-[#123C69]/40 uppercase text-[10px] font-black tracking-widest">
+                                        <tr className="bg-[#1B3FA0]/5 text-[#1B3FA0]/40 uppercase text-[10px] font-black tracking-widest">
                                             <th className="px-8 py-5">Date</th>
                                             <th className="px-8 py-5">Moderator</th>
                                             <th className="px-8 py-5">Type</th>
@@ -107,21 +107,21 @@ export default async function AuditLogsPage({
                                     <tbody className="divide-y divide-white/20">
                                         {logs.map((log) => (
                                             <tr key={log.id} className="hover:bg-white/40 transition-colors group">
-                                                <td className="px-8 py-5 text-sm font-bold text-[#123C69]/60">
+                                                <td className="px-8 py-5 text-sm font-bold text-[#1B3FA0]/60">
                                                     {new Date(log.created_at).toLocaleString()}
                                                 </td>
                                                 <td className="px-8 py-5">
-                                                    <div className="font-black text-[#123C69]">{log.moderator?.email || 'Unknown'}</div>
-                                                    <div className="text-[10px] font-bold text-[#123C69]/40 uppercase tracking-tighter">
+                                                    <div className="font-black text-[#1B3FA0]">{log.moderator?.email || 'Unknown'}</div>
+                                                    <div className="text-[10px] font-bold text-[#1B3FA0]/40 uppercase tracking-tighter">
                                                         {log.moderator?.role || 'Deleted User'}
                                                     </div>
                                                 </td>
                                                 <td className="px-8 py-5">
-                                                    <div className="inline-flex items-center gap-1.5 font-bold text-[#123C69]/80 capitalize">
+                                                    <div className="inline-flex items-center gap-1.5 font-bold text-[#1B3FA0]/80 capitalize">
                                                         {getActionTypeIcon(log.target_type)}
                                                         {log.target_type}
                                                     </div>
-                                                    <div className="text-[10px] font-bold text-[#123C69]/40 mt-1 truncate max-w-[120px]" title={log.target_id}>
+                                                    <div className="text-[10px] font-bold text-[#1B3FA0]/40 mt-1 truncate max-w-[120px]" title={log.target_id}>
                                                         {log.target_id.split('-')[0]}...
                                                     </div>
                                                 </td>
@@ -130,7 +130,7 @@ export default async function AuditLogsPage({
                                                         {log.action}
                                                     </div>
                                                 </td>
-                                                <td className="px-8 py-5 text-sm font-semibold text-[#123C69]/80 max-w-xs truncate">
+                                                <td className="px-8 py-5 text-sm font-semibold text-[#1B3FA0]/80 max-w-xs truncate">
                                                     {log.reason || <span className="text-slate-400 italic">No reason provided</span>}
                                                 </td>
                                             </tr>
@@ -142,16 +142,16 @@ export default async function AuditLogsPage({
                     </Card>
                 ) : (
                     <div className="bg-white/30 backdrop-blur-sm border-2 border-dashed border-white/40 rounded-[3rem] p-20 flex flex-col items-center justify-center text-center">
-                        <Database className="w-12 h-12 text-[#123C69]/20 mb-4" />
-                        <h2 className="text-2xl font-black text-[#123C69]">No logs found</h2>
-                        <p className="text-[#123C69]/50 font-bold mt-2">There are currently no moderation actions recorded.</p>
+                        <Database className="w-12 h-12 text-[#1B3FA0]/20 mb-4" />
+                        <h2 className="text-2xl font-black text-[#1B3FA0]">No logs found</h2>
+                        <p className="text-[#1B3FA0]/50 font-bold mt-2">There are currently no moderation actions recorded.</p>
                     </div>
                 )}
             </div>
 
             {/* Audit Logs */}
             <div>
-                <h2 className="text-2xl font-black text-[#123C69] flex items-center gap-2 mb-4">
+                <h2 className="text-2xl font-black text-[#1B3FA0] flex items-center gap-2 mb-4">
                     <ScrollText className="w-6 h-6 text-purple-600" /> System Audit Logs
                 </h2>
                 <div className="grid gap-4">
@@ -161,7 +161,7 @@ export default async function AuditLogsPage({
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="bg-[#123C69]/5 text-[#123C69]/40 uppercase text-[10px] font-black tracking-widest">
+                                            <tr className="bg-[#1B3FA0]/5 text-[#1B3FA0]/40 uppercase text-[10px] font-black tracking-widest">
                                                 <th className="px-8 py-5">Date</th>
                                                 <th className="px-8 py-5">Actor</th>
                                                 <th className="px-8 py-5">Type</th>
@@ -172,17 +172,17 @@ export default async function AuditLogsPage({
                                         <tbody className="divide-y divide-white/20">
                                             {auditLogs.map((log: any) => (
                                                 <tr key={log.id} className="hover:bg-white/40 transition-colors">
-                                                    <td className="px-8 py-5 text-sm font-bold text-[#123C69]/60">
+                                                    <td className="px-8 py-5 text-sm font-bold text-[#1B3FA0]/60">
                                                         {new Date(log.created_at).toLocaleString()}
                                                     </td>
                                                     <td className="px-8 py-5">
-                                                        <div className="font-black text-[#123C69]">{log.actor?.email || 'System'}</div>
-                                                        <div className="text-[10px] font-bold text-[#123C69]/40 uppercase">{log.actor?.role || ''}</div>
+                                                        <div className="font-black text-[#1B3FA0]">{log.actor?.email || 'System'}</div>
+                                                        <div className="text-[10px] font-bold text-[#1B3FA0]/40 uppercase">{log.actor?.role || ''}</div>
                                                     </td>
                                                     <td className="px-8 py-5">
-                                                        <div className="font-bold text-[#123C69]/80 capitalize">{log.target_type || '—'}</div>
+                                                        <div className="font-bold text-[#1B3FA0]/80 capitalize">{log.target_type || '—'}</div>
                                                         {log.target_id && (
-                                                            <div className="text-[10px] font-bold text-[#123C69]/40 mt-1 truncate max-w-[120px]">
+                                                            <div className="text-[10px] font-bold text-[#1B3FA0]/40 mt-1 truncate max-w-[120px]">
                                                                 {log.target_id.split('-')[0]}...
                                                             </div>
                                                         )}
@@ -192,7 +192,7 @@ export default async function AuditLogsPage({
                                                             {log.action}
                                                         </span>
                                                     </td>
-                                                    <td className="px-8 py-5 text-xs font-semibold text-[#123C69]/60 max-w-xs truncate">
+                                                    <td className="px-8 py-5 text-xs font-semibold text-[#1B3FA0]/60 max-w-xs truncate">
                                                         {log.details ? JSON.stringify(log.details) : <span className="text-slate-400 italic">—</span>}
                                                     </td>
                                                 </tr>
@@ -204,9 +204,9 @@ export default async function AuditLogsPage({
                         </Card>
                     ) : (
                         <div className="bg-white/30 backdrop-blur-sm border-2 border-dashed border-white/40 rounded-[3rem] p-12 flex flex-col items-center justify-center text-center">
-                            <ScrollText className="w-10 h-10 text-[#123C69]/20 mb-3" />
-                            <h2 className="text-xl font-black text-[#123C69]">No audit events</h2>
-                            <p className="text-[#123C69]/50 font-bold mt-1">System events will appear here.</p>
+                            <ScrollText className="w-10 h-10 text-[#1B3FA0]/20 mb-3" />
+                            <h2 className="text-xl font-black text-[#1B3FA0]">No audit events</h2>
+                            <p className="text-[#1B3FA0]/50 font-bold mt-1">System events will appear here.</p>
                         </div>
                     )}
                 </div>

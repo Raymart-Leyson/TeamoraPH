@@ -147,7 +147,7 @@ export function CameraCapture({
                         <Button
                             onClick={capture}
                             disabled={isLoading || !!error}
-                            className="bg-[#123C69] hover:bg-[#123C69]/90 text-white font-bold rounded-xl px-8"
+                            className="bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-bold rounded-xl px-8"
                         >
                             <Camera className="w-4 h-4 mr-2" /> {label}
                         </Button>

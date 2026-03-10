@@ -42,14 +42,14 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, bou
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-                <Button className="w-full rounded-full py-6 text-lg tracking-wider font-bold bg-[#123C69] hover:bg-[#123C69]/90 text-white shadow-xl hover:-translate-y-1 transition-transform">
+                <Button className="w-full rounded-full py-6 text-lg tracking-wider font-bold bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white shadow-xl hover:-translate-y-1 transition-transform">
                     Apply Now
                 </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-full sm:max-w-xl bg-[#EEE2DC] border-none shadow-2xl overflow-y-auto px-8 md:px-12">
+            <SheetContent side="right" className="w-full sm:max-w-xl bg-[#F8F9FF] border-none shadow-2xl overflow-y-auto px-8 md:px-12">
                 <SheetHeader className="mb-12 pt-10">
-                    <SheetTitle className="text-4xl font-extrabold text-[#123C69] leading-tight">Submit Application</SheetTitle>
-                    <SheetDescription className="text-[#123C69]/70 text-base font-semibold mt-2">
+                    <SheetTitle className="text-4xl font-extrabold text-[#1B3FA0] leading-tight">Submit Application</SheetTitle>
+                    <SheetDescription className="text-[#1B3FA0]/70 text-base font-semibold mt-2">
                         Craft your pitch and allocate booster credits to stand out from the crowd.
                     </SheetDescription>
                 </SheetHeader>
@@ -59,50 +59,50 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, bou
                     <input type="hidden" name="candidate_id" value={candidateId} />
 
                     <div className="space-y-3">
-                        <Label htmlFor="email" className="text-[#123C69] font-bold text-sm tracking-wide ml-1">Email Address</Label>
+                        <Label htmlFor="email" className="text-[#1B3FA0] font-bold text-sm tracking-wide ml-1">Email Address</Label>
                         <Input
                             id="email"
                             name="email"
                             type="email"
                             defaultValue={defaultEmail || ""}
                             required
-                            className="bg-white border-[#123C69]/10 rounded-2xl h-14 shadow-sm focus:ring-2 focus:ring-[#123C69]/20 transition-all text-base px-5"
+                            className="bg-white border-[#1B3FA0]/10 rounded-2xl h-14 shadow-sm focus:ring-2 focus:ring-[#1B3FA0]/20 transition-all text-base px-5"
                         />
                     </div>
 
                     <div className="space-y-3">
-                        <Label htmlFor="subject" className="text-[#123C69] font-bold text-sm tracking-wide ml-1">Subject / Headline</Label>
+                        <Label htmlFor="subject" className="text-[#1B3FA0] font-bold text-sm tracking-wide ml-1">Subject / Headline</Label>
                         <Input
                             id="subject"
                             name="subject"
                             placeholder="e.g. Passionate Developer ready to contribute"
                             required
-                            className="bg-white border-[#123C69]/10 rounded-2xl h-14 shadow-sm focus:ring-2 focus:ring-[#123C69]/20 transition-all text-base px-5"
+                            className="bg-white border-[#1B3FA0]/10 rounded-2xl h-14 shadow-sm focus:ring-2 focus:ring-[#1B3FA0]/20 transition-all text-base px-5"
                         />
                     </div>
 
                     <div className="space-y-3">
-                        <Label htmlFor="cover_letter" className="text-[#123C69] font-bold text-sm tracking-wide ml-1">Cover Letter</Label>
+                        <Label htmlFor="cover_letter" className="text-[#1B3FA0] font-bold text-sm tracking-wide ml-1">Cover Letter</Label>
                         <Textarea
                             id="cover_letter"
                             name="cover_letter"
                             placeholder="Explain why you are the best fit for this role..."
                             required
-                            className="min-h-[250px] bg-white border-[#123C69]/10 rounded-[2rem] shadow-sm focus:ring-2 focus:ring-[#123C69]/20 p-6 text-base leading-relaxed transition-all"
+                            className="min-h-[250px] bg-white border-[#1B3FA0]/10 rounded-[2rem] shadow-sm focus:ring-2 focus:ring-[#1B3FA0]/20 p-6 text-base leading-relaxed transition-all"
                         />
                     </div>
 
                     <div className="p-8 bg-white/60 border border-white/50 rounded-[2.5rem] shadow-sm space-y-6">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-center justify-between">
-                                <Label className="text-[#123C69] font-extrabold flex items-center gap-2">
-                                    <Coins className="h-4 w-4 text-[#AC3B61]" /> Total Available Credits
+                                <Label className="text-[#1B3FA0] font-extrabold flex items-center gap-2">
+                                    <Coins className="h-4 w-4 text-[#3D6EFF]" /> Total Available Credits
                                 </Label>
-                                <span className="text-sm font-bold text-[#AC3B61]">{freeCredits + boughtCredits}</span>
+                                <span className="text-sm font-bold text-[#3D6EFF]">{freeCredits + boughtCredits}</span>
                             </div>
-                            <div className="flex justify-between items-center text-[10px] font-bold text-[#123C69]/60 px-1">
+                            <div className="flex justify-between items-center text-[10px] font-bold text-[#1B3FA0]/60 px-1">
                                 <span>Free: {freeCredits} / 50 | Premium: {boughtCredits}</span>
-                                <a href="/candidate/billing" className="text-[#AC3B61] hover:underline">Buy More</a>
+                                <a href="/candidate/billing" className="text-[#3D6EFF] hover:underline">Buy More</a>
                             </div>
                         </div>
 
@@ -114,8 +114,8 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, bou
                                         type="button"
                                         onClick={() => setCredits(val)}
                                         className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${credits === val
-                                            ? "bg-[#123C69] text-white shadow-lg scale-105"
-                                            : "text-[#123C69]/50 hover:bg-[#123C69]/5"
+                                            ? "bg-[#1B3FA0] text-white shadow-lg scale-105"
+                                            : "text-[#1B3FA0]/50 hover:bg-[#1B3FA0]/5"
                                             }`}
                                     >
                                         {val}
@@ -134,7 +134,7 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, bou
                                 />
                             </div>
                         </div>
-                        <p className="text-[11px] text-[#123C69]/60 font-bold leading-tight px-1 italic">
+                        <p className="text-[11px] text-[#1B3FA0]/60 font-bold leading-tight px-1 italic">
                             💡 High-credit applications are pinned to the top of the employer's dashboard!
                         </p>
                     </div>
@@ -145,7 +145,7 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, bou
                         </div>
                     )}
 
-                    <Button type="submit" disabled={isPending} className="w-full bg-[#AC3B61] hover:bg-[#AC3B61]/90 text-white rounded-full py-8 text-2xl font-black shadow-2xl hover:-translate-y-1 hover:shadow-[#AC3B61]/20 transition-all active:scale-95 group">
+                    <Button type="submit" disabled={isPending} className="w-full bg-[#3D6EFF] hover:bg-[#3D6EFF]/90 text-white rounded-full py-8 text-2xl font-black shadow-2xl hover:-translate-y-1 hover:shadow-[#3D6EFF]/20 transition-all active:scale-95 group">
                         {isPending ? <Loader2 className="h-6 w-6 animate-spin mr-2" /> : <Send className="h-6 w-6 mr-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />}
                         Send Application
                     </Button>

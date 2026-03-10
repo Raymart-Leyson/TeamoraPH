@@ -106,7 +106,7 @@ export default async function CandidateDashboard() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Free Credits</CardTitle>
-                        <Coins className="h-4 w-4 text-[#AC3B61]" />
+                        <Coins className="h-4 w-4 text-[#3D6EFF]" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{candidateProfile?.free_credits ?? 0} / 50</div>
@@ -211,11 +211,11 @@ export default async function CandidateDashboard() {
                                                 }
                                             </div>
                                         )}
-                                        <span className={`text-sm ${step.done ? "font-bold text-[#123C69]" : "font-medium text-muted-foreground"}`}>
+                                        <span className={`text-sm ${step.done ? "font-bold text-[#1B3FA0]" : "font-medium text-muted-foreground"}`}>
                                             {step.label}
                                         </span>
                                         {!step.done && step.href && (
-                                            <span className="ml-auto text-xs text-[#AC3B61] font-bold">→</span>
+                                            <span className="ml-auto text-xs text-[#3D6EFF] font-bold">→</span>
                                         )}
                                     </div>
                                 );

@@ -91,13 +91,13 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
     ) as keyof typeof PLANS | undefined;
 
     return (
-        <div className="flex-1 bg-[#123C69]/[0.02] overflow-auto">
+        <div className="flex-1 bg-[#1B3FA0]/[0.02] overflow-auto">
             <div className="max-w-5xl mx-auto p-4 md:p-6">
                 {/* Header */}
                 <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-2">
                     <div>
-                        <h2 className="text-2xl font-black text-[#123C69] tracking-tight">Billing & Plans</h2>
-                        <p className="text-[#123C69]/60 font-medium text-sm">
+                        <h2 className="text-2xl font-black text-[#1B3FA0] tracking-tight">Billing & Plans</h2>
+                        <p className="text-[#1B3FA0]/60 font-medium text-sm">
                             Unlock premium hiring tools to find and secure top talent faster.
                         </p>
                     </div>
@@ -125,13 +125,13 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                         <CardHeader className="p-5 pb-3">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div>
-                                    <Badge variant="outline" className="mb-2 bg-[#123C69]/5 text-[#123C69] border-[#123C69]/10 font-bold uppercase tracking-widest text-[10px] px-3 py-1 rounded-full">
+                                    <Badge variant="outline" className="mb-2 bg-[#1B3FA0]/5 text-[#1B3FA0] border-[#1B3FA0]/10 font-bold uppercase tracking-widest text-[10px] px-3 py-1 rounded-full">
                                         Current Account Status
                                     </Badge>
-                                    <h3 className="text-xl font-black text-[#123C69]">
+                                    <h3 className="text-xl font-black text-[#1B3FA0]">
                                         {currentPlanKey ? PLANS[currentPlanKey].name : "Standard Free"}
                                     </h3>
-                                    <p className="text-[#123C69]/60 mt-1 font-medium text-sm">
+                                    <p className="text-[#1B3FA0]/60 mt-1 font-medium text-sm">
                                         {isActive
                                             ? `Active · renews ${new Date(subscription!.current_period_end!).toLocaleDateString()}`
                                             : "Free plan — upgrade to start hiring!"}
@@ -139,7 +139,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                                 </div>
                                 {isActive && (
                                     <form action={async () => { "use server"; await createBillingPortalSession(); }}>
-                                        <Button size="sm" className="rounded-xl bg-[#123C69] hover:bg-[#123C69]/90 text-white shadow-md transition-all hover:scale-105">
+                                        <Button size="sm" className="rounded-xl bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white shadow-md transition-all hover:scale-105">
                                             <CreditCard className="mr-2 h-4 w-4" />
                                             Manage Billing
                                         </Button>
@@ -149,7 +149,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                         </CardHeader>
                         {!isActive && (
                             <CardContent className="p-5 pt-0">
-                                <div className="flex items-center gap-2 text-[#AC3B61] font-bold text-sm bg-[#AC3B61]/5 w-fit px-4 py-2 rounded-xl border border-[#AC3B61]/10">
+                                <div className="flex items-center gap-2 text-[#3D6EFF] font-bold text-sm bg-[#3D6EFF]/5 w-fit px-4 py-2 rounded-xl border border-[#3D6EFF]/10">
                                     <AlertCircle className="h-4 w-4" />
                                     Contact limits are restricted on the Free plan.
                                 </div>
@@ -165,23 +165,23 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                         const isPopular = key === "pro";
 
                         return (
-                            <Card key={key} className={`relative flex flex-col border-none shadow-xl rounded-2xl overflow-hidden transition-all duration-300 hover:translate-y-[-4px] ${isPopular ? "bg-gradient-to-br from-[#123C69] to-[#123C69]/90 text-white" : "bg-white"
+                            <Card key={key} className={`relative flex flex-col border-none shadow-xl rounded-2xl overflow-hidden transition-all duration-300 hover:translate-y-[-4px] ${isPopular ? "bg-gradient-to-br from-[#1B3FA0] to-[#1B3FA0]/90 text-white" : "bg-white"
                                 }`}>
                                 {isPopular && (
                                     <div className="absolute top-4 right-4">
-                                        <Badge className="bg-[#AC3B61] text-white border-none font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
+                                        <Badge className="bg-[#3D6EFF] text-white border-none font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
                                             Most Popular
                                         </Badge>
                                     </div>
                                 )}
 
                                 <CardHeader className="p-5 pb-3">
-                                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-3 ${isPopular ? "bg-white/10" : "bg-[#123C69]/5 text-[#123C69]"
+                                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-3 ${isPopular ? "bg-white/10" : "bg-[#1B3FA0]/5 text-[#1B3FA0]"
                                         }`}>
                                         {key === "pro" ? <Rocket className="h-5 w-5" /> : <Crown className="h-5 w-5" />}
                                     </div>
                                     <CardTitle className="text-lg font-black mb-1">{plan.name}</CardTitle>
-                                    <CardDescription className={`text-xs font-medium ${isPopular ? "text-white/70" : "text-[#123C69]/60"}`}>
+                                    <CardDescription className={`text-xs font-medium ${isPopular ? "text-white/70" : "text-[#1B3FA0]/60"}`}>
                                         {plan.description}
                                     </CardDescription>
                                 </CardHeader>
@@ -189,7 +189,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                                 <CardContent className="p-5 pt-0 flex-1">
                                     <div className="mb-3">
                                         <span className="text-3xl font-black">${(plan.monthlyAmount / 100)}</span>
-                                        <span className={`text-xs ml-2 font-bold px-2 py-0.5 rounded-full ${isPopular ? "bg-white/10" : "bg-[#123C69]/5 text-[#123C69]"
+                                        <span className={`text-xs ml-2 font-bold px-2 py-0.5 rounded-full ${isPopular ? "bg-white/10" : "bg-[#1B3FA0]/5 text-[#1B3FA0]"
                                             }`}>/ month</span>
                                     </div>
 
@@ -200,7 +200,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                                                     }`}>
                                                     <CheckCircle2 className="h-3 w-3" />
                                                 </div>
-                                                <span className={`font-semibold text-xs ${isPopular ? "text-white/90" : "text-[#123C69]/80"}`}>
+                                                <span className={`font-semibold text-xs ${isPopular ? "text-white/90" : "text-[#1B3FA0]/80"}`}>
                                                     {feature}
                                                 </span>
                                             </li>
@@ -216,8 +216,8 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                                             className={`w-full py-2.5 rounded-xl font-bold text-sm shadow-md transition-all duration-300 active:scale-95 ${isCurrent
                                                     ? "opacity-50 cursor-not-allowed"
                                                     : isPopular
-                                                        ? "bg-white text-[#123C69] hover:bg-white/95"
-                                                        : "bg-[#123C69] text-white hover:bg-[#123C69]/90"
+                                                        ? "bg-white text-[#1B3FA0] hover:bg-white/95"
+                                                        : "bg-[#1B3FA0] text-white hover:bg-[#1B3FA0]/90"
                                                 }`}
                                         >
                                             {isCurrent ? "Current Plan" : `Upgrade to ${plan.name.split(' ')[0]}`}
@@ -230,7 +230,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                 </div>
 
                 <div className="mt-4 text-center">
-                    <p className="text-[#123C69]/40 text-xs font-bold uppercase tracking-[0.2em]">
+                    <p className="text-[#1B3FA0]/40 text-xs font-bold uppercase tracking-[0.2em]">
                         Secure checkout via Stripe · Cancel anytime · 24/7 Priority Support
                     </p>
                 </div>
@@ -238,28 +238,28 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                 {/* Payment History */}
                 {paymentHistory && paymentHistory.length > 0 && (
                     <div className="mt-6">
-                        <h3 className="text-lg font-black text-[#123C69] flex items-center gap-2 mb-3">
-                            <Receipt className="h-5 w-5 text-[#AC3B61]" /> Payment History
+                        <h3 className="text-lg font-black text-[#1B3FA0] flex items-center gap-2 mb-3">
+                            <Receipt className="h-5 w-5 text-[#3D6EFF]" /> Payment History
                         </h3>
                         <Card className="border-none shadow-xl bg-white/60 backdrop-blur-xl rounded-2xl overflow-hidden">
                             <CardContent className="p-0">
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left">
                                         <thead>
-                                            <tr className="bg-[#123C69]/5 text-[#123C69]/40 uppercase text-[10px] font-black tracking-widest">
+                                            <tr className="bg-[#1B3FA0]/5 text-[#1B3FA0]/40 uppercase text-[10px] font-black tracking-widest">
                                                 <th className="px-6 py-4">Date</th>
                                                 <th className="px-6 py-4">Amount</th>
                                                 <th className="px-6 py-4">Status</th>
                                                 <th className="px-6 py-4">Period</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-[#123C69]/5">
+                                        <tbody className="divide-y divide-[#1B3FA0]/5">
                                             {paymentHistory.map((tx: any) => (
-                                                <tr key={tx.id} className="hover:bg-[#123C69]/5 transition-colors">
-                                                    <td className="px-6 py-4 text-sm font-bold text-[#123C69]/60">
+                                                <tr key={tx.id} className="hover:bg-[#1B3FA0]/5 transition-colors">
+                                                    <td className="px-6 py-4 text-sm font-bold text-[#1B3FA0]/60">
                                                         {new Date(tx.created_at).toLocaleDateString()}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm font-black text-[#123C69]">
+                                                    <td className="px-6 py-4 text-sm font-black text-[#1B3FA0]">
                                                         {tx.currency?.toUpperCase()} {Number(tx.amount).toFixed(2)}
                                                     </td>
                                                     <td className="px-6 py-4">
@@ -267,7 +267,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                                                             {tx.status}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4 text-xs font-semibold text-[#123C69]/50">
+                                                    <td className="px-6 py-4 text-xs font-semibold text-[#1B3FA0]/50">
                                                         {tx.billing_period_start && tx.billing_period_end
                                                             ? `${new Date(tx.billing_period_start).toLocaleDateString()} – ${new Date(tx.billing_period_end).toLocaleDateString()}`
                                                             : '—'}

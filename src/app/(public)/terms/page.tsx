@@ -10,21 +10,21 @@ const CONTACT_EMAIL = "legal@teamoraph.com";
 
 export default function TermsOfServicePage() {
     return (
-        <div className="min-h-screen bg-[#EEE2DC]">
+        <div className="min-h-screen bg-[#F8F9FF]">
             <div className="max-w-4xl mx-auto px-6 py-16">
                 {/* Header */}
                 <div className="mb-12">
-                    <p className="text-sm font-bold text-[#AC3B61] uppercase tracking-widest mb-3">Legal</p>
-                    <h1 className="text-5xl font-black text-[#123C69] tracking-tight mb-4">Terms of Service</h1>
-                    <p className="text-[#123C69]/60 font-medium">
+                    <p className="text-sm font-bold text-[#3D6EFF] uppercase tracking-widest mb-3">Legal</p>
+                    <h1 className="text-5xl font-black text-[#1B3FA0] tracking-tight mb-4">Terms of Service</h1>
+                    <p className="text-[#1B3FA0]/60 font-medium">
                         Effective Date: {EFFECTIVE_DATE} &nbsp;·&nbsp; Last Updated: {EFFECTIVE_DATE}
                     </p>
                 </div>
 
-                <div className="bg-white/60 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-10 space-y-10 text-[#123C69]">
+                <div className="bg-white/60 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-10 space-y-10 text-[#1B3FA0]">
 
                     {/* Intro */}
-                    <p className="text-base leading-relaxed font-medium text-[#123C69]/80">
+                    <p className="text-base leading-relaxed font-medium text-[#1B3FA0]/80">
                         Welcome to <strong>TeamoraPH</strong> ("Platform", "we", "us", or "our"). By accessing or using our website at <strong>teamoraph.com</strong>, you agree to be bound by these Terms of Service ("Terms"). If you do not agree, please do not use the Platform. TeamoraPH is a Philippine-based job board connecting remote employers with Filipino talent.
                     </p>
 
@@ -116,13 +116,13 @@ export default function TermsOfServicePage() {
                         <p className="mt-2">
                             <strong>TeamoraPH</strong><br />
                             Cebu City, Philippines<br />
-                            <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#AC3B61] hover:underline font-bold">{CONTACT_EMAIL}</a>
+                            <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#3D6EFF] hover:underline font-bold">{CONTACT_EMAIL}</a>
                         </p>
                     </Section>
 
-                    <div className="pt-6 border-t border-[#123C69]/10 flex flex-wrap gap-4 text-sm font-semibold">
-                        <Link href="/privacy" className="text-[#AC3B61] hover:underline">Privacy Policy</Link>
-                        <Link href="/" className="text-[#123C69]/60 hover:underline">← Back to Home</Link>
+                    <div className="pt-6 border-t border-[#1B3FA0]/10 flex flex-wrap gap-4 text-sm font-semibold">
+                        <Link href="/privacy" className="text-[#3D6EFF] hover:underline">Privacy Policy</Link>
+                        <Link href="/" className="text-[#1B3FA0]/60 hover:underline">← Back to Home</Link>
                     </div>
                 </div>
             </div>
@@ -133,8 +133,8 @@ export default function TermsOfServicePage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <section className="space-y-3">
-            <h2 className="text-xl font-extrabold text-[#123C69] tracking-tight">{title}</h2>
-            <div className="text-[#123C69]/75 leading-relaxed font-medium space-y-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ul_li]:leading-relaxed">
+            <h2 className="text-xl font-extrabold text-[#1B3FA0] tracking-tight">{title}</h2>
+            <div className="text-[#1B3FA0]/75 leading-relaxed font-medium space-y-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ul_li]:leading-relaxed">
                 {children}
             </div>
         </section>

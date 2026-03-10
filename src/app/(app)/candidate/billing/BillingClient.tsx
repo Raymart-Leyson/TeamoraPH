@@ -31,12 +31,12 @@ export default function BillingClient({ currency }: BillingClientProps) {
     return (
         <div className="flex-1 space-y-8 p-4 md:p-8 max-w-5xl mx-auto pt-10">
             <div className="text-center space-y-3">
-                <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">Boost Your Visibility</h1>
-                <p className="text-[#123C69]/70 text-lg font-medium max-w-2xl mx-auto">
+                <h1 className="text-2xl sm:text-4xl font-black text-[#1B3FA0] tracking-tight">Boost Your Visibility</h1>
+                <p className="text-[#1B3FA0]/70 text-lg font-medium max-w-2xl mx-auto">
                     Purchase Booster Credits to pin your applications at the top of the employer&apos;s list and stand out from the crowd.
                 </p>
                 {currency === "usd" && (
-                    <p className="text-xs font-bold text-[#AC3B61] bg-[#AC3B61]/5 w-fit mx-auto px-3 py-1 rounded-full border border-[#AC3B61]/10">
+                    <p className="text-xs font-bold text-[#3D6EFF] bg-[#3D6EFF]/5 w-fit mx-auto px-3 py-1 rounded-full border border-[#3D6EFF]/10">
                         🌎 International Pricing (USD)
                     </p>
                 )}
@@ -64,26 +64,26 @@ export default function BillingClient({ currency }: BillingClientProps) {
                 {Object.entries(CREDIT_PACKAGES).map(([key, pkg]) => {
                     const price = pkg.prices[currency];
                     return (
-                        <Card key={key} className={`border-none shadow-xl rounded-[2.5rem] overflow-hidden transition-all duration-300 hover:-translate-y-2 ${key === 'standard' ? 'ring-4 ring-[#AC3B61] ring-offset-4 ring-offset-[#EEE2DC]' : ''}`}>
+                        <Card key={key} className={`border-none shadow-xl rounded-[2.5rem] overflow-hidden transition-all duration-300 hover:-translate-y-2 ${key === 'standard' ? 'ring-4 ring-[#3D6EFF] ring-offset-4 ring-offset-[#F8F9FF]' : ''}`}>
                             <CardHeader className="text-center pt-10">
-                                <div className="mx-auto bg-[#AC3B61]/10 p-4 rounded-3xl w-fit mb-4">
-                                    <Coins className="h-8 w-8 text-[#AC3B61]" />
+                                <div className="mx-auto bg-[#3D6EFF]/10 p-4 rounded-3xl w-fit mb-4">
+                                    <Coins className="h-8 w-8 text-[#3D6EFF]" />
                                 </div>
-                                <CardTitle className="text-3xl font-black text-[#123C69]">{pkg.name}</CardTitle>
-                                <CardDescription className="text-lg font-bold text-[#AC3B61] mt-2">{price.label}</CardDescription>
+                                <CardTitle className="text-3xl font-black text-[#1B3FA0]">{pkg.name}</CardTitle>
+                                <CardDescription className="text-lg font-bold text-[#3D6EFF] mt-2">{price.label}</CardDescription>
                             </CardHeader>
                             <CardContent className="text-center space-y-4 px-8 pb-10">
-                                <ul className="space-y-3 text-sm font-bold text-[#123C69]/70">
+                                <ul className="space-y-3 text-sm font-bold text-[#1B3FA0]/70">
                                     <li className="flex items-center justify-center gap-2">
-                                        <Star className="h-4 w-4 text-[#AC3B61]" />
+                                        <Star className="h-4 w-4 text-[#3D6EFF]" />
                                         {pkg.credits} Booster Credits
                                     </li>
                                     <li className="flex items-center justify-center gap-2">
-                                        <Star className="h-4 w-4 text-[#AC3B61]" />
+                                        <Star className="h-4 w-4 text-[#3D6EFF]" />
                                         No Expiry Date
                                     </li>
                                     <li className="flex items-center justify-center gap-2">
-                                        <Star className="h-4 w-4 text-[#AC3B61]" />
+                                        <Star className="h-4 w-4 text-[#3D6EFF]" />
                                         Priority Application Sorting
                                     </li>
                                 </ul>
@@ -92,7 +92,7 @@ export default function BillingClient({ currency }: BillingClientProps) {
                                 <Button
                                     onClick={() => handlePurchase(key)}
                                     disabled={!!loading}
-                                    className={`w-full rounded-full py-7 text-xl font-black shadow-xl transition-all ${key === 'standard' ? 'bg-[#AC3B61] hover:bg-[#AC3B61]/90 text-white' : 'bg-[#123C69] hover:bg-[#123C69]/90 text-white'}`}
+                                    className={`w-full rounded-full py-7 text-xl font-black shadow-xl transition-all ${key === 'standard' ? 'bg-[#3D6EFF] hover:bg-[#3D6EFF]/90 text-white' : 'bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white'}`}
                                 >
                                     {loading === key ? (
                                         <Loader2 className="h-6 w-6 animate-spin" />
@@ -106,20 +106,20 @@ export default function BillingClient({ currency }: BillingClientProps) {
                 })}
             </div>
 
-            <div className="bg-[#AC3B61]/5 border border-[#AC3B61]/20 rounded-[3rem] p-10 text-center space-y-3 shadow-sm">
-                <div className="mx-auto bg-[#AC3B61]/10 p-4 rounded-3xl w-fit mb-2">
-                    <Coins className="h-8 w-8 text-[#AC3B61]" />
+            <div className="bg-[#3D6EFF]/5 border border-[#3D6EFF]/20 rounded-[3rem] p-10 text-center space-y-3 shadow-sm">
+                <div className="mx-auto bg-[#3D6EFF]/10 p-4 rounded-3xl w-fit mb-2">
+                    <Coins className="h-8 w-8 text-[#3D6EFF]" />
                 </div>
-                <h3 className="text-2xl font-black text-[#123C69]">You Already Get Free Credits</h3>
-                <p className="text-[#123C69]/70 font-semibold max-w-2xl mx-auto leading-relaxed">
-                    Every day, <span className="text-[#AC3B61] font-black">+10 free credits</span> are automatically added to your account — up to a lifetime maximum of <span className="text-[#AC3B61] font-black">50 free credits</span>. Free credits are spent first whenever you apply to a job.
+                <h3 className="text-2xl font-black text-[#1B3FA0]">You Already Get Free Credits</h3>
+                <p className="text-[#1B3FA0]/70 font-semibold max-w-2xl mx-auto leading-relaxed">
+                    Every day, <span className="text-[#3D6EFF] font-black">+10 free credits</span> are automatically added to your account — up to a lifetime maximum of <span className="text-[#3D6EFF] font-black">50 free credits</span>. Free credits are spent first whenever you apply to a job.
                 </p>
-                <p className="text-xs text-[#123C69]/50 font-bold">Booster Credits are for when you want to go above and beyond.</p>
+                <p className="text-xs text-[#1B3FA0]/50 font-bold">Booster Credits are for when you want to go above and beyond.</p>
             </div>
 
             <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-[3rem] p-10 text-center space-y-4 shadow-sm">
-                <h3 className="text-2xl font-black text-[#123C69]">Why use credits?</h3>
-                <p className="text-[#123C69]/70 font-semibold max-w-3xl mx-auto leading-relaxed">
+                <h3 className="text-2xl font-black text-[#1B3FA0]">Why use credits?</h3>
+                <p className="text-[#1B3FA0]/70 font-semibold max-w-3xl mx-auto leading-relaxed">
                     When you apply for a job using Booster Credits, your application is displayed with a special icon and prioritized in the employer&apos;s view. Higher credit allocations push your profile to the very top, ensuring you&apos;re seen first by hiring managers.
                 </p>
             </div>

@@ -39,24 +39,24 @@ export default async function SavedJobsPage() {
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 className="text-xl font-bold tracking-tight text-[#123C69]">Saved Jobs</h2>
+                    <h2 className="text-xl font-bold tracking-tight text-[#1B3FA0]">Saved Jobs</h2>
                     <p className="text-muted-foreground mt-1 text-sm">Manage the jobs you've bookmarked to apply later.</p>
                 </div>
-                <Button size="sm" asChild className="bg-[#123C69] hover:bg-[#123C69]/90 text-white rounded-xl shadow-md font-bold">
+                <Button size="sm" asChild className="bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white rounded-xl shadow-md font-bold">
                     <Link href="/jobs">Browse More Jobs</Link>
                 </Button>
             </div>
 
             {!savedJobs || savedJobs.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 bg-muted/20 border border-dashed rounded-[2rem] border-[#123C69]/20 shadow-sm mt-8">
+                <div className="flex flex-col items-center justify-center py-20 bg-muted/20 border border-dashed rounded-[2rem] border-[#1B3FA0]/20 shadow-sm mt-8">
                     <div className="bg-slate-200 p-4 rounded-full mb-4">
-                        <BookmarkX className="h-8 w-8 text-[#123C69]/50" />
+                        <BookmarkX className="h-8 w-8 text-[#1B3FA0]/50" />
                     </div>
-                    <h3 className="font-bold text-xl text-[#123C69]">No saved jobs yet</h3>
+                    <h3 className="font-bold text-xl text-[#1B3FA0]">No saved jobs yet</h3>
                     <p className="text-muted-foreground mt-2 mb-6 max-w-sm text-center">
                         You haven't bookmarked any opportunities. Browse the marketplace and save jobs you're interested in.
                     </p>
-                    <Button variant="outline" asChild className="border-[#123C69]/20 text-[#123C69] rounded-xl font-bold font-inter">
+                    <Button variant="outline" asChild className="border-[#1B3FA0]/20 text-[#1B3FA0] rounded-xl font-bold font-inter">
                         <Link href="/jobs">Discover Jobs</Link>
                     </Button>
                 </div>
@@ -68,7 +68,7 @@ export default async function SavedJobsPage() {
                         if (!job) return null;
 
                         return (
-                            <Card key={item.id} className="group overflow-hidden border-[#123C69]/10 shadow-sm hover:shadow-md transition-shadow rounded-[1.5rem] bg-white">
+                            <Card key={item.id} className="group overflow-hidden border-[#1B3FA0]/10 shadow-sm hover:shadow-md transition-shadow rounded-[1.5rem] bg-white">
                                 <CardContent className="p-6 md:p-8">
                                     <div className="flex flex-col md:flex-row md:items-start gap-6">
                                         <div className="h-16 w-16 md:h-20 md:w-20 rounded-2xl border border-slate-100 bg-slate-50 shrink-0 flex items-center justify-center overflow-hidden">
@@ -81,13 +81,13 @@ export default async function SavedJobsPage() {
                                         <div className="flex-1 space-y-4">
                                             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                                                 <div>
-                                                    <h3 className="text-xl md:text-2xl font-bold text-[#123C69] group-hover:text-amber-600 transition-colors">
+                                                    <h3 className="text-xl md:text-2xl font-bold text-[#1B3FA0] group-hover:text-amber-600 transition-colors">
                                                         <Link href={`/jobs/${job.id}`}>
                                                             {job.title}
                                                         </Link>
                                                     </h3>
                                                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-sm text-slate-600 font-medium">
-                                                        <span className="flex items-center gap-1.5 font-bold text-[#AC3B61]">
+                                                        <span className="flex items-center gap-1.5 font-bold text-[#3D6EFF]">
                                                             <Building2 className="h-4 w-4" /> {job.company?.name || "Unknown"}
                                                         </span>
                                                         <span className="flex items-center gap-1.5">
@@ -111,7 +111,7 @@ export default async function SavedJobsPage() {
                                                             Remove
                                                         </Button>
                                                     </form>
-                                                    <Button asChild className="bg-[#123C69] hover:bg-[#123C69]/90 text-white font-semibold rounded-xl" size="sm">
+                                                    <Button asChild className="bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-semibold rounded-xl" size="sm">
                                                         <Link href={`/jobs/${job.id}`}>Apply Now</Link>
                                                     </Button>
                                                 </div>
@@ -121,7 +121,7 @@ export default async function SavedJobsPage() {
                                                     <Calendar className="h-3.5 w-3.5" /> Bookmarked on {new Date(item.created_at).toLocaleDateString()}
                                                 </div>
                                                 {job.created_at && (
-                                                    <Badge variant="secondary" className="bg-[#123C69]/5 text-[#123C69] hover:bg-[#123C69]/10 rounded-full font-bold">
+                                                    <Badge variant="secondary" className="bg-[#1B3FA0]/5 text-[#1B3FA0] hover:bg-[#1B3FA0]/10 rounded-full font-bold">
                                                         Posted {new Date(job.created_at).toLocaleDateString()}
                                                     </Badge>
                                                 )}

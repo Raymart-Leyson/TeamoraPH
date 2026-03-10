@@ -43,8 +43,8 @@ export default async function EmployerProfilePage() {
     return (
         <div className="flex-1 space-y-8 p-8 max-w-[90%] mx-auto pt-10">
             <div>
-                <h2 className="text-4xl font-extrabold tracking-wide text-[#123C69]">Company Profile</h2>
-                <p className="text-[#123C69]/70 mt-3 text-lg font-medium">
+                <h2 className="text-4xl font-extrabold tracking-wide text-[#1B3FA0]">Company Profile</h2>
+                <p className="text-[#1B3FA0]/70 mt-3 text-lg font-medium">
                     Set up your organization's identity to attract top remote talent.
                 </p>
             </div>

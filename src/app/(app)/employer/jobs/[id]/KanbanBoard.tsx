@@ -97,7 +97,7 @@ export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
                                         style={{ minHeight: "300px" }}
                                     >
                                         <div className="flex items-center justify-between mb-4 px-2">
-                                            <h3 className="font-bold text-[#123C69] tracking-tight">{column.title}</h3>
+                                            <h3 className="font-bold text-[#1B3FA0] tracking-tight">{column.title}</h3>
                                             <Badge variant="secondary" className="bg-white/60 font-medium">
                                                 {columnApplicants.length}
                                             </Badge>
@@ -122,7 +122,7 @@ export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
                                                                     ref={provided.innerRef}
                                                                     {...provided.draggableProps}
                                                                     {...provided.dragHandleProps}
-                                                                    className={`bg-white rounded-lg shadow-sm border border-slate-200 p-4 select-none ${snapshot.isDragging ? "shadow-xl ring-2 ring-primary/20 z-50" : "hover:border-[#123C69]/30"}`}
+                                                                    className={`bg-white rounded-lg shadow-sm border border-slate-200 p-4 select-none ${snapshot.isDragging ? "shadow-xl ring-2 ring-primary/20 z-50" : "hover:border-[#1B3FA0]/30"}`}
                                                                     style={{
                                                                         ...provided.draggableProps.style,
                                                                         ...(snapshot.isDropAnimating ? { transitionDuration: '0.001s' } : {})
@@ -130,7 +130,7 @@ export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
                                                                 >
                                                                     <div className="flex justify-between items-start mb-2">
                                                                         <div className="flex flex-col">
-                                                                            <h4 className="font-bold text-[#123C69] leading-tight">{name}</h4>
+                                                                            <h4 className="font-bold text-[#1B3FA0] leading-tight">{name}</h4>
                                                                             {candidate?.profile?.verification_status === 'verified' && (
                                                                                 <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-bold mt-1">
                                                                                     <ShieldCheck className="h-3 w-3" /> Verified
@@ -148,12 +148,12 @@ export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
                                                                             {new Date(app.created_at).toLocaleDateString()}
                                                                         </span>
                                                                         <div className="flex gap-1">
-                                                                            <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-slate-500 hover:text-[#123C69] hover:bg-slate-100 p-0" asChild>
+                                                                            <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-slate-500 hover:text-[#1B3FA0] hover:bg-slate-100 p-0" asChild>
                                                                                 <Link href={`/candidates/${candidate?.id}`} target="_blank">
                                                                                     <User className="h-3 w-3 mr-1" /> Profile
                                                                                 </Link>
                                                                             </Button>
-                                                                            <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-[#AC3B61] hover:text-[#123C69] hover:bg-slate-100 p-0" asChild>
+                                                                            <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-[#3D6EFF] hover:text-[#1B3FA0] hover:bg-slate-100 p-0" asChild>
                                                                                 <Link href={`/employer/jobs/${jobId}/applications/${app.id}`}>
                                                                                     <FileText className="h-3 w-3 mr-1" /> Review
                                                                                 </Link>
@@ -183,7 +183,7 @@ export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
             </DragDropContext>
 
             {isPending && (
-                <div className="fixed bottom-4 right-4 bg-[#123C69] text-white px-4 py-2 rounded-full shadow-lg text-sm font-medium animate-pulse">
+                <div className="fixed bottom-4 right-4 bg-[#1B3FA0] text-white px-4 py-2 rounded-full shadow-lg text-sm font-medium animate-pulse">
                     Updating status...
                 </div>
             )}

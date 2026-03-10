@@ -46,8 +46,8 @@ export default async function AdminSettingsPage({
     return (
         <div className="space-y-10">
             <div>
-                <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">Platform Settings</h1>
-                <p className="text-[#123C69]/70 font-bold mt-2">Configure global platform parameters.</p>
+                <h1 className="text-2xl sm:text-4xl font-black text-[#1B3FA0] tracking-tight">Platform Settings</h1>
+                <p className="text-[#1B3FA0]/70 font-bold mt-2">Configure global platform parameters.</p>
             </div>
 
             {saved && (
@@ -62,12 +62,12 @@ export default async function AdminSettingsPage({
                 <Card className="border-none shadow-xl rounded-[2.5rem] overflow-hidden bg-white/60 backdrop-blur-md">
                     <CardHeader className="p-8 pb-0">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-[#123C69] flex items-center justify-center text-white shadow-lg shadow-[#123C69]/20">
+                            <div className="w-12 h-12 rounded-2xl bg-[#1B3FA0] flex items-center justify-center text-white shadow-lg shadow-[#1B3FA0]/20">
                                 <Globe className="w-6 h-6" />
                             </div>
                             <div>
-                                <CardTitle className="text-xl font-black text-[#123C69]">General Configuration</CardTitle>
-                                <CardDescription className="font-bold text-[#123C69]/50">Basic site identification and contact details.</CardDescription>
+                                <CardTitle className="text-xl font-black text-[#1B3FA0]">General Configuration</CardTitle>
+                                <CardDescription className="font-bold text-[#1B3FA0]/50">Basic site identification and contact details.</CardDescription>
                             </div>
                         </div>
                     </CardHeader>
@@ -78,7 +78,7 @@ export default async function AdminSettingsPage({
                         }}>
                             <div className="grid gap-6 md:grid-cols-2 mb-6">
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-black uppercase tracking-widest text-[#123C69]/40 ml-1">Site Name</Label>
+                                    <Label className="text-xs font-black uppercase tracking-widest text-[#1B3FA0]/40 ml-1">Site Name</Label>
                                     <Input
                                         name="site_name"
                                         defaultValue={settings.site_name}
@@ -87,7 +87,7 @@ export default async function AdminSettingsPage({
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-black uppercase tracking-widest text-[#123C69]/40 ml-1">Support Email</Label>
+                                    <Label className="text-xs font-black uppercase tracking-widest text-[#1B3FA0]/40 ml-1">Support Email</Label>
                                     <Input
                                         name="support_email"
                                         type="email"
@@ -98,14 +98,14 @@ export default async function AdminSettingsPage({
                                 </div>
                             </div>
                             <div className="space-y-2 mb-6">
-                                <Label className="text-xs font-black uppercase tracking-widest text-[#123C69]/40 ml-1">Meta Description</Label>
+                                <Label className="text-xs font-black uppercase tracking-widest text-[#1B3FA0]/40 ml-1">Meta Description</Label>
                                 <Input
                                     name="meta_description"
                                     defaultValue={settings.meta_description}
                                     className="bg-white border-none shadow-inner rounded-xl font-bold h-12"
                                 />
                             </div>
-                            <Button type="submit" className="bg-[#123C69] hover:bg-[#123C69]/90 text-white font-black rounded-xl px-8 h-12">
+                            <Button type="submit" className="bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-black rounded-xl px-8 h-12">
                                 <Save className="w-4 h-4 mr-2" /> Save Changes
                             </Button>
                         </form>
@@ -116,12 +116,12 @@ export default async function AdminSettingsPage({
                 <Card className="border-none shadow-xl rounded-[2.5rem] overflow-hidden bg-white/60 backdrop-blur-md">
                     <CardHeader className="p-8 pb-0">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-[#AC3B61] flex items-center justify-center text-white shadow-lg shadow-[#AC3B61]/20">
+                            <div className="w-12 h-12 rounded-2xl bg-[#3D6EFF] flex items-center justify-center text-white shadow-lg shadow-[#3D6EFF]/20">
                                 <ShieldCheck className="w-6 h-6" />
                             </div>
                             <div>
-                                <CardTitle className="text-xl font-black text-[#123C69]">Moderation & Policy</CardTitle>
-                                <CardDescription className="font-bold text-[#123C69]/50">Control how job posts and verifications are handled.</CardDescription>
+                                <CardTitle className="text-xl font-black text-[#1B3FA0]">Moderation & Policy</CardTitle>
+                                <CardDescription className="font-bold text-[#1B3FA0]/50">Control how job posts and verifications are handled.</CardDescription>
                             </div>
                         </div>
                     </CardHeader>
@@ -133,30 +133,30 @@ export default async function AdminSettingsPage({
                             <div className="space-y-4 mb-6">
                                 <label className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-white/60 cursor-pointer hover:bg-white/60 transition-colors">
                                     <div>
-                                        <p className="font-black text-[#123C69]">Auto-publish for Verified Employers</p>
-                                        <p className="text-xs font-bold text-[#123C69]/50">Skip moderation if the employer is already verified.</p>
+                                        <p className="font-black text-[#1B3FA0]">Auto-publish for Verified Employers</p>
+                                        <p className="text-xs font-bold text-[#1B3FA0]/50">Skip moderation if the employer is already verified.</p>
                                     </div>
                                     <input
                                         type="checkbox"
                                         name="auto_publish_verified"
                                         defaultChecked={settings.auto_publish_verified}
-                                        className="w-5 h-5 accent-[#123C69] cursor-pointer"
+                                        className="w-5 h-5 accent-[#1B3FA0] cursor-pointer"
                                     />
                                 </label>
                                 <label className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-white/60 cursor-pointer hover:bg-white/60 transition-colors">
                                     <div>
-                                        <p className="font-black text-[#123C69]">Flagged Content Notifications</p>
-                                        <p className="text-xs font-bold text-[#123C69]/50">Alert staff immediately when an item is reported.</p>
+                                        <p className="font-black text-[#1B3FA0]">Flagged Content Notifications</p>
+                                        <p className="text-xs font-bold text-[#1B3FA0]/50">Alert staff immediately when an item is reported.</p>
                                     </div>
                                     <input
                                         type="checkbox"
                                         name="flagged_notifications"
                                         defaultChecked={settings.flagged_notifications}
-                                        className="w-5 h-5 accent-[#123C69] cursor-pointer"
+                                        className="w-5 h-5 accent-[#1B3FA0] cursor-pointer"
                                     />
                                 </label>
                             </div>
-                            <Button type="submit" className="bg-[#AC3B61] hover:bg-[#AC3B61]/90 text-white font-black rounded-xl px-8 h-12">
+                            <Button type="submit" className="bg-[#3D6EFF] hover:bg-[#3D6EFF]/90 text-white font-black rounded-xl px-8 h-12">
                                 <Save className="w-4 h-4 mr-2" /> Save Moderation Settings
                             </Button>
                         </form>
@@ -164,15 +164,15 @@ export default async function AdminSettingsPage({
                 </Card>
 
                 {/* System Maintenance */}
-                <Card className="border-none shadow-xl rounded-[2.5rem] overflow-hidden bg-[#123C69]/5 border border-[#123C69]/10">
+                <Card className="border-none shadow-xl rounded-[2.5rem] overflow-hidden bg-[#1B3FA0]/5 border border-[#1B3FA0]/10">
                     <CardHeader className="p-8 pb-0">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-2xl bg-slate-200 flex items-center justify-center text-slate-500">
                                 <Lock className="w-6 h-6" />
                             </div>
                             <div>
-                                <CardTitle className="text-xl font-black text-[#123C69]">System Maintenance</CardTitle>
-                                <CardDescription className="font-bold text-[#123C69]/50">Critical platform actions and security configuration.</CardDescription>
+                                <CardTitle className="text-xl font-black text-[#1B3FA0]">System Maintenance</CardTitle>
+                                <CardDescription className="font-bold text-[#1B3FA0]/50">Critical platform actions and security configuration.</CardDescription>
                             </div>
                         </div>
                     </CardHeader>

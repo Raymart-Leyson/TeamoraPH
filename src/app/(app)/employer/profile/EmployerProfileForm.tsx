@@ -42,16 +42,16 @@ function ProfilePreview({ data }: { data: Defaults }) {
 
     return (
         <div className="space-y-6">
-            <p className="text-sm text-[#123C69]/60 font-medium italic">
+            <p className="text-sm text-[#1B3FA0]/60 font-medium italic">
                 This is how your company profile appears to candidates and the public.
             </p>
 
             {/* Main Company Card */}
             <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2.5rem] overflow-hidden">
-                <div className="h-28 w-full bg-gradient-to-r from-[#123C69] to-[#123C69]/80" />
+                <div className="h-28 w-full bg-gradient-to-r from-[#1B3FA0] to-[#1B3FA0]/80" />
                 <div className="px-4 sm:px-8 pb-6 sm:pb-8 pt-0">
                     <div className="flex justify-between items-end mt-[-3rem] mb-6">
-                        <div className="h-24 w-24 rounded-3xl bg-white border-4 border-[#EEE2DC] shadow-lg flex items-center justify-center font-black text-2xl text-[#123C69] uppercase overflow-hidden relative">
+                        <div className="h-24 w-24 rounded-3xl bg-white border-4 border-[#F8F9FF] shadow-lg flex items-center justify-center font-black text-2xl text-[#1B3FA0] uppercase overflow-hidden relative">
                             {data.logo_url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img src={data.logo_url} alt={data.company_name} className="object-cover w-full h-full absolute inset-0" />
@@ -60,25 +60,25 @@ function ProfilePreview({ data }: { data: Defaults }) {
                             )}
                         </div>
                         {data.company_size && (
-                            <Badge variant="secondary" className="bg-[#123C69]/10 text-[#123C69] border-[#123C69]/20 font-bold mb-1">
+                            <Badge variant="secondary" className="bg-[#1B3FA0]/10 text-[#1B3FA0] border-[#1B3FA0]/20 font-bold mb-1">
                                 <Users className="h-3 w-3 mr-1" /> {data.company_size} employees
                             </Badge>
                         )}
                     </div>
 
-                    <h2 className="text-3xl font-extrabold text-[#123C69] tracking-tight">
-                        {data.company_name || <span className="text-[#123C69]/30 italic">Company Name</span>}
+                    <h2 className="text-3xl font-extrabold text-[#1B3FA0] tracking-tight">
+                        {data.company_name || <span className="text-[#1B3FA0]/30 italic">Company Name</span>}
                     </h2>
 
-                    <div className="flex flex-wrap gap-4 mt-4 text-sm font-semibold text-[#123C69]/70">
+                    <div className="flex flex-wrap gap-4 mt-4 text-sm font-semibold text-[#1B3FA0]/70">
                         {data.industry && (
                             <span className="flex items-center gap-1.5">
-                                <Activity className="h-4 w-4 text-[#AC3B61]" /> {data.industry}
+                                <Activity className="h-4 w-4 text-[#3D6EFF]" /> {data.industry}
                             </span>
                         )}
                         {data.location && (
                             <span className="flex items-center gap-1.5">
-                                <MapPin className="h-4 w-4 text-[#AC3B61]" /> {data.location}
+                                <MapPin className="h-4 w-4 text-[#3D6EFF]" /> {data.location}
                             </span>
                         )}
                         {data.website && (
@@ -86,7 +86,7 @@ function ProfilePreview({ data }: { data: Defaults }) {
                                 href={data.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 text-[#AC3B61] hover:underline"
+                                className="flex items-center gap-1.5 text-[#3D6EFF] hover:underline"
                             >
                                 <Globe className="h-4 w-4" /> {data.website.replace(/^https?:\/\//, "")}
                             </a>
@@ -97,34 +97,34 @@ function ProfilePreview({ data }: { data: Defaults }) {
 
             {/* About Section */}
             <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-5 sm:p-8">
-                <h3 className="text-xl font-bold text-[#123C69] mb-4 flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-[#AC3B61]" /> About the Company
+                <h3 className="text-xl font-bold text-[#1B3FA0] mb-4 flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-[#3D6EFF]" /> About the Company
                 </h3>
                 {data.description ? (
                     <p className="text-sm font-medium text-slate-600 leading-relaxed whitespace-pre-wrap">{data.description}</p>
                 ) : (
-                    <p className="text-sm text-[#123C69]/30 italic">No description added yet.</p>
+                    <p className="text-sm text-[#1B3FA0]/30 italic">No description added yet.</p>
                 )}
             </div>
 
             {/* Hiring Contact */}
             <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-5 sm:p-8">
-                <h3 className="text-xl font-bold text-[#123C69] mb-4 flex items-center gap-2">
-                    <User className="h-5 w-5 text-[#AC3B61]" /> Hiring Contact
+                <h3 className="text-xl font-bold text-[#1B3FA0] mb-4 flex items-center gap-2">
+                    <User className="h-5 w-5 text-[#3D6EFF]" /> Hiring Contact
                 </h3>
                 <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-2xl bg-[#123C69]/10 flex items-center justify-center font-bold text-[#123C69] text-lg shrink-0">
+                    <div className="h-12 w-12 rounded-2xl bg-[#1B3FA0]/10 flex items-center justify-center font-bold text-[#1B3FA0] text-lg shrink-0">
                         {data.first_name ? data.first_name[0].toUpperCase() : "?"}
                     </div>
                     <div>
-                        <p className="font-bold text-[#123C69]">
+                        <p className="font-bold text-[#1B3FA0]">
                             {data.first_name || data.last_name
                                 ? `${data.first_name} ${data.last_name}`.trim()
-                                : <span className="text-[#123C69]/30 italic font-normal">Name not set</span>
+                                : <span className="text-[#1B3FA0]/30 italic font-normal">Name not set</span>
                             }
                         </p>
                         {data.position && (
-                            <p className="text-sm text-[#123C69]/60 font-medium">{data.position}</p>
+                            <p className="text-sm text-[#1B3FA0]/60 font-medium">{data.position}</p>
                         )}
                     </div>
                 </div>
@@ -158,8 +158,8 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                     onClick={() => setMode("edit")}
                     className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 ${
                         mode === "edit"
-                            ? "bg-[#123C69] text-white shadow-md"
-                            : "text-[#123C69]/60 hover:text-[#123C69] hover:bg-white/60"
+                            ? "bg-[#1B3FA0] text-white shadow-md"
+                            : "text-[#1B3FA0]/60 hover:text-[#1B3FA0] hover:bg-white/60"
                     }`}
                 >
                     <Pencil className="h-4 w-4" /> Edit Profile
@@ -169,8 +169,8 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                     onClick={() => setMode("preview")}
                     className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 ${
                         mode === "preview"
-                            ? "bg-[#123C69] text-white shadow-md"
-                            : "text-[#123C69]/60 hover:text-[#123C69] hover:bg-white/60"
+                            ? "bg-[#1B3FA0] text-white shadow-md"
+                            : "text-[#1B3FA0]/60 hover:text-[#1B3FA0] hover:bg-white/60"
                     }`}
                 >
                     <Eye className="h-4 w-4" /> Preview
@@ -187,8 +187,8 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                 <Card>
                     <form action={formAction}>
                         <CardHeader>
-                            <CardTitle className="text-2xl text-[#123C69]">Organization Details</CardTitle>
-                            <CardDescription className="text-[#123C69]/70 text-base">
+                            <CardTitle className="text-2xl text-[#1B3FA0]">Organization Details</CardTitle>
+                            <CardDescription className="text-[#1B3FA0]/70 text-base">
                                 This information is the public face of your hiring.
                             </CardDescription>
                         </CardHeader>
@@ -210,15 +210,15 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                             <div className="flex flex-col md:flex-row gap-8 items-start bg-white/40 p-6 rounded-3xl border border-white/40 shadow-sm">
                                 {/* Logo Preview */}
                                 <div className="flex flex-col gap-3 items-center shrink-0">
-                                    <Label className="text-[#123C69] font-bold tracking-wide">Company Logo</Label>
-                                    <label htmlFor="logo_upload" className="h-28 w-28 rounded-3xl bg-white border border-white/60 shadow-lg flex flex-col items-center justify-center text-[#123C69]/40 overflow-hidden relative group transition-all duration-300 cursor-pointer">
+                                    <Label className="text-[#1B3FA0] font-bold tracking-wide">Company Logo</Label>
+                                    <label htmlFor="logo_upload" className="h-28 w-28 rounded-3xl bg-white border border-white/60 shadow-lg flex flex-col items-center justify-center text-[#1B3FA0]/40 overflow-hidden relative group transition-all duration-300 cursor-pointer">
                                         {logoUrl ? (
                                             // eslint-disable-next-line @next/next/no-img-element
                                             <img src={logoUrl} alt="Company Logo" className="object-cover w-full h-full absolute inset-0 z-0 transition-transform duration-500 group-hover:scale-110" onError={(e) => { e.currentTarget.src = ''; setLogoUrl('') }} />
                                         ) : (
                                             <span className="text-sm font-semibold px-2 text-center relative z-10">No Logo</span>
                                         )}
-                                        <div className="absolute inset-0 bg-[#123C69]/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-300 z-10 backdrop-blur-sm">
+                                        <div className="absolute inset-0 bg-[#1B3FA0]/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-300 z-10 backdrop-blur-sm">
                                             <div className="flex flex-col items-center gap-1">
                                                 <Pencil className="h-6 w-6" />
                                                 <span className="text-xs font-bold tracking-wider">EDIT</span>
@@ -229,7 +229,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
 
                                 <div className="flex-1 space-y-5 w-full">
                                     <div className="space-y-2">
-                                        <Label htmlFor="company_name" className="text-[#123C69] font-semibold">Company Name *</Label>
+                                        <Label htmlFor="company_name" className="text-[#1B3FA0] font-semibold">Company Name *</Label>
                                         <Input
                                             id="company_name"
                                             name="company_name"
@@ -243,7 +243,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
 
                                     <div className="flex flex-col md:flex-row gap-5">
                                         <div className="space-y-2 flex-1">
-                                            <Label htmlFor="industry" className="text-[#123C69] font-semibold">Industry</Label>
+                                            <Label htmlFor="industry" className="text-[#1B3FA0] font-semibold">Industry</Label>
                                             <Input
                                                 id="industry"
                                                 name="industry"
@@ -254,7 +254,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                                             />
                                         </div>
                                         <div className="space-y-2 flex-1">
-                                            <Label htmlFor="company_size" className="text-[#123C69] font-semibold">Company Size</Label>
+                                            <Label htmlFor="company_size" className="text-[#1B3FA0] font-semibold">Company Size</Label>
                                             <Select name="company_size" defaultValue={defaults.company_size || undefined} disabled={isPending}>
                                                 <SelectTrigger id="company_size" className="shadow-inner bg-white">
                                                     <SelectValue placeholder="Select size..." />
@@ -273,7 +273,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
 
                                     <div className="flex flex-col md:flex-row gap-5">
                                         <div className="space-y-2 flex-1">
-                                            <Label htmlFor="location" className="text-[#123C69] font-semibold">Headquarters Location</Label>
+                                            <Label htmlFor="location" className="text-[#1B3FA0] font-semibold">Headquarters Location</Label>
                                             <Input
                                                 id="location"
                                                 name="location"
@@ -284,7 +284,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                                             />
                                         </div>
                                         <div className="space-y-2 flex-1">
-                                            <Label htmlFor="website" className="text-[#123C69] font-semibold">Company Website</Label>
+                                            <Label htmlFor="website" className="text-[#1B3FA0] font-semibold">Company Website</Label>
                                             <Input
                                                 id="website"
                                                 name="website"
@@ -298,7 +298,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="logo_upload" className="text-[#123C69] font-semibold">Upload New Logo</Label>
+                                        <Label htmlFor="logo_upload" className="text-[#1B3FA0] font-semibold">Upload New Logo</Label>
                                         <Input
                                             id="logo_upload"
                                             name="logo_upload"
@@ -306,16 +306,16 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                                             accept="image/*"
                                             onChange={handleLogoChange}
                                             disabled={isPending}
-                                            className="shadow-inner focus-visible:ring-[#AC3B61] cursor-pointer"
+                                            className="shadow-inner focus-visible:ring-[#3D6EFF] cursor-pointer"
                                         />
-                                        <p className="text-xs text-[#123C69]/60">Select a PNG or JPG file. Recommended size: 400x400px.</p>
+                                        <p className="text-xs text-[#1B3FA0]/60">Select a PNG or JPG file. Recommended size: 400x400px.</p>
                                         <input type="hidden" name="logo_url" value={defaults.logo_url} />
                                     </div>
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description" className="text-[#123C69] font-semibold">About the Company</Label>
+                                <Label htmlFor="description" className="text-[#1B3FA0] font-semibold">About the Company</Label>
                                 <Textarea
                                     id="description"
                                     name="description"
@@ -328,11 +328,11 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
 
                             <hr className="border-white/40 my-8" />
 
-                            <h3 className="font-bold text-xl text-[#123C69]">Your Information</h3>
+                            <h3 className="font-bold text-xl text-[#1B3FA0]">Your Information</h3>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div className="space-y-2">
-                                    <Label htmlFor="first_name" className="text-[#123C69] font-semibold">First Name *</Label>
+                                    <Label htmlFor="first_name" className="text-[#1B3FA0] font-semibold">First Name *</Label>
                                     <Input
                                         id="first_name"
                                         name="first_name"
@@ -344,7 +344,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="last_name" className="text-[#123C69] font-semibold">Last Name *</Label>
+                                    <Label htmlFor="last_name" className="text-[#1B3FA0] font-semibold">Last Name *</Label>
                                     <Input
                                         id="last_name"
                                         name="last_name"
@@ -358,7 +358,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="position" className="text-[#123C69] font-semibold">Your Title / Position</Label>
+                                <Label htmlFor="position" className="text-[#1B3FA0] font-semibold">Your Title / Position</Label>
                                 <Input
                                     id="position"
                                     name="position"

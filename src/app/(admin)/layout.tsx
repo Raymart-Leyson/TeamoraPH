@@ -52,12 +52,12 @@ export default async function AdminLayout({
         <div className="flex flex-col h-full py-6">
             <div className="px-6 mb-10">
                 <Link href={basePath} className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-[#123C69] rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-[#1B3FA0] rounded-lg flex items-center justify-center">
                         <span className="text-white font-black text-xl">T</span>
                     </div>
-                    <span className="text-xl font-black text-[#123C69] tracking-tighter">Admin Panel</span>
+                    <span className="text-xl font-black text-[#1B3FA0] tracking-tighter">Admin Panel</span>
                 </Link>
-                <div className="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest bg-[#AC3B61]/10 text-[#AC3B61]">
+                <div className="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest bg-[#3D6EFF]/10 text-[#3D6EFF]">
                     {profile.role}
                 </div>
             </div>
@@ -67,7 +67,7 @@ export default async function AdminLayout({
                     <Link
                         key={item.href}
                         href={item.href}
-                        className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-[#123C69]/70 hover:text-[#123C69] hover:bg-white/50 rounded-2xl transition-all group"
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-[#1B3FA0]/70 hover:text-[#1B3FA0] hover:bg-white/50 rounded-2xl transition-all group"
                     >
                         <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         {item.label}
@@ -87,7 +87,7 @@ export default async function AdminLayout({
     );
 
     return (
-        <div className="flex min-h-screen bg-[#EEE2DC]">
+        <div className="flex min-h-screen bg-[#F8F9FF]">
             {/* Desktop Sidebar */}
             <aside className="hidden lg:block w-72 border-r border-white/20 bg-white/30 backdrop-blur-xl sticky top-0 h-screen overflow-y-auto">
                 <SidebarContent />
@@ -97,10 +97,10 @@ export default async function AdminLayout({
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 <header className="lg:hidden flex items-center justify-between h-16 px-6 bg-white/50 backdrop-blur-md border-b border-white/20 sticky top-0 z-30">
                     <Link href={basePath} className="flex items-center gap-2">
-                        <div className="w-6 h-6 bg-[#123C69] rounded flex items-center justify-center">
+                        <div className="w-6 h-6 bg-[#1B3FA0] rounded flex items-center justify-center">
                             <span className="text-white font-black text-sm">T</span>
                         </div>
-                        <span className="font-black text-[#123C69]">Teamora<span className="text-[#AC3B61]">PH</span> Admin</span>
+                        <span className="font-black text-[#1B3FA0]">Teamora<span className="text-[#3D6EFF]">PH</span> Admin</span>
                     </Link>
                     <Sheet>
                         <SheetTrigger asChild>
@@ -108,7 +108,7 @@ export default async function AdminLayout({
                                 <Menu className="w-6 h-6" />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="left" className="p-0 border-none bg-[#EEE2DC] w-72">
+                        <SheetContent side="left" className="p-0 border-none bg-[#F8F9FF] w-72">
                             <SidebarContent />
                         </SheetContent>
                     </Sheet>

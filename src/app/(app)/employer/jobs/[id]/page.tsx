@@ -76,11 +76,11 @@ export default async function EmployerJobDetailPage({ params }: { params: Promis
                         <div className="flex gap-8">
                             <div className="flex items-center gap-3">
                                 <span className="text-muted-foreground">Total Applicants:</span>
-                                <span className="font-bold text-lg text-[#123C69]">{applicants?.length || 0}</span>
+                                <span className="font-bold text-lg text-[#1B3FA0]">{applicants?.length || 0}</span>
                             </div>
                             <div className="flex items-center gap-3">
                                 <span className="text-muted-foreground">Hired:</span>
-                                <span className="font-bold text-lg text-[#123C69]">
+                                <span className="font-bold text-lg text-[#1B3FA0]">
                                     {applicants?.filter((a: { status: string }) => a.status === 'hired').length || 0}
                                 </span>
                             </div>

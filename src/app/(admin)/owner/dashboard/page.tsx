@@ -63,8 +63,8 @@ export default async function AdminDashboardPage() {
         <div className="space-y-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-2xl sm:text-4xl font-black text-[#123C69] tracking-tight">Overview</h1>
-                    <p className="text-[#123C69]/70 font-bold mt-2">Welcome back! Here&apos;s what needs your attention today.</p>
+                    <h1 className="text-2xl sm:text-4xl font-black text-[#1B3FA0] tracking-tight">Overview</h1>
+                    <p className="text-[#1B3FA0]/70 font-bold mt-2">Welcome back! Here&apos;s what needs your attention today.</p>
                 </div>
                 {adminProfile && (
                     <div className="flex items-center gap-2 bg-white/60 backdrop-blur-md rounded-2xl px-5 py-3 shadow-md border border-white/40">
@@ -80,15 +80,15 @@ export default async function AdminDashboardPage() {
                 {stats.map((stat) => (
                     <Card key={stat.label} className="border-none shadow-xl rounded-[2rem] overflow-hidden bg-white/60 backdrop-blur-md">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-sm font-black uppercase tracking-widest text-[#123C69]/50">{stat.label}</CardTitle>
+                            <CardTitle className="text-sm font-black uppercase tracking-widest text-[#1B3FA0]/50">{stat.label}</CardTitle>
                             <div className={`${stat.bg} p-2 rounded-xl`}>
                                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
                             </div>
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-end justify-between">
-                                <div className="text-5xl font-black text-[#123C69]">{stat.value}</div>
-                                <Button variant="ghost" className="rounded-full font-bold text-[#123C69] hover:bg-white/40 group" asChild>
+                                <div className="text-5xl font-black text-[#1B3FA0]">{stat.value}</div>
+                                <Button variant="ghost" className="rounded-full font-bold text-[#1B3FA0] hover:bg-white/40 group" asChild>
                                     <Link href={stat.link}>
                                         Manage <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                     </Link>
@@ -102,7 +102,7 @@ export default async function AdminDashboardPage() {
             <div className="grid gap-8 md:grid-cols-2">
                 {/* Pending Jobs List */}
                 <div className="space-y-4">
-                    <h3 className="text-xl font-black text-[#123C69] flex items-center gap-2">
+                    <h3 className="text-xl font-black text-[#1B3FA0] flex items-center gap-2">
                         <Clock className="w-5 h-5 text-amber-500" /> Recent Job Submissions
                     </h3>
                     <div className="space-y-3">
@@ -110,23 +110,23 @@ export default async function AdminDashboardPage() {
                             recentJobs.map((job: any) => (
                                 <div key={job.id} className="bg-white/40 p-4 rounded-3xl border border-white/60 flex items-center justify-between shadow-sm">
                                     <div className="min-w-0 flex-1">
-                                        <div className="font-bold text-[#123C69] truncate">{job.title}</div>
-                                        <div className="text-xs font-semibold text-[#123C69]/50 truncate">{job.company.name}</div>
+                                        <div className="font-bold text-[#1B3FA0] truncate">{job.title}</div>
+                                        <div className="text-xs font-semibold text-[#1B3FA0]/50 truncate">{job.company.name}</div>
                                     </div>
-                                    <Button size="sm" variant="ghost" className="rounded-xl font-bold text-[#AC3B61]" asChild>
+                                    <Button size="sm" variant="ghost" className="rounded-xl font-bold text-[#3D6EFF]" asChild>
                                         <Link href={`/owner/jobs?id=${job.id}`}>Review</Link>
                                     </Button>
                                 </div>
                             ))
                         ) : (
-                            <div className="text-sm font-bold text-[#123C69]/40 italic py-4 text-center">No pending job posts.</div>
+                            <div className="text-sm font-bold text-[#1B3FA0]/40 italic py-4 text-center">No pending job posts.</div>
                         )}
                     </div>
                 </div>
 
                 {/* Pending Verifications List */}
                 <div className="space-y-4">
-                    <h3 className="text-xl font-black text-[#123C69] flex items-center gap-2">
+                    <h3 className="text-xl font-black text-[#1B3FA0] flex items-center gap-2">
                         <Clock className="w-5 h-5 text-blue-500" /> Recent Verification Requests
                     </h3>
                     <div className="space-y-3">
@@ -134,16 +134,16 @@ export default async function AdminDashboardPage() {
                             recentVerifs.map((verif: any) => (
                                 <div key={verif.id} className="bg-white/40 p-4 rounded-3xl border border-white/60 flex items-center justify-between shadow-sm">
                                     <div className="min-w-0 flex-1">
-                                        <div className="font-bold text-[#123C69] truncate capitalize">{verif.type.replace('_', ' ')}</div>
-                                        <div className="text-xs font-semibold text-[#123C69]/50">Requested {new Date(verif.created_at).toLocaleDateString()}</div>
+                                        <div className="font-bold text-[#1B3FA0] truncate capitalize">{verif.type.replace('_', ' ')}</div>
+                                        <div className="text-xs font-semibold text-[#1B3FA0]/50">Requested {new Date(verif.created_at).toLocaleDateString()}</div>
                                     </div>
-                                    <Button size="sm" variant="ghost" className="rounded-xl font-bold text-[#AC3B61]" asChild>
+                                    <Button size="sm" variant="ghost" className="rounded-xl font-bold text-[#3D6EFF]" asChild>
                                         <Link href={`/owner/verifications?id=${verif.id}`}>Review</Link>
                                     </Button>
                                 </div>
                             ))
                         ) : (
-                            <div className="text-sm font-bold text-[#123C69]/40 italic py-4 text-center">No pending requests.</div>
+                            <div className="text-sm font-bold text-[#1B3FA0]/40 italic py-4 text-center">No pending requests.</div>
                         )}
                     </div>
                 </div>

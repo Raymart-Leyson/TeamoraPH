@@ -70,7 +70,7 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-6xl mx-auto">
             {/* Promotion Banner for Free Users */}
             {!isSubscribed && (
-                <div className="bg-gradient-to-r from-[#123C69] to-[#AC3B61] p-6 rounded-[2rem] text-white shadow-2xl relative overflow-hidden group">
+                <div className="bg-gradient-to-r from-[#1B3FA0] to-[#3D6EFF] p-6 rounded-[2rem] text-white shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none group-hover:scale-110 transition-transform">
                         <Star size={120} className="rotate-12" />
                     </div>
@@ -83,7 +83,7 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                                 You are viewing a candidate preview. Upgrade to a Pro Talent plan to view resumes, social links, and message this candidate directly.
                             </p>
                         </div>
-                        <Button asChild size="lg" className="bg-white text-[#123C69] hover:bg-white/95 rounded-2xl font-black px-8 py-7 shadow-xl">
+                        <Button asChild size="lg" className="bg-white text-[#1B3FA0] hover:bg-white/95 rounded-2xl font-black px-8 py-7 shadow-xl">
                             <Link href="/employer/billing">Upgrade Now</Link>
                         </Button>
                     </div>
@@ -124,9 +124,9 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
 
                         {/* Resume Section */}
                         {candidate?.resume_url && (
-                            <div className="pt-4 border-t border-[#123C69]/10">
+                            <div className="pt-4 border-t border-[#1B3FA0]/10">
                                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Documents</h3>
-                                <Button asChild variant="outline" className="border-[#AC3B61]/30 text-[#AC3B61] hover:bg-[#AC3B61]/5 font-bold">
+                                <Button asChild variant="outline" className="border-[#3D6EFF]/30 text-[#3D6EFF] hover:bg-[#3D6EFF]/5 font-bold">
                                     <a href={candidate.resume_url} target="_blank" rel="noreferrer">
                                         <FileText className="h-4 w-4 mr-2" /> View Resume / CV
                                     </a>
@@ -135,19 +135,19 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                         )}
 
                         {/* Social Links */}
-                        <div className="flex flex-wrap gap-3 pt-4 border-t border-[#123C69]/10">
+                        <div className="flex flex-wrap gap-3 pt-4 border-t border-[#1B3FA0]/10">
                             {candidate?.portfolio_url && (
-                                <Button variant="ghost" size="sm" asChild className="text-[#123C69]/60 hover:text-[#123C69]">
+                                <Button variant="ghost" size="sm" asChild className="text-[#1B3FA0]/60 hover:text-[#1B3FA0]">
                                     <a href={candidate.portfolio_url} target="_blank" rel="noreferrer"><Globe className="h-4 w-4 mr-2" /> Portfolio</a>
                                 </Button>
                             )}
                             {candidate?.linkedin_url && (
-                                <Button variant="ghost" size="sm" asChild className="text-[#123C69]/60 hover:text-[#123C69]">
+                                <Button variant="ghost" size="sm" asChild className="text-[#1B3FA0]/60 hover:text-[#1B3FA0]">
                                     <a href={candidate.linkedin_url} target="_blank" rel="noreferrer"><Linkedin className="h-4 w-4 mr-2" /> LinkedIn</a>
                                 </Button>
                             )}
                             {candidate?.github_url && (
-                                <Button variant="ghost" size="sm" asChild className="text-[#123C69]/60 hover:text-[#123C69]">
+                                <Button variant="ghost" size="sm" asChild className="text-[#1B3FA0]/60 hover:text-[#1B3FA0]">
                                     <a href={candidate.github_url} target="_blank" rel="noreferrer"><Github className="h-4 w-4 mr-2" /> GitHub</a>
                                 </Button>
                             )}
@@ -155,21 +155,21 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
 
                         {/* Experience Section */}
                         {candidate?.experience && candidate.experience.length > 0 && (
-                            <div className="pt-6 border-t border-[#123C69]/10 space-y-4">
+                            <div className="pt-6 border-t border-[#1B3FA0]/10 space-y-4">
                                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                                     <Briefcase className="h-4 w-4" /> Experience
                                 </h3>
                                 <div className="space-y-6">
                                     {candidate.experience.map((exp: any) => (
-                                        <div key={exp.id} className="relative pl-6 border-l-2 border-[#123C69]/10 pb-2">
-                                            <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-white border-2 border-[#123C69]/20" />
-                                            <h4 className="font-bold text-[#123C69]">{exp.job_title}</h4>
-                                            <p className="text-sm font-semibold text-[#AC3B61]">{exp.company_name} • <span className="text-muted-foreground font-medium">{exp.employment_type}</span></p>
+                                        <div key={exp.id} className="relative pl-6 border-l-2 border-[#1B3FA0]/10 pb-2">
+                                            <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-white border-2 border-[#1B3FA0]/20" />
+                                            <h4 className="font-bold text-[#1B3FA0]">{exp.job_title}</h4>
+                                            <p className="text-sm font-semibold text-[#3D6EFF]">{exp.company_name} • <span className="text-muted-foreground font-medium">{exp.employment_type}</span></p>
                                             <p className="text-xs text-muted-foreground mb-2">
                                                 {new Date(exp.start_date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })} -
                                                 {exp.end_date ? new Date(exp.end_date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'Present'}
                                             </p>
-                                            <p className="text-sm text-[#123C69]/80 leading-relaxed">{exp.responsibilities}</p>
+                                            <p className="text-sm text-[#1B3FA0]/80 leading-relaxed">{exp.responsibilities}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -178,15 +178,15 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
 
                         {/* Education Section */}
                         {candidate?.education && candidate.education.length > 0 && (
-                            <div className="pt-6 border-t border-[#123C69]/10 space-y-4">
+                            <div className="pt-6 border-t border-[#1B3FA0]/10 space-y-4">
                                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                                     <GraduationCap className="h-4 w-4" /> Education
                                 </h3>
                                 <div className="grid gap-4">
                                     {candidate.education.map((edu: any) => (
-                                        <div key={edu.id} className="bg-[#123C69]/5 p-4 rounded-2xl">
-                                            <h4 className="font-bold text-[#123C69]">{edu.school_name}</h4>
-                                            <p className="text-sm font-medium text-[#AC3B61]">{edu.degree_level} in {edu.field_of_study}</p>
+                                        <div key={edu.id} className="bg-[#1B3FA0]/5 p-4 rounded-2xl">
+                                            <h4 className="font-bold text-[#1B3FA0]">{edu.school_name}</h4>
+                                            <p className="text-sm font-medium text-[#3D6EFF]">{edu.degree_level} in {edu.field_of_study}</p>
                                             <p className="text-xs text-muted-foreground mt-1">{edu.start_year} - {edu.end_year || 'Present'}</p>
                                         </div>
                                     ))}
@@ -196,18 +196,18 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
 
                         {/* Projects Section */}
                         {candidate?.projects && candidate.projects.length > 0 && (
-                            <div className="pt-6 border-t border-[#123C69]/10 space-y-4">
+                            <div className="pt-6 border-t border-[#1B3FA0]/10 space-y-4">
                                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                                     <Layout className="h-4 w-4" /> Projects
                                 </h3>
                                 <div className="grid gap-4 sm:grid-cols-2">
                                     {candidate.projects.map((project: any) => (
-                                        <div key={project.id} className="p-4 border border-[#123C69]/10 rounded-2xl bg-white shadow-sm flex flex-col">
-                                            <h4 className="font-bold text-[#123C69]">{project.title}</h4>
-                                            <p className="text-xs font-semibold text-[#AC3B61] mb-2">{project.role_in_project}</p>
-                                            <p className="text-sm text-[#123C69]/70 line-clamp-2 mb-3 flex-1">{project.description}</p>
+                                        <div key={project.id} className="p-4 border border-[#1B3FA0]/10 rounded-2xl bg-white shadow-sm flex flex-col">
+                                            <h4 className="font-bold text-[#1B3FA0]">{project.title}</h4>
+                                            <p className="text-xs font-semibold text-[#3D6EFF] mb-2">{project.role_in_project}</p>
+                                            <p className="text-sm text-[#1B3FA0]/70 line-clamp-2 mb-3 flex-1">{project.description}</p>
                                             {project.url && (
-                                                <a href={project.url} target="_blank" rel="noreferrer" className="text-xs font-bold text-[#123C69] hover:underline flex items-center gap-1">
+                                                <a href={project.url} target="_blank" rel="noreferrer" className="text-xs font-bold text-[#1B3FA0] hover:underline flex items-center gap-1">
                                                     View Project <ExternalLink className="h-3 w-3" />
                                                 </a>
                                             )}
@@ -307,8 +307,8 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                             </form>
                         )}
                         {/* Notes Section */}
-                        <div className="pt-4 border-t border-[#123C69]/10 space-y-3">
-                            <h4 className="text-sm font-bold text-[#123C69] flex items-center gap-2">
+                        <div className="pt-4 border-t border-[#1B3FA0]/10 space-y-3">
+                            <h4 className="text-sm font-bold text-[#1B3FA0] flex items-center gap-2">
                                 <StickyNote className="h-4 w-4" /> Private Notes
                             </h4>
 
@@ -316,16 +316,16 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                             {notes && notes.length > 0 && (
                                 <div className="space-y-2 max-h-48 overflow-y-auto">
                                     {notes.map((n: any) => (
-                                        <div key={n.id} className="bg-[#123C69]/5 rounded-xl p-3 text-xs">
+                                        <div key={n.id} className="bg-[#1B3FA0]/5 rounded-xl p-3 text-xs">
                                             {n.rating && (
                                                 <div className="flex gap-0.5 mb-1">
                                                     {Array.from({ length: 5 }).map((_, i) => (
-                                                        <Star key={i} className={`h-3 w-3 ${i < n.rating ? "fill-amber-400 text-amber-400" : "text-[#123C69]/20"}`} />
+                                                        <Star key={i} className={`h-3 w-3 ${i < n.rating ? "fill-amber-400 text-amber-400" : "text-[#1B3FA0]/20"}`} />
                                                     ))}
                                                 </div>
                                             )}
-                                            <p className="text-[#123C69]/80 font-medium leading-snug">{n.note}</p>
-                                            <p className="text-[#123C69]/40 font-bold mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
+                                            <p className="text-[#1B3FA0]/80 font-medium leading-snug">{n.note}</p>
+                                            <p className="text-[#1B3FA0]/40 font-bold mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -350,17 +350,17 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                                 <Textarea
                                     name="note"
                                     placeholder="Add a private note about this applicant..."
-                                    className="min-h-[80px] text-xs rounded-xl border-[#123C69]/10 bg-white resize-none"
+                                    className="min-h-[80px] text-xs rounded-xl border-[#1B3FA0]/10 bg-white resize-none"
                                     required
                                 />
                                 <div className="flex items-center gap-2">
-                                    <select name="rating" className="flex-1 text-xs rounded-xl border border-[#123C69]/10 bg-white px-3 py-2 font-bold text-[#123C69]/60 focus:outline-none">
+                                    <select name="rating" className="flex-1 text-xs rounded-xl border border-[#1B3FA0]/10 bg-white px-3 py-2 font-bold text-[#1B3FA0]/60 focus:outline-none">
                                         <option value="">No rating</option>
                                         {[1, 2, 3, 4, 5].map(r => (
                                             <option key={r} value={r}>{"★".repeat(r)} {["Poor", "Fair", "Good", "Great", "Excellent"][r - 1]}</option>
                                         ))}
                                     </select>
-                                    <Button type="submit" size="sm" className="rounded-xl bg-[#123C69] text-white font-bold text-xs px-4">
+                                    <Button type="submit" size="sm" className="rounded-xl bg-[#1B3FA0] text-white font-bold text-xs px-4">
                                         Save
                                     </Button>
                                 </div>

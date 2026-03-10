@@ -50,15 +50,15 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
 
     return (
         <div className="flex flex-col h-full overflow-hidden">
-            <header className="flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-md border-b border-[#123C69]/10 shrink-0">
+            <header className="flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-md border-b border-[#1B3FA0]/10 shrink-0">
                 <div className="flex items-center gap-3">
                     {/* Back button: mobile only — desktop always shows the inbox list panel */}
-                    <Button variant="ghost" size="icon" asChild className="lg:hidden rounded-full hover:bg-[#123C69]/5 shrink-0">
-                        <Link href={`/${profile.role}/messages`}><ArrowLeft className="h-5 w-5 text-[#123C69]" /></Link>
+                    <Button variant="ghost" size="icon" asChild className="lg:hidden rounded-full hover:bg-[#1B3FA0]/5 shrink-0">
+                        <Link href={`/${profile.role}/messages`}><ArrowLeft className="h-5 w-5 text-[#1B3FA0]" /></Link>
                     </Button>
 
                     <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-[#123C69]/10 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center font-bold text-[#123C69] uppercase">
+                        <div className="h-10 w-10 rounded-full bg-[#1B3FA0]/10 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center font-bold text-[#1B3FA0] uppercase">
                             {avatar ? (
                                 <img src={avatar} alt={title} className="h-full w-full object-cover" />
                             ) : (
@@ -66,13 +66,13 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
                             )}
                         </div>
                         <div>
-                            <h2 className="text-base font-bold text-[#123C69] leading-tight">{title}</h2>
-                            <p className="text-[10px] font-bold text-[#AC3B61] uppercase tracking-wider line-clamp-1">{subtitle}</p>
+                            <h2 className="text-base font-bold text-[#1B3FA0] leading-tight">{title}</h2>
+                            <p className="text-[10px] font-bold text-[#3D6EFF] uppercase tracking-wider line-clamp-1">{subtitle}</p>
                         </div>
                     </div>
                 </div>
 
-                <Badge variant="outline" className="hidden sm:inline-flex bg-[#123C69]/5 text-[#123C69] border-[#123C69]/10 font-bold uppercase text-[10px] px-3 py-1 rounded-full">
+                <Badge variant="outline" className="hidden sm:inline-flex bg-[#1B3FA0]/5 text-[#1B3FA0] border-[#1B3FA0]/10 font-bold uppercase text-[10px] px-3 py-1 rounded-full">
                     {app.status}
                 </Badge>
             </header>

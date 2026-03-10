@@ -90,10 +90,10 @@ export async function InboxList({ role, sidebar = false }: { role: "employer" | 
             ? "flex flex-col w-full h-full overflow-hidden"
             : "flex flex-col max-w-4xl mx-auto w-full bg-white/60 backdrop-blur-xl rounded-[2rem] shadow-xl border border-white/40 overflow-hidden"
         }>
-            <div className={`border-b border-[#123C69]/10 bg-white/40 ${sidebar ? "px-5 py-4" : "p-6"}`}>
-                <h3 className="text-xl font-bold text-[#123C69]">Messages</h3>
+            <div className={`border-b border-[#1B3FA0]/10 bg-white/40 ${sidebar ? "px-5 py-4" : "p-6"}`}>
+                <h3 className="text-xl font-bold text-[#1B3FA0]">Messages</h3>
             </div>
-            <div className={`divide-y divide-[#123C69]/5 ${sidebar ? "overflow-y-auto flex-1" : ""}`}>
+            <div className={`divide-y divide-[#1B3FA0]/5 ${sidebar ? "overflow-y-auto flex-1" : ""}`}>
                 {conversations.map((conv: any) => {
                     const app = Array.isArray(conv.application) ? conv.application[0] : conv.application;
                     const candidate = Array.isArray(app?.candidate) ? app.candidate[0] : app?.candidate;
@@ -117,11 +117,11 @@ export async function InboxList({ role, sidebar = false }: { role: "employer" | 
                         : (employerSub?.status === 'active' || employerSub?.status === 'trialing');
 
                     return (
-                        <Link key={conv.id} href={`/${role}/messages/${conv.id}`} className={`block transition-all hover:bg-[#123C69]/5 active:scale-[0.99] ${hasUnread ? "bg-[#123C69]/5" : ""}`}>
+                        <Link key={conv.id} href={`/${role}/messages/${conv.id}`} className={`block transition-all hover:bg-[#1B3FA0]/5 active:scale-[0.99] ${hasUnread ? "bg-[#1B3FA0]/5" : ""}`}>
                             <div className="p-4 flex gap-4 items-center">
                                 {/* Avatar */}
                                 <div className="relative shrink-0">
-                                    <div className="h-14 w-14 rounded-full bg-[#123C69]/10 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center font-bold text-[#123C69] uppercase">
+                                    <div className="h-14 w-14 rounded-full bg-[#1B3FA0]/10 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center font-bold text-[#1B3FA0] uppercase">
                                         {avatar ? (
                                             <img src={avatar} alt={subjectName} className="h-full w-full object-cover" />
                                         ) : (
@@ -138,22 +138,22 @@ export async function InboxList({ role, sidebar = false }: { role: "employer" | 
                                 {/* Content */}
                                 <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-baseline mb-0.5">
-                                        <h4 className={`text-base truncate ${hasUnread ? "font-bold text-[#123C69]" : "font-semibold text-foreground/80"}`}>
+                                        <h4 className={`text-base truncate ${hasUnread ? "font-bold text-[#1B3FA0]" : "font-semibold text-foreground/80"}`}>
                                             {subjectName}
                                         </h4>
-                                        <span className="text-[10px] font-bold text-[#123C69]/40 uppercase shrink-0">
+                                        <span className="text-[10px] font-bold text-[#1B3FA0]/40 uppercase shrink-0">
                                             {lastMsg
                                                 ? new Date(lastMsg.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })
                                                 : new Date(conv.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })
                                             }
                                         </span>
                                     </div>
-                                    <p className="text-[11px] text-[#AC3B61] font-bold truncate mb-1 uppercase tracking-tight">
+                                    <p className="text-[11px] text-[#3D6EFF] font-bold truncate mb-1 uppercase tracking-tight">
                                         {jobTitle}
                                     </p>
                                     <div className="flex items-center gap-2">
                                         {lastMsg ? (
-                                            <p className={`text-sm truncate flex-1 ${hasUnread ? "font-bold text-[#123C69]" : "text-muted-foreground"}`}>
+                                            <p className={`text-sm truncate flex-1 ${hasUnread ? "font-bold text-[#1B3FA0]" : "text-muted-foreground"}`}>
                                                 {lastMsg.sender_id === profile.id ? "You: " : ""}
                                                 {lastMsg.body}
                                             </p>
@@ -161,7 +161,7 @@ export async function InboxList({ role, sidebar = false }: { role: "employer" | 
                                             <p className="text-sm text-muted-foreground italic flex-1">No messages yet</p>
                                         )}
                                         {hasUnread && (
-                                            <div className="h-2.5 w-2.5 rounded-full bg-[#AC3B61] shrink-0" />
+                                            <div className="h-2.5 w-2.5 rounded-full bg-[#3D6EFF] shrink-0" />
                                         )}
                                     </div>
                                 </div>

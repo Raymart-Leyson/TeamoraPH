@@ -56,9 +56,9 @@ export function ReportJobButton({ jobId, jobTitle }: ReportJobButtonProps) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-md rounded-[2rem] border-none shadow-2xl bg-white/90 backdrop-blur-xl">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-black text-[#123C69]">Report Suspicious Job</DialogTitle>
-                    <DialogDescription className="font-bold text-[#123C69]/60">
-                        Help us keep Teamora safe. Why are you reporting <span className="text-[#AC3B61]">"{jobTitle}"</span>?
+                    <DialogTitle className="text-2xl font-black text-[#1B3FA0]">Report Suspicious Job</DialogTitle>
+                    <DialogDescription className="font-bold text-[#1B3FA0]/60">
+                        Help us keep Teamora safe. Why are you reporting <span className="text-[#3D6EFF]">"{jobTitle}"</span>?
                     </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
@@ -70,7 +70,7 @@ export function ReportJobButton({ jobId, jobTitle }: ReportJobButtonProps) {
                     </div>
                     <Textarea
                         placeholder="Please describe the issue (e.g., Requesting payment outside the platform, fake job post...)"
-                        className="min-h-[120px] rounded-2xl border-none shadow-inner bg-white font-bold resize-none focus-visible:ring-[#AC3B61]"
+                        className="min-h-[120px] rounded-2xl border-none shadow-inner bg-white font-bold resize-none focus-visible:ring-[#3D6EFF]"
                         value={reason}
                         onChange={(e) => setReason(e.target.value)}
                     />

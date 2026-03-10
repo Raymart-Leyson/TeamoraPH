@@ -102,7 +102,7 @@ async function JobList({
                     return (
                         <Card
                             key={job.id}
-                            className="relative group hover:border-[#123C69]/50 transition-colors shadow-sm overflow-hidden bg-white/60 backdrop-blur-sm"
+                            className="relative group hover:border-[#1B3FA0]/50 transition-colors shadow-sm overflow-hidden bg-white/60 backdrop-blur-sm"
                         >
                             <Link
                                 href={`/jobs/${job.id}`}
@@ -110,7 +110,7 @@ async function JobList({
                                 aria-label={`View details for ${job.title}`}
                             />
                             <div className="relative z-0 flex flex-col md:flex-row p-4 md:p-5 gap-4 md:gap-5">
-                                <div className="h-12 w-12 shrink-0 bg-muted/50 rounded-lg flex items-center justify-center border font-bold text-xl text-[#123C69] uppercase group-hover:bg-[#123C69]/10 transition-colors overflow-hidden">
+                                <div className="h-12 w-12 shrink-0 bg-muted/50 rounded-lg flex items-center justify-center border font-bold text-xl text-[#1B3FA0] uppercase group-hover:bg-[#1B3FA0]/10 transition-colors overflow-hidden">
                                     {company?.logo_url ? (
                                         <Image
                                             src={company.logo_url}
@@ -126,7 +126,7 @@ async function JobList({
                                 <div className="flex-1 space-y-3">
                                     <div className="flex items-start justify-between">
                                         <div>
-                                            <h3 className="text-lg font-semibold leading-none mb-1 group-hover:text-[#123C69] transition-colors">
+                                            <h3 className="text-lg font-semibold leading-none mb-1 group-hover:text-[#1B3FA0] transition-colors">
                                                 {job.title}
                                             </h3>
                                             <p className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
@@ -145,7 +145,7 @@ async function JobList({
                                                 "hidden md:flex relative z-20 shadow-md transition-transform hover:-translate-y-0.5 rounded-full px-6",
                                                 alreadyApplied
                                                     ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                                    : "bg-[#123C69] text-white hover:bg-[#123C69]/90"
+                                                    : "bg-[#1B3FA0] text-white hover:bg-[#1B3FA0]/90"
                                             )}
                                         >
                                             <Link href={`/jobs/${job.id}`}>
@@ -155,14 +155,14 @@ async function JobList({
                                     </div>
                                     <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                                         {job.location && (
-                                            <span className="flex items-center gap-1.5 bg-muted/50 px-2.5 py-1 rounded-md text-[#123C69]/80 font-medium">
+                                            <span className="flex items-center gap-1.5 bg-muted/50 px-2.5 py-1 rounded-md text-[#1B3FA0]/80 font-medium">
                                                 <MapPin className="h-3.5 w-3.5" /> {job.location}
                                             </span>
                                         )}
                                         {job.job_type && (
                                             <Badge
                                                 variant="secondary"
-                                                className="px-2.5 py-1 text-xs tracking-wider bg-[#EDC7B7]/40 text-[#123C69] border-none font-bold"
+                                                className="px-2.5 py-1 text-xs tracking-wider bg-[#A8C4FF]/40 text-[#1B3FA0] border-none font-bold"
                                             >
                                                 {job.job_type.toUpperCase()}
                                             </Badge>
@@ -177,7 +177,7 @@ async function JobList({
                                 <div className="md:hidden mt-3 pt-3 border-t w-full flex justify-end relative z-20">
                                     <Button
                                         asChild
-                                        className="w-full bg-[#123C69] text-white hover:bg-[#123C69]/90"
+                                        className="w-full bg-[#1B3FA0] text-white hover:bg-[#1B3FA0]/90"
                                     >
                                         <Link href={`/jobs/${job.id}`}>View &amp; Apply</Link>
                                     </Button>
@@ -232,8 +232,8 @@ export default async function CandidateBrowseJobsPage({
     return (
         <div className="flex-1 space-y-4 p-4 md:p-6 max-w-[90%] mx-auto pt-6">
             <div>
-                <h2 className="text-2xl font-extrabold tracking-wide text-[#123C69]">Browse Jobs</h2>
-                <p className="text-[#123C69]/70 font-medium mt-1 text-sm">
+                <h2 className="text-2xl font-extrabold tracking-wide text-[#1B3FA0]">Browse Jobs</h2>
+                <p className="text-[#1B3FA0]/70 font-medium mt-1 text-sm">
                     Find your next remote opportunity.
                 </p>
             </div>

@@ -68,15 +68,15 @@ function GovIdCapture({ onComplete, isSubmitting }: {
 
     if (phase === "intro") return (
         <div className="space-y-4 w-full">
-            <div className="bg-[#123C69]/5 border border-[#123C69]/10 rounded-xl p-4 text-sm text-[#123C69]/80 font-medium space-y-2">
-                <p className="font-bold text-[#123C69]">3-step ID verification:</p>
+            <div className="bg-[#1B3FA0]/5 border border-[#1B3FA0]/10 rounded-xl p-4 text-sm text-[#1B3FA0]/80 font-medium space-y-2">
+                <p className="font-bold text-[#1B3FA0]">3-step ID verification:</p>
                 <ol className="list-decimal list-inside space-y-1">
                     <li>📷 Photo of the <strong>front</strong> of your government ID</li>
                     <li>📷 Photo of the <strong>back</strong> of your government ID</li>
                     <li>🤳 A <strong>selfie</strong> of you holding the ID next to your face</li>
                 </ol>
             </div>
-            <Button onClick={() => setPhase("front")} className="w-full bg-[#123C69] hover:bg-[#123C69]/90 text-white font-bold rounded-xl">
+            <Button onClick={() => setPhase("front")} className="w-full bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-bold rounded-xl">
                 <Camera className="w-4 h-4 mr-2" /> Start Verification
             </Button>
         </div>
@@ -84,8 +84,8 @@ function GovIdCapture({ onComplete, isSubmitting }: {
 
     if (phase === "front") return (
         <div className="w-full space-y-3">
-            <p className="text-sm font-bold text-[#123C69] text-center">Step 1 of 3 — Front of your ID</p>
-            <p className="text-xs text-center text-[#123C69]/60">Hold your ID clearly in frame. Make sure all text is visible.</p>
+            <p className="text-sm font-bold text-[#1B3FA0] text-center">Step 1 of 3 — Front of your ID</p>
+            <p className="text-xs text-center text-[#1B3FA0]/60">Hold your ID clearly in frame. Make sure all text is visible.</p>
             <CameraCapture
                 key="id-front"
                 label="Capture Front"
@@ -102,8 +102,8 @@ function GovIdCapture({ onComplete, isSubmitting }: {
 
     if (phase === "back") return (
         <div className="w-full space-y-3">
-            <p className="text-sm font-bold text-[#123C69] text-center">Step 2 of 3 — Back of your ID</p>
-            <p className="text-xs text-center text-[#123C69]/60">Flip the ID and capture the back side clearly.</p>
+            <p className="text-sm font-bold text-[#1B3FA0] text-center">Step 2 of 3 — Back of your ID</p>
+            <p className="text-xs text-center text-[#1B3FA0]/60">Flip the ID and capture the back side clearly.</p>
             <CameraCapture
                 key="id-back"
                 label="Capture Back"
@@ -120,8 +120,8 @@ function GovIdCapture({ onComplete, isSubmitting }: {
 
     if (phase === "selfie") return (
         <div className="w-full space-y-3">
-            <p className="text-sm font-bold text-[#123C69] text-center">Step 3 of 3 — Selfie holding your ID</p>
-            <p className="text-xs text-center text-[#123C69]/60">Hold your ID next to your face so both are clearly visible.</p>
+            <p className="text-sm font-bold text-[#1B3FA0] text-center">Step 3 of 3 — Selfie holding your ID</p>
+            <p className="text-xs text-center text-[#1B3FA0]/60">Hold your ID next to your face so both are clearly visible.</p>
             <CameraCapture
                 key="id-selfie"
                 label="Capture Selfie with ID"
@@ -138,7 +138,7 @@ function GovIdCapture({ onComplete, isSubmitting }: {
 
     if (phase === "confirm") return (
         <div className="w-full space-y-4">
-            <p className="text-sm font-bold text-[#123C69] text-center">Review your photos</p>
+            <p className="text-sm font-bold text-[#1B3FA0] text-center">Review your photos</p>
             <div className="grid grid-cols-3 gap-2">
                 {[
                     { label: "Front", url: frontUrl },
@@ -147,7 +147,7 @@ function GovIdCapture({ onComplete, isSubmitting }: {
                 ].map(({ label, url }) => (
                     <div key={label} className="space-y-1">
                         <img src={url!} alt={label} className="w-full aspect-[4/3] object-cover rounded-xl border border-slate-200" />
-                        <p className="text-[10px] font-bold text-center text-[#123C69]/60">{label}</p>
+                        <p className="text-[10px] font-bold text-center text-[#1B3FA0]/60">{label}</p>
                     </div>
                 ))}
             </div>
@@ -157,7 +157,7 @@ function GovIdCapture({ onComplete, isSubmitting }: {
                 </Button>
                 <Button
                     onClick={() => onComplete(frontBlob!, backBlob!, selfieBlob!)}
-                    className="flex-1 bg-[#123C69] hover:bg-[#123C69]/90 text-white font-bold rounded-xl"
+                    className="flex-1 bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-bold rounded-xl"
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
@@ -179,7 +179,7 @@ function SelfieCapture({ onComplete, isSubmitting }: {
 
     if (!captured) return (
         <div className="w-full space-y-3">
-            <p className="text-xs text-center text-[#123C69]/60">Keep your face centred and well-lit. Remove sunglasses or face coverings.</p>
+            <p className="text-xs text-center text-[#1B3FA0]/60">Keep your face centred and well-lit. Remove sunglasses or face coverings.</p>
             <CameraCapture
                 label="Take Selfie"
                 facingMode="user"
@@ -197,7 +197,7 @@ function SelfieCapture({ onComplete, isSubmitting }: {
                 </Button>
                 <Button
                     onClick={() => onComplete(captured.blob)}
-                    className="bg-[#123C69] hover:bg-[#123C69]/90 text-white font-bold rounded-xl px-6"
+                    className="bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-bold rounded-xl px-6"
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
@@ -307,7 +307,7 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
                     variant="outline"
                     onClick={() => setActiveCapture("id_front")}
                     disabled={!!submitting}
-                    className="rounded-xl border-[#123C69]/20 font-bold hover:bg-[#123C69] hover:text-white transition-all whitespace-nowrap"
+                    className="rounded-xl border-[#1B3FA0]/20 font-bold hover:bg-[#1B3FA0] hover:text-white transition-all whitespace-nowrap"
                 >
                     <Camera className="h-4 w-4 mr-2" /> Start Capture
                 </Button>
@@ -320,7 +320,7 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
                     variant="outline"
                     onClick={() => setActiveCapture("selfie")}
                     disabled={!!submitting}
-                    className="rounded-xl border-[#123C69]/20 font-bold hover:bg-[#123C69] hover:text-white transition-all whitespace-nowrap"
+                    className="rounded-xl border-[#1B3FA0]/20 font-bold hover:bg-[#1B3FA0] hover:text-white transition-all whitespace-nowrap"
                 >
                     <Camera className="h-4 w-4 mr-2" /> Open Camera
                 </Button>
@@ -335,14 +335,14 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
                         placeholder="https://linkedin.com/in/..."
                         value={socialUrl}
                         onChange={(e) => setSocialUrl(e.target.value)}
-                        className="w-52 text-sm rounded-xl border-[#123C69]/20"
+                        className="w-52 text-sm rounded-xl border-[#1B3FA0]/20"
                         disabled={!!submitting}
                     />
                     <Button
                         onClick={handleSocialLink}
                         disabled={!!submitting || !socialUrl.trim()}
                         variant="outline"
-                        className="rounded-xl border-[#123C69]/20 font-bold hover:bg-[#123C69] hover:text-white transition-all shrink-0"
+                        className="rounded-xl border-[#1B3FA0]/20 font-bold hover:bg-[#1B3FA0] hover:text-white transition-all shrink-0"
                     >
                         {submitting === "social_link" ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <LinkIcon className="h-4 w-4 mr-2" />}
                         Submit
@@ -364,7 +364,7 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
             )}
 
             {/* Score Header */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#123C69] to-[#123C69]/80 rounded-[2.5rem] p-10 text-white shadow-2xl">
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#1B3FA0] to-[#1B3FA0]/80 rounded-[2.5rem] p-10 text-white shadow-2xl">
                 <div className="absolute top-0 right-0 p-12 opacity-10">
                     <ShieldCheck size={180} />
                 </div>
@@ -404,19 +404,19 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
                         (activeCapture === "selfie" && step.id === "selfie");
 
                     return (
-                        <Card key={step.id} className={`border-none shadow-xl bg-white/60 backdrop-blur-xl rounded-[1.5rem] overflow-hidden transition-all ${isExpanded ? "ring-2 ring-[#123C69]/20" : "hover:translate-x-2"}`}>
+                        <Card key={step.id} className={`border-none shadow-xl bg-white/60 backdrop-blur-xl rounded-[1.5rem] overflow-hidden transition-all ${isExpanded ? "ring-2 ring-[#1B3FA0]/20" : "hover:translate-x-2"}`}>
                             <CardContent className="p-6">
                                 {/* Step Header */}
                                 <div className="flex items-center gap-6">
-                                    <div className={`h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 ${step.status === "verified" ? "bg-green-500/10 text-green-600" : "bg-[#123C69]/5 text-[#123C69]"}`}>
+                                    <div className={`h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 ${step.status === "verified" ? "bg-green-500/10 text-green-600" : "bg-[#1B3FA0]/5 text-[#1B3FA0]"}`}>
                                         <step.icon className="h-7 w-7" />
                                     </div>
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <h3 className="font-bold text-[#123C69]">{step.label}</h3>
+                                            <h3 className="font-bold text-[#1B3FA0]">{step.label}</h3>
                                             <StatusBadge status={step.status} />
                                         </div>
-                                        <p className="text-xs font-medium text-[#123C69]/60 leading-relaxed">{step.description}</p>
+                                        <p className="text-xs font-medium text-[#1B3FA0]/60 leading-relaxed">{step.description}</p>
                                     </div>
                                     <div className="shrink-0">{!isExpanded && renderAction(step)}</div>
                                 </div>
@@ -445,11 +445,11 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
             </div>
 
             {/* Privacy Note */}
-            <div className="bg-[#AC3B61]/5 border border-[#AC3B61]/10 rounded-2xl p-6 flex gap-4">
-                <AlertCircle className="h-6 w-6 text-[#AC3B61] shrink-0" />
+            <div className="bg-[#3D6EFF]/5 border border-[#3D6EFF]/10 rounded-2xl p-6 flex gap-4">
+                <AlertCircle className="h-6 w-6 text-[#3D6EFF] shrink-0" />
                 <div>
-                    <h4 className="font-bold text-[#AC3B61] text-sm mb-1">Privacy Guarantee</h4>
-                    <p className="text-xs text-[#AC3B61]/80 font-medium leading-relaxed">
+                    <h4 className="font-bold text-[#3D6EFF] text-sm mb-1">Privacy Guarantee</h4>
+                    <p className="text-xs text-[#3D6EFF]/80 font-medium leading-relaxed">
                         Your identification documents are encrypted and stored securely. They are only used for verification and will never be shared with employers or third parties without your consent.
                     </p>
                 </div>
