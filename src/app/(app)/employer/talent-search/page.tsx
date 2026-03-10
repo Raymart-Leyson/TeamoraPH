@@ -66,7 +66,8 @@ export default async function TalentSearchPage({
             last_name,
             avatar_url,
             bio,
-            location,
+            location_city,
+            location_country,
             skills,
             profiles!inner(email)
         `)
@@ -121,12 +122,14 @@ export default async function TalentSearchPage({
                             {[candidate.first_name, candidate.last_name].filter(Boolean).join(" ") || "Candidate User"}
                         </h3>
 
-                        {candidate.location && (
-                            <div className="flex items-center text-muted-foreground text-xs font-medium mb-3">
-                                <MapPin className="w-3 h-3 mr-1" />
-                                {candidate.location}
-                            </div>
-                        )}
+                        <div className="flex items-center text-muted-foreground text-xs font-medium mb-3">
+                            <MapPin className="w-3 h-3 mr-1 shrink-0" />
+                            <span className="truncate">
+                                {(candidate.location_city || candidate.location_country)
+                                    ? [candidate.location_city, candidate.location_country].filter(Boolean).join(", ")
+                                    : "Anywhere"}
+                            </span>
+                        </div>
 
                         <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-10 w-full">
                             {candidate.bio || "No biography provided."}
