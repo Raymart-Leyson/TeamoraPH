@@ -68,36 +68,30 @@ export default async function HiredApplicantsPage() {
     const candidateIds = [...new Set(rawHired.map(r => r.candidate_id))];
 
     // 3. Get candidate details from separate tables
-    const [cpRes, profileRes] = await Promise.all([
+    const [cpRes, authUsersRes] = await Promise.all([
         supabaseAdmin
             .from("candidate_profiles")
             .select("id, first_name, last_name, avatar_url, tagline")
             .in("id", candidateIds),
-        supabaseAdmin
-            .from("profiles")
-            .select("id, email, full_name")
-            .in("id", candidateIds)
+        supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
     ]);
 
     const cps = cpRes.data ?? [];
-    const profiles = profileRes.data ?? [];
-
-    // console.log("Hired Debug - JobIds:", jobIds);
-    // console.log("Hired Debug - CandidateIds:", candidateIds);
-    // console.log("Hired Debug - Profile Result:", profiles);
+    const authUsers = authUsersRes.data?.users ?? [];
+    const candidateAuthUsers = authUsers.filter(u => candidateIds.includes(u.id));
 
     if (cpRes.error) console.error("Error fetching candidate_profiles:", cpRes.error);
-    if (profileRes.error) console.error("Error fetching profiles:", profileRes.error);
+    if (authUsersRes.error) console.error("Error fetching auth users:", authUsersRes.error);
 
     // 4. Map to clean format
     const teamMembers = rawHired.map((row) => {
         const cp = cps.find((p) => p.id === row.candidate_id);
-        const p = profiles.find((prof) => prof.id === row.candidate_id);
+        const authUser = candidateAuthUsers.find((u) => u.id === row.candidate_id);
         const job = jobs.find((j) => j.id === row.job_id);
 
         const cpName = cp ? [cp.first_name, cp.last_name].filter(Boolean).join(" ") : null;
-        const displayName = cpName || (p as any)?.full_name || (p as any)?.name || "Hired Candidate";
-        const email = p?.email || (p as any)?.email_address || "No email available";
+        const displayName = cpName || authUser?.user_metadata?.full_name || authUser?.email?.split("@")[0] || "Hired Candidate";
+        const email = authUser?.email || "No email available";
 
         return {
             id: row.candidate_id as string,
