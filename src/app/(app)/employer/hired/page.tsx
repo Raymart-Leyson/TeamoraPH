@@ -36,17 +36,24 @@ export default async function HiredApplicantsPage() {
         );
     }
 
-    // 2. Get hired applications
-    const { data: hiredRows } = await supabaseAdmin
+    // 2. Get hired applications with a robust join
+    const { data: rawTeam, error: teamError } = await supabaseAdmin
         .from("applications")
-        .select("candidate_id, job_id, created_at")
+        .select(`
+            candidate_id, 
+            created_at,
+            job_posts(title),
+            profiles:profiles!candidate_id(id, email, full_name),
+            candidate_profiles:candidate_profiles!candidate_id(first_name, last_name, avatar_url, tagline)
+        `)
         .eq("status", "hired")
         .in("job_id", jobIds);
 
-    const rawHired = hiredRows ?? [];
-    const candidateIds = [...new Set(rawHired.map((r) => r.candidate_id as string))];
+    if (teamError) console.error("Error fetching team data:", teamError);
 
-    if (candidateIds.length === 0) {
+    const team = (rawTeam ?? []) as any[];
+
+    if (team.length === 0) {
         return (
             <div className="p-6 lg:p-8 max-w-5xl mx-auto text-center py-20">
                 <div className="p-4 rounded-full bg-slate-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -60,42 +67,25 @@ export default async function HiredApplicantsPage() {
         );
     }
 
-    // 3. Get candidate profiles and auth info
-    const [{ data: cps }, { data: profiles }] = await Promise.all([
-        supabaseAdmin
-            .from("candidate_profiles")
-            .select("id, first_name, last_name, avatar_url, bio, tagline")
-            .in("id", candidateIds),
-        supabaseAdmin
-            .from("profiles")
-            .select("id, email, full_name")
-            .in("id", candidateIds)
-    ]);
+    // 3. Map to clean format
+    const teamMembers = team.map((row) => {
+        const p = row.profiles;
+        const cp = row.candidate_profiles;
+        const job = row.job_posts;
 
-    // 4. Combine data
-    const teamMembers = rawHired.map((row) => {
-        const cp = (cps ?? []).find((p) => p.id === row.candidate_id);
-        const profileInfo = (profiles ?? []).find((p) => p.id === row.candidate_id);
-        const job = jobs.find((j) => j.id === row.job_id);
-
-        const displayName = cp 
-            ? [cp.first_name, cp.last_name].filter(Boolean).join(" ") 
-            : (profileInfo as any)?.full_name ?? "Candidate";
+        const cpName = cp ? [cp.first_name, cp.last_name].filter(Boolean).join(" ") : null;
+        const displayName = cpName || p?.full_name || "Hired Candidate";
 
         return {
             id: row.candidate_id as string,
-            email: profileInfo?.email ?? "No email",
-            first_name: cp?.first_name ?? "Candidate",
-            last_name: cp?.last_name ?? "",
+            email: p?.email || "No email available",
             full_name: displayName,
             avatar_url: cp?.avatar_url ?? null,
             job_title: job?.title ?? "Position",
             hired_at: row.created_at,
-            tagline: cp?.tagline ?? "Hired Team Member"
+            tagline: cp?.tagline ?? "Verified Team Member"
         };
-    });
-
-    return (
+    });    return (
         <div className="p-6 lg:p-8 max-w-6xl mx-auto space-y-8">
             <div className="flex items-end justify-between">
                 <div>
