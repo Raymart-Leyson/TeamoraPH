@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getUserProfile } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
-import { supabaseAdmin } from "@/utils/supabase/admin";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -71,47 +70,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         .maybeSingle();
     const isPro = subData?.status === "active" || subData?.status === "trialing";
 
-    // Fetch hired candidates if employer
-    let hiredCandidates: { id: string; full_name: string; avatar_url: string | null }[] = [];
-    if (validRole === "employer") {
-        const { data: jobRows } = await supabaseAdmin
-            .from("job_posts")
-            .select("id")
-            .eq("author_id", profile.id);
-        const jobIds = (jobRows ?? []).map((j) => j.id);
-
-        if (jobIds.length > 0) {
-            const { data: hiredRows } = await supabaseAdmin
-                .from("applications")
-                .select("candidate_id")
-                .eq("status", "hired")
-                .in("job_id", jobIds);
-
-            const candidateIds = [...new Set((hiredRows ?? []).map((r) => r.candidate_id))];
-
-            if (candidateIds.length > 0) {
-                const { data: cps } = await supabaseAdmin
-                    .from("candidate_profiles")
-                    .select("id, first_name, last_name, avatar_url")
-                    .in("id", candidateIds);
-
-                hiredCandidates = candidateIds.map((id) => {
-                    const cp = cps?.find((p) => p.id === id);
-                    return {
-                        id,
-                        full_name: cp ? `${cp.first_name} ${cp.last_name}` : "Candidate",
-                        avatar_url: cp?.avatar_url ?? null,
-                    };
-                });
-            }
-        }
-    }
 
     return (
         <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
             {/* Desktop Sidebar */}
             <aside className="hidden border-r bg-muted/30 lg:block lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
-                <Sidebar role={validRole} unreadMessages={unreadMessages} isPro={isPro} hiredCandidates={hiredCandidates} />
+                <Sidebar role={validRole} unreadMessages={unreadMessages} isPro={isPro} />
             </aside>
 
             {/* Main Container */}
@@ -126,7 +90,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="flex flex-col p-0 w-72">
-                            <Sidebar role={validRole} unreadMessages={unreadMessages} isPro={isPro} hiredCandidates={hiredCandidates} />
+                            <Sidebar role={validRole} unreadMessages={unreadMessages} isPro={isPro} />
                         </SheetContent>
                     </Sheet>
                     <div className="w-full flex-1">

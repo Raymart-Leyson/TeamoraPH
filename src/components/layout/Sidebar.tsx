@@ -25,7 +25,6 @@ interface SidebarProps {
     role: "candidate" | "employer" | "admin";
     unreadMessages?: number;
     isPro?: boolean;
-    hiredCandidates?: { id: string; full_name: string; avatar_url: string | null }[];
 }
 
 interface NavLink {
@@ -35,7 +34,7 @@ interface NavLink {
     badge?: number;
 }
 
-export function Sidebar({ role, unreadMessages = 0, isPro = false, hiredCandidates = [] }: SidebarProps) {
+export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProps) {
     const pathname = usePathname();
 
     const candidateLinks: NavLink[] = [
@@ -57,7 +56,6 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false, hiredCandidat
         { name: "Browse Companies", href: "/employer/browse-companies", icon: Building2 },
         { name: "My Company", href: "/employer/profile", icon: Building2 },
         { name: "My Jobs", href: "/employer/jobs", icon: BriefcaseBusiness },
-        { name: "Hired Applicants", href: "/employer/hired", icon: Users, badge: hiredCandidates.length },
         { name: "Messages", href: "/employer/messages", icon: MessageSquare, badge: unreadMessages },
         { name: "Time Proof", href: "/employer/timeproof", icon: Clock },
         { name: "Billing", href: "/employer/billing", icon: Settings },
