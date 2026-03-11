@@ -39,11 +39,12 @@ export default async function HiredApplicantsPage() {
     // 2. Get hired applications
     const { data: hiredRows } = await supabaseAdmin
         .from("applications")
-        .select("candidate_id, job_id, created_at, profiles!candidate_id(id, email)")
+        .select("candidate_id, job_id, created_at")
         .eq("status", "hired")
         .in("job_id", jobIds);
 
-    const candidateIds = [...new Set((hiredRows ?? []).map((r) => r.candidate_id))];
+    const rawHired = hiredRows ?? [];
+    const candidateIds = [...new Set(rawHired.map((r) => r.candidate_id as string))];
 
     if (candidateIds.length === 0) {
         return (
@@ -59,21 +60,27 @@ export default async function HiredApplicantsPage() {
         );
     }
 
-    // 3. Get candidate profiles
-    const { data: cps } = await supabaseAdmin
-        .from("candidate_profiles")
-        .select("id, first_name, last_name, avatar_url, bio, tagline")
-        .in("id", candidateIds);
+    // 3. Get candidate profiles and auth info
+    const [{ data: cps }, { data: profiles }] = await Promise.all([
+        supabaseAdmin
+            .from("candidate_profiles")
+            .select("id, first_name, last_name, avatar_url, bio, tagline")
+            .in("id", candidateIds),
+        supabaseAdmin
+            .from("profiles")
+            .select("id, email")
+            .in("id", candidateIds)
+    ]);
 
     // 4. Combine data
-    const teamMembers = (hiredRows ?? []).map((row) => {
-        const cp = cps?.find((p) => p.id === row.candidate_id);
+    const teamMembers = rawHired.map((row) => {
+        const cp = (cps ?? []).find((p) => p.id === row.candidate_id);
+        const profileInfo = (profiles ?? []).find((p) => p.id === row.candidate_id);
         const job = jobs.find((j) => j.id === row.job_id);
-        const p = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles;
 
         return {
             id: row.candidate_id as string,
-            email: (p as any)?.email ?? "",
+            email: profileInfo?.email ?? "No email",
             first_name: cp?.first_name ?? "Candidate",
             last_name: cp?.last_name ?? "",
             full_name: cp ? `${cp.first_name} ${cp.last_name}` : "Unknown",

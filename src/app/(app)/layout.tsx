@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getUserProfile } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
+import { supabaseAdmin } from "@/utils/supabase/admin";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -73,14 +74,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     // Fetch hired candidates if employer
     let hiredCandidates: { id: string; full_name: string; avatar_url: string | null }[] = [];
     if (validRole === "employer") {
-        const { data: jobRows } = await supabase
+        const { data: jobRows } = await supabaseAdmin
             .from("job_posts")
             .select("id")
             .eq("author_id", profile.id);
         const jobIds = (jobRows ?? []).map((j) => j.id);
 
         if (jobIds.length > 0) {
-            const { data: hiredRows } = await supabase
+            const { data: hiredRows } = await supabaseAdmin
                 .from("applications")
                 .select("candidate_id")
                 .eq("status", "hired")
@@ -89,7 +90,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             const candidateIds = [...new Set((hiredRows ?? []).map((r) => r.candidate_id))];
 
             if (candidateIds.length > 0) {
-                const { data: cps } = await supabase
+                const { data: cps } = await supabaseAdmin
                     .from("candidate_profiles")
                     .select("id, first_name, last_name, avatar_url")
                     .in("id", candidateIds);
