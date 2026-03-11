@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 const EFFECTIVE_DATE = "February 28, 2026";
-const CONTACT_EMAIL = "legal@teamoraph.com";
+const CONTACT_EMAIL = "legal@teamoraph.selleruniverse.com";
 
 export default function TermsOfServicePage() {
     return (
@@ -25,7 +25,7 @@ export default function TermsOfServicePage() {
 
                     {/* Intro */}
                     <p className="text-base leading-relaxed font-medium text-[#1B3FA0]/80">
-                        Welcome to <strong>TeamoraPH</strong> ("Platform", "we", "us", or "our"). By accessing or using our website at <strong>teamoraph.com</strong>, you agree to be bound by these Terms of Service ("Terms"). If you do not agree, please do not use the Platform. TeamoraPH is a Philippine-based job board connecting remote employers with Filipino talent.
+                        Welcome to <strong>TeamoraPH</strong> ("Platform", "we", "us", or "our"). By accessing or using our website at <strong>teamoraph.selleruniverse.com</strong>, you agree to be bound by these Terms of Service ("Terms"). If you do not agree, please do not use the Platform. TeamoraPH is a Philippine-based job board connecting remote employers with Filipino talent.
                     </p>
 
                     <Section title="1. Eligibility">

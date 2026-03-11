@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 const EFFECTIVE_DATE = "February 28, 2026";
-const CONTACT_EMAIL = "privacy@teamoraph.com";
+const CONTACT_EMAIL = "privacy@teamoraph.selleruniverse.com";
 
 export default function PrivacyPolicyPage() {
     return (

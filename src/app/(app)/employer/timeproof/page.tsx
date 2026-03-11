@@ -103,7 +103,7 @@ export default async function TimeproofPage({
         .in("user_id", candidateIds)
         .gte("started_at", dayStart)
         .lt("started_at", dayEnd)
-        .order("started_at", { ascending: true });
+        .order("started_at", { ascending: false });
 
     // 4. Screenshots for the selected day
     const { data: screenshots } = await supabaseAdmin
@@ -113,7 +113,7 @@ export default async function TimeproofPage({
         .eq("status", "uploaded")
         .gte("captured_at", dayStart)
         .lt("captured_at", dayEnd)
-        .order("captured_at", { ascending: true });
+        .order("captured_at", { ascending: false });
 
     // 5. Generate signed URLs
     const signedMap: Record<string, string> = {};
