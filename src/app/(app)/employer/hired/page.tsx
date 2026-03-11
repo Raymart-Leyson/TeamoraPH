@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+export const dynamic = "force-dynamic";
+
 export default async function HiredApplicantsPage() {
     const profile = await getUserProfile();
     if (!profile || profile.role !== "employer") redirect("/login");
@@ -36,13 +38,12 @@ export default async function HiredApplicantsPage() {
         );
     }
 
-    // 2. Get ALL hired applications for these jobs
-    // Using ilike for case-insensitivity just in case
+    // 2. Get hired applications - Match sidebar logic exactly
     const { data: hiredRows, error: hiredError } = await supabaseAdmin
         .from("applications")
-        .select("candidate_id, job_id, created_at, status")
-        .in("job_id", jobIds)
-        .ilike("status", "hired");
+        .select("candidate_id, job_id, created_at")
+        .eq("status", "hired")
+        .in("job_id", jobIds);
 
     if (hiredError) {
         console.error("Error fetching hired applications:", hiredError);
