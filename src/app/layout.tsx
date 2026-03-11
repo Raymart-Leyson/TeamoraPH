@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Teamora - Remote Job Marketplace",
   description: "Find Top Remote Roles & Candidates around the globe.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
