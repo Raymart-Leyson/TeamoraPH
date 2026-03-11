@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     // Verify ownership
     const { data: existing, error: fetchError } = await supabaseAdmin
         .from("screenshots")
-        .select("id, status")
+        .select("id, status, storage_path")
         .eq("id", screenshot_id)
         .eq("device_id", deviceId)
         .eq("user_id", userId)
