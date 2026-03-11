@@ -36,24 +36,21 @@ export default async function HiredApplicantsPage() {
         );
     }
 
-    // 2. Get hired applications with a robust join
-    const { data: rawTeam, error: teamError } = await supabaseAdmin
+    // 2. Get ALL hired applications for these jobs
+    // Using ilike for case-insensitivity just in case
+    const { data: hiredRows, error: hiredError } = await supabaseAdmin
         .from("applications")
-        .select(`
-            candidate_id, 
-            created_at,
-            job_posts(title),
-            profiles:profiles!candidate_id(id, email, full_name),
-            candidate_profiles:candidate_profiles!candidate_id(first_name, last_name, avatar_url, tagline)
-        `)
-        .eq("status", "hired")
-        .in("job_id", jobIds);
+        .select("candidate_id, job_id, created_at, status")
+        .in("job_id", jobIds)
+        .ilike("status", "hired");
 
-    if (teamError) console.error("Error fetching team data:", teamError);
+    if (hiredError) {
+        console.error("Error fetching hired applications:", hiredError);
+    }
 
-    const team = (rawTeam ?? []) as any[];
+    const rawHired = hiredRows ?? [];
 
-    if (team.length === 0) {
+    if (rawHired.length === 0) {
         return (
             <div className="p-6 lg:p-8 max-w-5xl mx-auto text-center py-20">
                 <div className="p-4 rounded-full bg-slate-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -67,11 +64,28 @@ export default async function HiredApplicantsPage() {
         );
     }
 
-    // 3. Map to clean format
-    const teamMembers = team.map((row) => {
-        const p = row.profiles;
-        const cp = row.candidate_profiles;
-        const job = row.job_posts;
+    const candidateIds = [...new Set(rawHired.map(r => r.candidate_id))];
+
+    // 3. Get candidate details from separate tables
+    const [cpRes, profileRes] = await Promise.all([
+        supabaseAdmin
+            .from("candidate_profiles")
+            .select("id, first_name, last_name, avatar_url, tagline")
+            .in("id", candidateIds),
+        supabaseAdmin
+            .from("profiles")
+            .select("id, email, full_name")
+            .in("id", candidateIds)
+    ]);
+
+    const cps = cpRes.data ?? [];
+    const profiles = profileRes.data ?? [];
+
+    // 4. Map to clean format
+    const teamMembers = rawHired.map((row) => {
+        const cp = cps.find((p) => p.id === row.candidate_id);
+        const p = profiles.find((prof) => prof.id === row.candidate_id);
+        const job = jobs.find((j) => j.id === row.job_id);
 
         const cpName = cp ? [cp.first_name, cp.last_name].filter(Boolean).join(" ") : null;
         const displayName = cpName || p?.full_name || "Hired Candidate";
