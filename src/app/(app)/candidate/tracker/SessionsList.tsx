@@ -26,7 +26,7 @@ export function SessionsList({ sessions }: { sessions: Session[] }) {
         <ul className="divide-y divide-slate-100">
             {sessions.map((s) => {
                 const dur =
-                    s.status === "ended" && s.total_seconds
+                    (s.status === "ended" || s.status === "abandoned") && s.total_seconds != null
                         ? formatDuration(s.total_seconds)
                         : s.status === "active"
                           ? formatDuration(Math.floor((now - new Date(s.started_at).getTime()) / 1000))

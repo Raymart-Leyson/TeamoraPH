@@ -86,7 +86,7 @@ function CandidateCard({ data }: { data: CandidateData }) {
                             <ul className="space-y-1">
                                 {data.sessions.map((s) => {
                                     const dur =
-                                        s.status === "ended" && s.total_seconds
+                                        (s.status === "ended" || s.status === "abandoned") && s.total_seconds != null
                                             ? formatDuration(s.total_seconds)
                                             : s.status === "active"
                                               ? "Active now"

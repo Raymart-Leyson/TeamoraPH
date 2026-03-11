@@ -70,7 +70,7 @@ export async function TimeReportsSection({ userId }: { userId: string }) {
     let totalSeconds = 0;
     const now = Date.now();
     for (const s of sessions ?? []) {
-        if (s.status === "ended" && s.total_seconds) {
+        if ((s.status === "ended" || s.status === "abandoned") && s.total_seconds) {
             totalSeconds += s.total_seconds;
         } else if (s.status === "active") {
             totalSeconds += Math.floor((now - new Date(s.started_at).getTime()) / 1000);
@@ -134,7 +134,7 @@ export async function TimeReportsSection({ userId }: { userId: string }) {
                         <ul className="divide-y divide-slate-100">
                             {sessions.map((s) => {
                                 const dur =
-                                    s.status === "ended" && s.total_seconds
+                                    (s.status === "ended" || s.status === "abandoned") && s.total_seconds != null
                                         ? formatDuration(s.total_seconds)
                                         : s.status === "active"
                                           ? formatDuration(

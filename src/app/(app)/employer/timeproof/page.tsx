@@ -126,7 +126,7 @@ export default async function TimeproofPage({
 
         let totalSeconds = 0;
         for (const s of cSessions) {
-            if (s.status === "ended" && s.total_seconds) {
+            if ((s.status === "ended" || s.status === "abandoned") && s.total_seconds) {
                 totalSeconds += s.total_seconds;
             } else if (s.status === "active") {
                 totalSeconds += Math.floor((now - new Date(s.started_at).getTime()) / 1000);
