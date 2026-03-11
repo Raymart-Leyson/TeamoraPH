@@ -44,26 +44,18 @@ export default async function TimeproofPage({
         );
     }
 
-    // 2. Get hired candidates for this employer
+    // 2. Get hired candidate IDs
     const { data: hiredRows } = await supabaseAdmin
         .from("applications")
-        .select("candidate_id, profiles!candidate_id(id, full_name, avatar_url)")
+        .select("candidate_id")
         .eq("status", "hired")
         .in("job_id", jobIds);
 
-    const hired = (hiredRows ?? []).map((r) => {
-        const p = Array.isArray(r.profiles) ? r.profiles[0] : r.profiles;
-        return {
-            id: r.candidate_id as string,
-            full_name: (p as { full_name?: string })?.full_name ?? "Unknown",
-            avatar_url: (p as { avatar_url?: string })?.avatar_url ?? null,
-        };
-    });
-
+    const rawCandidateIds = (hiredRows ?? []).map((r) => r.candidate_id as string);
     // Deduplicate (candidate may have multiple hired jobs)
-    const uniqueHired = Array.from(new Map(hired.map((h) => [h.id, h])).values());
+    const candidateIds = [...new Set(rawCandidateIds)];
 
-    if (uniqueHired.length === 0) {
+    if (candidateIds.length === 0) {
         return (
             <div className="p-6 lg:p-8 max-w-4xl mx-auto">
                 <h1 className="text-2xl font-bold tracking-tight text-[#1B3FA0] mb-2">Time Proof</h1>
@@ -79,7 +71,20 @@ export default async function TimeproofPage({
         );
     }
 
-    const candidateIds = uniqueHired.map((c) => c.id);
+    // 2b. Fetch names and avatars from candidate_profiles
+    const { data: candidateProfiles } = await supabaseAdmin
+        .from("candidate_profiles")
+        .select("id, first_name, last_name, avatar_url")
+        .in("id", candidateIds);
+
+    const uniqueHired = candidateIds.map((id) => {
+        const cp = (candidateProfiles ?? []).find((p) => p.id === id);
+        return {
+            id,
+            full_name: cp ? [cp.first_name, cp.last_name].filter(Boolean).join(" ") || "Candidate" : "Unknown",
+            avatar_url: cp?.avatar_url ?? null,
+        };
+    });
 
     // 3. Sessions for the selected day
     const { data: sessions } = await supabaseAdmin
@@ -117,7 +122,7 @@ export default async function TimeproofPage({
 
     // 6. Build per-candidate data
     const now = Date.now();
-    const candidateData = uniqueHired.map((c) => {
+    const candidateData = uniqueHired.map((c: { id: string; full_name: string; avatar_url: string | null }) => {
         const cSessions = (sessions ?? []).filter((s) => s.user_id === c.id);
         const cScreenshots = (screenshots ?? [])
             .filter((s) => s.user_id === c.id)
