@@ -142,7 +142,7 @@ export default async function TimeproofPage({
     });
 
     return (
-        <div className="p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
+        <div className="p-6 lg:p-8 w-[90%] mx-auto space-y-6">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight text-[#1B3FA0]">Time Proof</h1>
                 <p className="text-muted-foreground mt-1">Verify work hours and screenshots of your hired candidates.</p>

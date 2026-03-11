@@ -25,6 +25,7 @@ interface SidebarProps {
     role: "candidate" | "employer" | "admin";
     unreadMessages?: number;
     isPro?: boolean;
+    hiredCandidates?: { id: string; full_name: string; avatar_url: string | null }[];
 }
 
 interface NavLink {
@@ -34,7 +35,7 @@ interface NavLink {
     badge?: number;
 }
 
-export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProps) {
+export function Sidebar({ role, unreadMessages = 0, isPro = false, hiredCandidates = [] }: SidebarProps) {
     const pathname = usePathname();
 
     const candidateLinks: NavLink[] = [
@@ -120,6 +121,35 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
                         );
                     })}
                 </nav>
+
+                {role === "employer" && hiredCandidates.length > 0 && (
+                    <div className="mt-8 px-4">
+                        <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Hired Applicants
+                        </h3>
+                        <div className="grid gap-1">
+                            {hiredCandidates.map((c) => (
+                                <Link
+                                    key={c.id}
+                                    href={`/employer/timeproof?candidateId=${c.id}`}
+                                    className={cn(
+                                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted/50",
+                                        pathname.includes(c.id) ? "bg-muted text-primary" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden shrink-0 border border-muted">
+                                        {c.avatar_url ? (
+                                            <img src={c.avatar_url} alt="" className="h-full w-full object-cover" />
+                                        ) : (
+                                            <UserCircle2 className="h-3 w-3 text-primary" />
+                                        )}
+                                    </div>
+                                    <span className="truncate">{c.full_name}</span>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
