@@ -82,6 +82,13 @@ export default async function HiredApplicantsPage() {
     const cps = cpRes.data ?? [];
     const profiles = profileRes.data ?? [];
 
+    // console.log("Hired Debug - JobIds:", jobIds);
+    // console.log("Hired Debug - CandidateIds:", candidateIds);
+    // console.log("Hired Debug - Profile Result:", profiles);
+
+    if (cpRes.error) console.error("Error fetching candidate_profiles:", cpRes.error);
+    if (profileRes.error) console.error("Error fetching profiles:", profileRes.error);
+
     // 4. Map to clean format
     const teamMembers = rawHired.map((row) => {
         const cp = cps.find((p) => p.id === row.candidate_id);
@@ -89,11 +96,12 @@ export default async function HiredApplicantsPage() {
         const job = jobs.find((j) => j.id === row.job_id);
 
         const cpName = cp ? [cp.first_name, cp.last_name].filter(Boolean).join(" ") : null;
-        const displayName = cpName || p?.full_name || "Hired Candidate";
+        const displayName = cpName || (p as any)?.full_name || (p as any)?.name || "Hired Candidate";
+        const email = p?.email || (p as any)?.email_address || "No email available";
 
         return {
             id: row.candidate_id as string,
-            email: p?.email || "No email available",
+            email: email,
             full_name: displayName,
             avatar_url: cp?.avatar_url ?? null,
             job_title: job?.title ?? "Position",
