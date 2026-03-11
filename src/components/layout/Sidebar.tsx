@@ -16,7 +16,8 @@ import {
     ShieldCheck,
     Bookmark,
     AlertTriangle,
-    Search
+    Search,
+    Monitor
 } from "lucide-react";
 
 interface SidebarProps {
@@ -43,6 +44,7 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
         { name: "Applications", href: "/candidate/applications", icon: BriefcaseBusiness },
         { name: "Saved Jobs", href: "/candidate/saved-jobs", icon: Bookmark },
         { name: "Messages", href: "/candidate/messages", icon: MessageSquare, badge: unreadMessages },
+        { name: "Tracker", href: "/candidate/tracker", icon: Monitor },
         { name: "Verification", href: "/verification", icon: ShieldCheck },
     ];
 
