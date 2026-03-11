@@ -12,6 +12,9 @@ function formatDuration(seconds: number): string {
     return `${Math.max(seconds, 0)}s`;
 }
 
+// import { formatTime } from "lucide-react"; // Not needed
+import { LocalTime } from "@/components/ui/LocalTime";
+
 function formatTime(iso: string): string {
     return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
@@ -115,8 +118,8 @@ export async function TimeReportsSection({ userId }: { userId: string }) {
             {activeSession && (
                 <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-green-50 border border-green-200">
                     <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse shrink-0" />
-                    <span className="text-sm text-green-800 font-medium">
-                        Session active — started at {formatTime(activeSession.started_at)}
+                    <span className="text-sm text-green-800 font-medium flex items-center gap-1.5">
+                        Session active — started at <LocalTime iso={activeSession.started_at} />
                     </span>
                 </div>
             )}
@@ -151,9 +154,14 @@ export async function TimeReportsSection({ userId }: { userId: string }) {
                                                 }`}
                                             />
                                             <div>
-                                                <p className="text-sm font-medium text-slate-700">
-                                                    {formatTime(s.started_at)}
-                                                    {s.ended_at && ` – ${formatTime(s.ended_at)}`}
+                                                <p className="text-sm font-medium text-slate-700 flex items-center gap-1">
+                                                    <LocalTime iso={s.started_at} />
+                                                    {s.ended_at && (
+                                                        <>
+                                                            <span> – </span>
+                                                            <LocalTime iso={s.ended_at} />
+                                                        </>
+                                                    )}
                                                     {s.status === "active" && (
                                                         <span className="ml-1.5 text-xs text-green-600 font-semibold">
                                                             LIVE

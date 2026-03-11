@@ -28,9 +28,8 @@ function formatDuration(seconds: number): string {
     return "< 1m";
 }
 
-function formatTime(iso: string): string {
-    return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-}
+// import { formatTime } from "lucide-react"; // Note: not needed
+import { LocalTime } from "@/components/ui/LocalTime";
 
 function CandidateCard({ data }: { data: CandidateData }) {
     const [expanded, setExpanded] = useState(false);
@@ -103,9 +102,14 @@ function CandidateCard({ data }: { data: CandidateData }) {
                                                         s.status === "active" ? "bg-green-500" : "bg-slate-300"
                                                     }`}
                                                 />
-                                                <span className="text-sm text-slate-700">
-                                                    {formatTime(s.started_at)}
-                                                    {s.ended_at && ` – ${formatTime(s.ended_at)}`}
+                                                <span className="text-sm text-slate-700 flex items-center gap-1">
+                                                    <LocalTime iso={s.started_at} />
+                                                    {s.ended_at && (
+                                                        <>
+                                                            <span> – </span>
+                                                            <LocalTime iso={s.ended_at} />
+                                                        </>
+                                                    )}
                                                     {s.status === "active" && (
                                                         <span className="ml-1.5 text-xs text-green-600 font-semibold">
                                                             LIVE
