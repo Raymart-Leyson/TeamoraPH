@@ -127,7 +127,7 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false, hiredCandidat
                         <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                             Hired Applicants
                         </h3>
-                        <div className="grid gap-1">
+                        <div className="grid gap-1 max-h-[350px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40">
                             {hiredCandidates.map((c) => (
                                 <Link
                                     key={c.id}

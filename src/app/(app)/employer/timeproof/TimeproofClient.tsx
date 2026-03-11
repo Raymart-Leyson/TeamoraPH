@@ -175,7 +175,7 @@ export function TimeproofClient({
                                             <p className="text-sm text-slate-400 font-medium">No sessions recorded for this date.</p>
                                         </div>
                                     ) : (
-                                        <div className="grid gap-2">
+                                        <div className="grid gap-2 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
                                             {selectedCandidate.sessions.map((s) => {
                                                 const dur =
                                                     (s.status === "ended" || s.status === "abandoned") && s.total_seconds != null
