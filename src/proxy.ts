@@ -1,20 +1,35 @@
-import { type NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 
+// CORS headers for the desktop tracker (Electron app)
+const CORS_HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+} as const;
+
 export async function proxy(request: NextRequest) {
-    return await updateSession(request);
+    const { pathname } = request.nextUrl;
+
+    // Tracker API routes: handle CORS only (no Supabase session needed)
+    if (pathname.startsWith("/api/tracker")) {
+        if (request.method === "OPTIONS") {
+            return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+        }
+        const response = NextResponse.next();
+        for (const [key, value] of Object.entries(CORS_HEADERS)) {
+            response.headers.set(key, value);
+        }
+        return response;
+    }
+
+    // All other routes: run Supabase session refresh + auth protection
+    return updateSession(request);
 }
 
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - api/webhook/stripe (Stripe webhooks usually bypass auth middleware)
-         * Feel free to modify this pattern to include more paths.
-         */
+        "/api/tracker/:path*",
         "/((?!_next/static|_next/image|favicon.ico|api/stripe/webhook|images/.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
     ],
 };

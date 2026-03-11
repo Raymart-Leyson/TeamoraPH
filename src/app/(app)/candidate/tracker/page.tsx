@@ -2,8 +2,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { getUserProfile } from "@/utils/auth";
 import { TrackerDevicesClient } from "./TrackerDevicesClient";
+import { TimeReportsSection } from "./TimeReportsSection";
 import { Monitor, ShieldCheck, Clock, UploadCloud } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Suspense } from "react";
 import type { TrackerDevice } from "@/lib/tracker/types";
 
 export default async function TrackerPage() {
@@ -71,6 +73,14 @@ export default async function TrackerPage() {
 
             {/* Devices manager */}
             <TrackerDevicesClient initialDevices={(devices ?? []) as TrackerDevice[]} />
+
+            {/* Today's work */}
+            <div>
+                <h2 className="text-lg font-semibold text-slate-800 mb-4">Today&apos;s Work</h2>
+                <Suspense fallback={<p className="text-sm text-slate-400">Loading time reports…</p>}>
+                    <TimeReportsSection userId={profile.id} />
+                </Suspense>
+            </div>
         </div>
     );
 }
