@@ -24,7 +24,7 @@ export default async function TimeproofPage({
     const { data: jobRows } = await supabaseAdmin
         .from("job_posts")
         .select("id")
-        .eq("employer_id", profile.id);
+        .eq("author_id", profile.id);
 
     const jobIds = (jobRows ?? []).map((j) => j.id);
 
