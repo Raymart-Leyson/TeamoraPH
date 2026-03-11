@@ -33,7 +33,7 @@ export default async function TrackerPage() {
 
             <div className="grid lg:grid-cols-12 gap-8 items-start">
                 {/* Left side: Setup & Devices */}
-                <div className="lg:col-span-4 space-y-8">
+                <div className="lg:col-span-5 space-y-8">
                     {/* Security note */}
                     <div className="flex items-start gap-3 p-4 rounded-lg bg-blue-50 border border-blue-100 text-sm text-blue-800">
                         <ShieldCheck className="h-4 w-4 mt-0.5 shrink-0 text-blue-600" />
@@ -79,7 +79,7 @@ export default async function TrackerPage() {
                 </div>
 
                 {/* Right side: Reports */}
-                <div className="lg:col-span-8">
+                <div className="lg:col-span-7">
                     <div className="sticky top-8 space-y-6">
                         <div>
                             <h2 className="text-lg font-semibold text-slate-800 mb-4">Today&apos;s Work</h2>
