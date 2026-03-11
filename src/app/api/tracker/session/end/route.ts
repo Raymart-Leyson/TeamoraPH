@@ -29,14 +29,28 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "session_id is required" }, { status: 400 });
     }
 
-    // Fetch the session — must belong to this device/user and be active
-    const { data: session, error: fetchError } = await supabaseAdmin
-        .from("tracker_sessions")
-        .select("id, started_at, status")
-        .eq("id", session_id)
-        .eq("device_id", deviceId)
-        .eq("user_id", userId)
-        .single();
+    // Fetch the session — must belong to this device/user
+    let query;
+    if (session_id === "current") {
+        query = supabaseAdmin
+            .from("tracker_sessions")
+            .select("id, started_at, status")
+            .eq("device_id", deviceId)
+            .eq("user_id", userId)
+            .eq("status", "active")
+            .limit(1)
+            .maybeSingle();
+    } else {
+        query = supabaseAdmin
+            .from("tracker_sessions")
+            .select("id, started_at, status")
+            .eq("id", session_id)
+            .eq("device_id", deviceId)
+            .eq("user_id", userId)
+            .single();
+    }
+
+    const { data: session, error: fetchError } = await query;
 
     if (fetchError || !session) {
         return NextResponse.json({ error: "Session not found" }, { status: 404 });

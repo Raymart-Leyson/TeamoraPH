@@ -71,17 +71,27 @@ export default async function TimeproofPage({
         );
     }
 
-    // 2b. Fetch names and avatars from candidate_profiles
-    const { data: candidateProfiles } = await supabaseAdmin
-        .from("candidate_profiles")
-        .select("id, first_name, last_name, avatar_url")
-        .in("id", candidateIds);
+    // 2b. Fetch names and avatars
+    const [{ data: candidateProfiles }, { data: profiles }] = await Promise.all([
+        supabaseAdmin
+            .from("candidate_profiles")
+            .select("id, first_name, last_name, avatar_url")
+            .in("id", candidateIds),
+        supabaseAdmin
+            .from("profiles")
+            .select("id, full_name")
+            .in("id", candidateIds)
+    ]);
 
     const uniqueHired = candidateIds.map((id) => {
         const cp = (candidateProfiles ?? []).find((p) => p.id === id);
+        const p = (profiles ?? []).find((prof) => prof.id === id);
+        
         return {
             id,
-            full_name: cp ? [cp.first_name, cp.last_name].filter(Boolean).join(" ") || "Candidate" : "Unknown",
+            full_name: cp 
+                ? [cp.first_name, cp.last_name].filter(Boolean).join(" ") 
+                : (p as any)?.full_name ?? "Candidate",
             avatar_url: cp?.avatar_url ?? null,
         };
     });
@@ -89,7 +99,7 @@ export default async function TimeproofPage({
     // 3. Sessions for the selected day
     const { data: sessions } = await supabaseAdmin
         .from("tracker_sessions")
-        .select("id, user_id, started_at, ended_at, status, total_seconds, memo")
+        .select("id, user_id, started_at, ended_at, status, total_seconds, memo, last_heartbeat_at")
         .in("user_id", candidateIds)
         .gte("started_at", dayStart)
         .lt("started_at", dayEnd)

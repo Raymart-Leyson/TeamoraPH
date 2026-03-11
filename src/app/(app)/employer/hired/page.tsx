@@ -68,7 +68,7 @@ export default async function HiredApplicantsPage() {
             .in("id", candidateIds),
         supabaseAdmin
             .from("profiles")
-            .select("id, email")
+            .select("id, email, full_name")
             .in("id", candidateIds)
     ]);
 
@@ -78,12 +78,16 @@ export default async function HiredApplicantsPage() {
         const profileInfo = (profiles ?? []).find((p) => p.id === row.candidate_id);
         const job = jobs.find((j) => j.id === row.job_id);
 
+        const displayName = cp 
+            ? [cp.first_name, cp.last_name].filter(Boolean).join(" ") 
+            : (profileInfo as any)?.full_name ?? "Candidate";
+
         return {
             id: row.candidate_id as string,
             email: profileInfo?.email ?? "No email",
             first_name: cp?.first_name ?? "Candidate",
             last_name: cp?.last_name ?? "",
-            full_name: cp ? `${cp.first_name} ${cp.last_name}` : "Unknown",
+            full_name: displayName,
             avatar_url: cp?.avatar_url ?? null,
             job_title: job?.title ?? "Position",
             hired_at: row.created_at,

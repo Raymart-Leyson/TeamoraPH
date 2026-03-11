@@ -16,6 +16,7 @@ interface CandidateData {
         status: string;
         total_seconds: number | null;
         memo: string | null;
+        last_heartbeat_at?: string;
     }[];
     screenshots: { id: string; url: string; captured_at: string }[];
     totalSeconds: number;
@@ -177,11 +178,16 @@ export function TimeproofClient({
                                     ) : (
                                         <div className="grid gap-2 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
                                             {selectedCandidate.sessions.map((s) => {
+                                                const isSessionActuallyLive =
+                                                    s.status === "active" &&
+                                                    s.last_heartbeat_at &&
+                                                    (Date.now() - new Date(s.last_heartbeat_at).getTime()) < 120000;
+
                                                 const dur =
                                                     (s.status === "ended" || s.status === "abandoned") && s.total_seconds != null
                                                         ? formatDuration(s.total_seconds)
                                                         : s.status === "active"
-                                                          ? "Active now"
+                                                          ? isSessionActuallyLive ? "Active now" : "Closing session..."
                                                           : "—";
                                                 return (
                                                     <div
@@ -190,15 +196,15 @@ export function TimeproofClient({
                                                     >
                                                         <div className="flex items-center gap-3">
                                                             <div className={`h-2.5 w-2.5 rounded-full shrink-0 ${
-                                                                s.status === "active" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse" : "bg-slate-300"
+                                                                isSessionActuallyLive ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse" : "bg-slate-300"
                                                             }`} />
                                                             <div className="flex flex-col">
                                                                 <span className="text-sm font-bold text-slate-800 flex items-center gap-2">
                                                                     <LocalTime iso={s.started_at} />
                                                                     <span className="text-slate-300 font-normal">—</span>
-                                                                    {s.ended_at ? <LocalTime iso={s.ended_at} /> : "Present"}
+                                                                    {s.ended_at ? <LocalTime iso={s.ended_at} /> : (isSessionActuallyLive ? "Present" : "Disconnected")}
                                                                     
-                                                                    {s.status === "active" && (
+                                                                    {isSessionActuallyLive && (
                                                                         <span className="ml-2 px-1.5 py-0.5 bg-green-100 text-[10px] text-green-700 font-black rounded uppercase tracking-tighter">
                                                                             LIVE
                                                                         </span>
