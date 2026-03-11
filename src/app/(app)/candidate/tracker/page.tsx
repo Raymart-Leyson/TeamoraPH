@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { getUserProfile } from "@/utils/auth";
 import { TrackerDevicesClient } from "./TrackerDevicesClient";
 import { TimeReportsSection } from "./TimeReportsSection";
+import { RefreshButton } from "./RefreshButton";
 import { Monitor, ShieldCheck, Clock, UploadCloud } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Suspense } from "react";
@@ -82,7 +83,10 @@ export default async function TrackerPage() {
                 <div className="lg:col-span-7">
                     <div className="sticky top-8 space-y-6">
                         <div>
-                            <h2 className="text-lg font-semibold text-slate-800 mb-4">Today&apos;s Work</h2>
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-semibold text-slate-800">Today&apos;s Work</h2>
+                                <RefreshButton />
+                            </div>
                             <Suspense fallback={<p className="text-sm text-slate-400">Loading time reports…</p>}>
                                 <TimeReportsSection userId={profile.id} />
                             </Suspense>
