@@ -1,0 +1,28 @@
+
+> teamora-ph@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 4.2s
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/api/tracker/screenshot/confirm/route.ts:67:58
+Type error: Property 'storage_path' does not exist on type '{ id: any; status: any; }'.
+
+[0m [90m 65 |[39m             [33m?[39m {
+ [90m 66 |[39m                   status[33m:[39m [32m"uploaded"[39m [36mas[39m [36mconst[39m[33m,[39m
+[31m[1m>[22m[39m[90m 67 |[39m                   storage_path[33m:[39m storage_path [33m?[39m[33m?[39m existing[33m.[39mstorage_path[33m,[39m
+ [90m    |[39m                                                          [31m[1m^[22m[39m
+ [90m 68 |[39m                   file_size_bytes[33m:[39m file_size_bytes [33m?[39m[33m?[39m [36mnull[39m[33m,[39m
+ [90m 69 |[39m                   upload_confirmed_at[33m:[39m now[33m,[39m
+ [90m 70 |[39m               }[0m
+Next.js build worker exited with code: 1 and signal: null
+npm notice
+npm notice New minor version of npm available! 11.6.2 -> 11.11.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.0
+npm notice To update run: npm install -g npm@11.11.0
+npm notice
