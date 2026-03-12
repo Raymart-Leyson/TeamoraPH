@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Metadata } from "next";
 import { createClient } from "@/utils/supabase/server";
+import { Card } from "@/components/ui/card";
+import { MapPin, BriefcaseBusiness, Clock } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { JobFilters } from "@/components/jobs/JobFilters";
+import { Suspense } from "react";
+import { formatDistanceToNow } from "@/utils/date";
+import { getUserProfile } from "@/utils/auth";
 
 export const metadata: Metadata = {
     title: "Browse Remote Jobs",
@@ -17,17 +27,6 @@ export const metadata: Metadata = {
         canonical: "/jobs",
     },
 };
-import { Card } from "@/components/ui/card";
-import { MapPin, BriefcaseBusiness } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { JobFilters } from "@/components/jobs/JobFilters";
-import { Suspense } from "react";
-import { formatDistanceToNow } from "@/utils/date";
-import { getUserProfile } from "@/utils/auth";
-import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 12;
