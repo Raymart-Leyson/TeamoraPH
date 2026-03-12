@@ -135,12 +135,16 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
                                                     <BriefcaseBusiness className="h-3 w-3" />
                                                     {openJobs} open {openJobs === 1 ? "role" : "roles"}
                                                 </Badge>
-                                                {company.website && (
-                                                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                                                        <Globe className="h-3 w-3" />
-                                                        {new URL(company.website).hostname.replace("www.", "")}
-                                                    </span>
-                                                )}
+                                                {company.website && (() => {
+                                                    try {
+                                                        return (
+                                                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                                <Globe className="h-3 w-3" />
+                                                                {new URL(company.website).hostname.replace("www.", "")}
+                                                            </span>
+                                                        );
+                                                    } catch { return null; }
+                                                })()}
                                             </div>
                                         </CardContent>
                                     </Card>

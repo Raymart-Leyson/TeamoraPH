@@ -158,11 +158,17 @@ export default async function CandidateDashboard() {
                                 {applications.map((app: any) => (
                                     <div key={app.id} className="flex items-center">
                                         <div className="ml-4 space-y-1">
-                                            <Link href={`/jobs/${app.job.id}`} className="text-sm font-medium leading-none hover:underline">
-                                                {app.job.title} at {app.job.company.name}
-                                            </Link>
+                                            {app.job ? (
+                                                <Link href={`/jobs/${app.job.id}`} className="text-sm font-medium leading-none hover:underline">
+                                                    {app.job.title} at {app.job.company?.name ?? 'Unknown Company'}
+                                                </Link>
+                                            ) : (
+                                                <span className="text-sm font-medium leading-none text-muted-foreground">
+                                                    Job no longer available
+                                                </span>
+                                            )}
                                             <div className="flex items-center text-sm text-muted-foreground pt-1 gap-2">
-                                                <MapPin className="h-3 w-3" /> {app.job.location || 'Remote'}
+                                                <MapPin className="h-3 w-3" /> {app.job?.location || 'Remote'}
                                             </div>
                                         </div>
                                         <div className="ml-auto font-medium">

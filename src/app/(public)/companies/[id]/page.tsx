@@ -175,7 +175,7 @@ export default async function CompanyDetailPage({ params }: Props) {
                                         className="flex items-center gap-1 text-sm text-[#3D6EFF] hover:underline font-bold"
                                     >
                                         <Globe className="h-3.5 w-3.5" />
-                                        {new URL(company.website).hostname.replace("www.", "")}
+                                        {(() => { try { return new URL(company.website).hostname.replace("www.", ""); } catch { return company.website; } })()}
                                     </a>
                                 )}
                             </div>
