@@ -41,7 +41,8 @@ export default async function AdminJobsPage({
             author:profiles(email)
         `)
         .in("status", ["pending_review", "flagged"])
-        .order("created_at", { ascending: false });
+        .order("review_priority", { ascending: true })
+        .order("created_at", { ascending: true });
 
     return (
         <div className="space-y-10">
@@ -75,8 +76,23 @@ export default async function AdminJobsPage({
                                     <div className="flex-1 space-y-4">
                                         <div className="flex justify-between items-start gap-4">
                                             <div>
-                                                <h3 className="text-2xl font-black text-[#1B3FA0] leading-tight flex items-center gap-3">
+                                                <h3 className="text-2xl font-black text-[#1B3FA0] leading-tight flex flex-wrap items-center gap-3">
                                                     {job.title}
+                                                    {job.review_priority === 1 && (
+                                                        <Badge className="bg-purple-600 text-white font-black rounded-lg px-3 py-1 text-xs">
+                                                            PREMIUM
+                                                        </Badge>
+                                                    )}
+                                                    {job.review_priority === 2 && (
+                                                        <Badge className="bg-[#1B3FA0] text-white font-black rounded-lg px-3 py-1 text-xs">
+                                                            PRO
+                                                        </Badge>
+                                                    )}
+                                                    {(!job.review_priority || job.review_priority === 3) && (
+                                                        <Badge className="bg-slate-400 text-white font-black rounded-lg px-3 py-1 text-xs">
+                                                            FREE
+                                                        </Badge>
+                                                    )}
                                                     {job.status === 'flagged' && (
                                                         <Badge className="bg-red-500 text-white font-black rounded-lg px-3 py-1 animate-pulse">
                                                             FORCE REMOVED / FLAG

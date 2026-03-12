@@ -12,8 +12,29 @@ import {
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import { ReactNode } from "react";
+import type { Metadata } from "next";
 
-export const revalidate = 3600; // Revalidate homepage stats every hour
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+    title: "TeamoraPH — Remote Job Marketplace for Filipino Talent",
+    description:
+        "Discover your next remote opportunity. Browse curated remote jobs and connect directly with top-tier companies hiring Filipino professionals worldwide.",
+    openGraph: {
+        title: "TeamoraPH — Remote Job Marketplace for Filipino Talent",
+        description:
+            "Discover your next remote opportunity. Browse curated remote jobs and connect directly with top-tier companies hiring Filipino professionals worldwide.",
+        url: "/",
+        type: "website",
+    },
+    twitter: {
+        title: "TeamoraPH — Remote Job Marketplace for Filipino Talent",
+        description: "Browse curated remote jobs for Filipino professionals.",
+    },
+    alternates: {
+        canonical: "/",
+    },
+};
 
 export default async function Home() {
     const supabase = await createClient();
@@ -26,7 +47,28 @@ export default async function Home() {
         .order("created_at", { ascending: false })
         .limit(3);
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "TeamoraPH",
+        url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://teamoraph.selleruniverse.com",
+        description: "Remote job marketplace connecting Filipino talent with global companies.",
+        potentialAction: {
+            "@type": "SearchAction",
+            target: {
+                "@type": "EntryPoint",
+                urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://teamoraph.selleruniverse.com"}/jobs?q={search_term_string}`,
+            },
+            "query-input": "required name=search_term_string",
+        },
+    };
+
     return (
+        <>
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <div className="flex flex-col min-h-[calc(100vh-4rem)]">
             {/* ── Anti-Gravity Hero ─────────────────────────────────────────── */}
             <section className="relative flex flex-col items-center justify-center text-center px-4 py-12 bg-[#F8F9FF] overflow-hidden min-h-[70vh]">
@@ -183,6 +225,7 @@ export default async function Home() {
                 </div>
             </section>
         </div>
+        </>
     );
 }
 

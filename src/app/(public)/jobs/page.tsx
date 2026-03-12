@@ -1,5 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Metadata } from "next";
 import { createClient } from "@/utils/supabase/server";
+
+export const metadata: Metadata = {
+    title: "Browse Remote Jobs",
+    description:
+        "Search hundreds of remote job opportunities in the Philippines and globally. Filter by role, location, and job type to find your perfect remote position.",
+    openGraph: {
+        title: "Browse Remote Jobs | TeamoraPH",
+        description:
+            "Search hundreds of remote job opportunities. Filter by role, location, and job type.",
+        url: "/jobs",
+        type: "website",
+    },
+    alternates: {
+        canonical: "/jobs",
+    },
+};
 import { Card } from "@/components/ui/card";
 import { MapPin, BriefcaseBusiness } from "lucide-react";
 import Link from "next/link";

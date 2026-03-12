@@ -9,6 +9,47 @@ import { ApplyButton } from "./apply-button";
 import { refreshCreditsIfNeeded } from "@/utils/credits";
 import { toggleSavedJob } from "@/app/(app)/candidate/saved-jobs/actions";
 import { ReportJobButton } from "@/components/jobs/ReportJobButton";
+import type { Metadata } from "next";
+
+interface JobDetailProps {
+    params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: JobDetailProps): Promise<Metadata> {
+    const { id } = await params;
+    const supabase = await createClient();
+    const { data: job } = await supabase
+        .from("job_posts")
+        .select("title, description, location, job_type, salary_range, company:companies(name)")
+        .eq("id", id)
+        .single();
+
+    if (!job) return { title: "Job Not Found" };
+
+    const company = Array.isArray(job.company) ? job.company[0] : (job.company as { name?: string } | null);
+    const title = `${job.title}${company?.name ? ` at ${company.name}` : ""}`;
+    const description =
+        job.description?.slice(0, 160) ??
+        `Apply for ${job.title}${company?.name ? ` at ${company.name}` : ""} on TeamoraPH.`;
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            url: `/jobs/${id}`,
+            type: "article",
+        },
+        twitter: {
+            title,
+            description,
+        },
+        alternates: {
+            canonical: `/jobs/${id}`,
+        },
+    };
+}
 
 export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -64,7 +105,38 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
 
     const company = job.company?.[0] || job.company;
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://teamoraph.selleruniverse.com";
+    const jobJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        title: job.title,
+        description: job.description ?? "",
+        datePosted: job.created_at,
+        employmentType: job.job_type ?? "OTHER",
+        jobLocation: job.location
+            ? {
+                  "@type": "Place",
+                  address: {
+                      "@type": "PostalAddress",
+                      addressLocality: job.location,
+                  },
+              }
+            : { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: "Remote" } },
+        hiringOrganization: {
+            "@type": "Organization",
+            name: company?.name ?? "Confidential",
+            ...(company?.website ? { sameAs: company.website } : {}),
+        },
+        url: `${siteUrl}/jobs/${id}`,
+        ...(job.salary_range ? { baseSalary: { "@type": "MonetaryAmount", value: job.salary_range } } : {}),
+    };
+
     return (
+        <>
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jobJsonLd) }}
+        />
         <div className="relative min-h-[calc(100vh-4rem)] bg-[#F8F9FF] overflow-hidden">
             {/* Background Blobs for Anti-Gravity feel */}
             <div className="absolute top-[-5%] left-[-10%] w-[30rem] h-[30rem] bg-[#A8C4FF] rounded-full mix-blend-multiply blur-3xl opacity-60 pointer-events-none" />
@@ -226,5 +298,6 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                 </div>
             </div>
         </div>
+        </>
     );
 }

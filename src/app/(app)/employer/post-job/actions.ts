@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { hasActiveSubscription } from "@/lib/entitlements";
+import { hasActiveSubscription, getReviewPriority } from "@/lib/entitlements";
 
 export async function createJobAction(formData: FormData) {
     const supabase = await createClient();
@@ -34,20 +34,14 @@ export async function createJobAction(formData: FormData) {
         return { error: "You must create a company profile before posting a job." };
     }
 
-    // ── Entitlement gate & Status Logic ─────────────────────────────────────
+    // ── Free user monthly post limit ─────────────────────────────────────────
     const subscribed = await hasActiveSubscription(user.id);
-    let finalStatus = "draft"; // fallback
 
-    if (subscribed) {
-        // Pro users don't need review, directly publish
-        finalStatus = "published";
-    } else {
-        // Free users logic
+    if (!subscribed) {
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
 
-        // Check posts in current month
         const { count } = await supabase
             .from("job_posts")
             .select("*", { count: "exact", head: true })
@@ -59,11 +53,11 @@ export async function createJobAction(formData: FormData) {
                 error: "Free accounts are limited to 3 job posts per month. Please upgrade your subscription to post more.",
             };
         }
-
-        // Free postings need review. We assume 'pending_approval' or 'draft' 
-        // Note: For this to work flawlessly, 'pending' must be added to the job_status ENUM
-        finalStatus = "pending";
     }
+
+    // ── ALL jobs require staff/admin review before going public ──────────────
+    // review_priority controls queue order: 1=Premium (first), 2=Pro, 3=Free (last)
+    const reviewPriority = await getReviewPriority(user.id);
 
     const { error } = await supabase.from("job_posts").insert({
         company_id: employer.company_id,
@@ -74,7 +68,8 @@ export async function createJobAction(formData: FormData) {
         job_type,
         salary_range,
         hours_per_week,
-        status: finalStatus
+        status: "pending_review",
+        review_priority: reviewPriority,
     });
 
     if (error) {

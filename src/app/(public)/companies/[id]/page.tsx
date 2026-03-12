@@ -31,9 +31,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         .eq("id", id)
         .single();
 
+    const title = company ? `${company.name} — Remote Jobs` : "Company | TeamoraPH";
+    const description =
+        company?.description?.slice(0, 160) ??
+        `View open remote roles at ${company?.name ?? "this company"} on TeamoraPH.`;
+
     return {
-        title: company ? `${company.name} | Teamora` : "Company | Teamora",
-        description: company?.description ?? "View open roles at this company on Teamora.",
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            url: `/companies/${id}`,
+            type: "profile",
+        },
+        twitter: { title, description },
+        alternates: { canonical: `/companies/${id}` },
     };
 }
 

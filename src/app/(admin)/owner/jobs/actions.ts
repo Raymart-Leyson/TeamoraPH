@@ -25,21 +25,8 @@ export async function approveJobAction(jobId: string) {
 
     if (jobErr || !job) throw new Error("Job not found");
 
-    // 2. Check employer's subscription status
-    const { data: subData } = await supabase
-        .from("subscriptions")
-        .select("status")
-        .eq("employer_id", job.author_id)
-        .maybeSingle();
-
-    const isPro = subData?.status === "active" || subData?.status === "trialing";
-
-    // 3. Calculate publishing date
+    // All approved jobs publish immediately — subscription only affects queue priority, not speed.
     const publishedAt = new Date();
-    if (!isPro) {
-        // Free users get a 3-day delay
-        publishedAt.setDate(publishedAt.getDate() + 3);
-    }
 
     const { error } = await supabase
         .from("job_posts")
@@ -47,37 +34,31 @@ export async function approveJobAction(jobId: string) {
             status: "published",
             published_at: publishedAt.toISOString(),
             reviewed_at: new Date().toISOString(),
-            reviewed_by: moderator.id
+            reviewed_by: moderator.id,
         })
         .eq("id", jobId);
 
     if (error) throw new Error(error.message);
 
-    // Log the action
     await supabase.from("moderation_logs").insert({
         moderator_id: moderator.id,
         target_id: jobId,
         target_type: "job",
-        action: "approve"
+        action: "approve",
     });
-
-    // Notify the employer
-    const content = isPro
-        ? `Your job post "${job.title}" has been approved and is now live.`
-        : `Your job post "${job.title}" has been approved and will go live in 3 days (free plan delay).`;
 
     await supabase.from("notifications").insert({
         user_id: job.author_id,
         type: "application_update",
         title: "Job Post Approved ✅",
-        content,
+        content: `Your job post "${job.title}" has been approved and is now live.`,
         link: "/employer/jobs",
         read_status: false,
     });
 
     revalidatePath("/owner/jobs");
     revalidatePath("/jobs");
-    return { success: true, isPro, publishedAt: publishedAt.toISOString() };
+    return { success: true, publishedAt: publishedAt.toISOString() };
 }
 
 export async function rejectJobAction(jobId: string, reason: string) {
