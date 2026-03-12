@@ -11,6 +11,7 @@ import { JobFilters } from "@/components/jobs/JobFilters";
 import { Suspense } from "react";
 import { formatDistanceToNow } from "@/utils/date";
 import { getUserProfile } from "@/utils/auth";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
     title: "Browse Remote Jobs",
@@ -27,7 +28,6 @@ export const metadata: Metadata = {
         canonical: "/jobs",
     },
 };
-import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 12;
 
