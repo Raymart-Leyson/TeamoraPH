@@ -47,19 +47,36 @@ export default async function Home() {
         .order("created_at", { ascending: false })
         .limit(3);
 
-    const jsonLd = {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://teamoraph.selleruniverse.com";
+
+    const websiteJsonLd = {
         "@context": "https://schema.org",
         "@type": "WebSite",
         name: "TeamoraPH",
-        url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://teamoraph.selleruniverse.com",
+        url: siteUrl,
         description: "Remote job marketplace connecting Filipino talent with global companies.",
         potentialAction: {
             "@type": "SearchAction",
             target: {
                 "@type": "EntryPoint",
-                urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://teamoraph.selleruniverse.com"}/jobs?q={search_term_string}`,
+                urlTemplate: `${siteUrl}/jobs?q={search_term_string}`,
             },
             "query-input": "required name=search_term_string",
+        },
+    };
+
+    const orgJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "TeamoraPH",
+        url: siteUrl,
+        logo: `${siteUrl}/logo.png`,
+        sameAs: [siteUrl],
+        description: "Remote job marketplace connecting Filipino talent with global companies.",
+        contactPoint: {
+            "@type": "ContactPoint",
+            contactType: "customer support",
+            url: siteUrl,
         },
     };
 
@@ -67,7 +84,11 @@ export default async function Home() {
         <>
         <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
         <div className="flex flex-col min-h-[calc(100vh-4rem)]">
             {/* ── Anti-Gravity Hero ─────────────────────────────────────────── */}

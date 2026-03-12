@@ -131,11 +131,25 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
         ...(job.salary_range ? { baseSalary: { "@type": "MonetaryAmount", value: job.salary_range } } : {}),
     };
 
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+            { "@type": "ListItem", position: 2, name: "Jobs", item: `${siteUrl}/jobs` },
+            { "@type": "ListItem", position: 3, name: job.title, item: `${siteUrl}/jobs/${id}` },
+        ],
+    };
+
     return (
         <>
         <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jobJsonLd) }}
+        />
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
         <div className="relative min-h-[calc(100vh-4rem)] bg-[#F8F9FF] overflow-hidden">
             {/* Background Blobs for Anti-Gravity feel */}

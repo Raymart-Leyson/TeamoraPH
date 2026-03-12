@@ -89,7 +89,33 @@ export default async function CompanyDetailPage({ params }: Props) {
         .join("")
         .toUpperCase();
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://teamoraph.selleruniverse.com";
+
+    const orgJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: company.name,
+        url: company.website ?? `${siteUrl}/companies/${id}`,
+        description: company.description ?? undefined,
+        ...(company.logo_url ? { logo: company.logo_url } : {}),
+        ...(company.location ? { address: { "@type": "PostalAddress", addressLocality: company.location } } : {}),
+        ...(company.industry ? { knowsAbout: company.industry } : {}),
+    };
+
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+            { "@type": "ListItem", position: 2, name: "Companies", item: `${siteUrl}/companies` },
+            { "@type": "ListItem", position: 3, name: company.name, item: `${siteUrl}/companies/${id}` },
+        ],
+    };
+
     return (
+        <>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
         <div className="min-h-screen">
             {/* Back */}
             <div className="max-w-[90%] mx-auto px-4 pt-6">
@@ -228,5 +254,6 @@ export default async function CompanyDetailPage({ params }: Props) {
                 )}
             </section>
         </div>
+        </>
     );
 }

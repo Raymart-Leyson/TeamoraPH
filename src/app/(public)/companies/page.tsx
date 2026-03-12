@@ -6,8 +6,21 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 
 export const metadata = {
-    title: "Companies Hiring Remotely | Teamora",
-    description: "Browse companies actively hiring remote talent on Teamora.",
+    title: "Companies Hiring Remotely",
+    description: "Browse top companies actively hiring remote Filipino talent on TeamoraPH. Find your next employer today.",
+    openGraph: {
+        title: "Companies Hiring Remotely | TeamoraPH",
+        description: "Browse top companies actively hiring remote Filipino talent on TeamoraPH.",
+        url: "/companies",
+        type: "website",
+    },
+    twitter: {
+        title: "Companies Hiring Remotely | TeamoraPH",
+        description: "Browse top companies actively hiring remote Filipino talent.",
+    },
+    alternates: {
+        canonical: "/companies",
+    },
 };
 
 interface CompaniesPageProps {
