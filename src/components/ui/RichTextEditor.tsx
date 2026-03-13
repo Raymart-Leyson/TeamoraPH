@@ -2,7 +2,8 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Bold, Italic, List, ListOrdered } from "lucide-react";
+import TextAlign from "@tiptap/extension-text-align";
+import { AlignLeft, AlignCenter, AlignRight, Bold, Italic, List, ListOrdered } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -56,7 +57,10 @@ export function RichTextEditor({
     const [html, setHtml] = useState(defaultValue);
 
     const editor = useEditor({
-        extensions: [StarterKit],
+        extensions: [
+            StarterKit,
+            TextAlign.configure({ types: ["heading", "paragraph"] }),
+        ],
         content: defaultValue,
         editable: !disabled,
         immediatelyRender: false,
@@ -109,6 +113,28 @@ export function RichTextEditor({
                     disabled={disabled}
                 >
                     <ListOrdered className="h-4 w-4" />
+                </ToolbarButton>
+                <div className="w-px h-4 bg-border mx-1" />
+                <ToolbarButton
+                    onClick={() => editor?.chain().focus().setTextAlign("left").run()}
+                    active={editor?.isActive({ textAlign: "left" })}
+                    disabled={disabled}
+                >
+                    <AlignLeft className="h-4 w-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                    onClick={() => editor?.chain().focus().setTextAlign("center").run()}
+                    active={editor?.isActive({ textAlign: "center" })}
+                    disabled={disabled}
+                >
+                    <AlignCenter className="h-4 w-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                    onClick={() => editor?.chain().focus().setTextAlign("right").run()}
+                    active={editor?.isActive({ textAlign: "right" })}
+                    disabled={disabled}
+                >
+                    <AlignRight className="h-4 w-4" />
                 </ToolbarButton>
             </div>
 
