@@ -116,23 +116,13 @@ function PlanCard({
                 ))}
             </ul>
 
-            {plan.price === "₱0" ? (
-                <Button
-                    className={`w-full h-12 font-black rounded-xl text-base ${plan.badge ? "bg-white text-[#1B3FA0] hover:bg-white/90" : "border-2 border-[#1B3FA0] text-[#1B3FA0] hover:bg-[#1B3FA0]/5"}`}
-                    variant={plan.badge ? "default" : "outline"}
-                    asChild
-                >
-                    <Link href={plan.href}>{plan.cta}</Link>
-                </Button>
-            ) : (
-                <Button
-                    className="w-full h-12 font-black rounded-xl text-base opacity-60 cursor-not-allowed"
-                    variant="outline"
-                    disabled
-                >
-                    Coming Soon
-                </Button>
-            )}
+            <Button
+                className={`w-full h-12 font-black rounded-xl text-base ${plan.badge ? "bg-white text-[#1B3FA0] hover:bg-white/90" : "border-2 border-[#1B3FA0] text-[#1B3FA0] hover:bg-[#1B3FA0]/5"}`}
+                variant={plan.badge ? "default" : "outline"}
+                asChild
+            >
+                <Link href={plan.href}>{plan.cta}</Link>
+            </Button>
         </div>
     );
 }
