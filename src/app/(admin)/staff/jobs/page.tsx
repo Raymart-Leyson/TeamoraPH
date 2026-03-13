@@ -112,9 +112,10 @@ export default async function AdminJobsPage({
                                             </Button>
                                         </div>
 
-                                        <p className="text-sm font-medium text-slate-600 line-clamp-3 leading-relaxed">
-                                            {job.description}
-                                        </p>
+                                        <div
+                                            className="text-sm font-medium text-slate-600 line-clamp-3 leading-relaxed prose prose-sm max-w-none"
+                                            dangerouslySetInnerHTML={{ __html: job.description ?? "" }}
+                                        />
 
                                         <div className="flex flex-wrap gap-4 pt-4">
                                             <form action={async () => {

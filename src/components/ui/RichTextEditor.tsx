@@ -4,6 +4,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Bold, Italic, List, ListOrdered } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface RichTextEditorProps {
     name: string;
@@ -52,11 +53,16 @@ export function RichTextEditor({
     placeholder = "Write here...",
     minHeight = "200px",
 }: RichTextEditorProps) {
+    const [html, setHtml] = useState(defaultValue);
+
     const editor = useEditor({
         extensions: [StarterKit],
         content: defaultValue,
         editable: !disabled,
         immediatelyRender: false,
+        onUpdate: ({ editor }) => {
+            setHtml(editor.getHTML());
+        },
         editorProps: {
             attributes: {
                 class: cn(
@@ -70,8 +76,6 @@ export function RichTextEditor({
             },
         },
     });
-
-    const html = editor?.getHTML() ?? defaultValue;
 
     return (
         <div className={cn("border rounded-md overflow-hidden", disabled && "opacity-60")}>
