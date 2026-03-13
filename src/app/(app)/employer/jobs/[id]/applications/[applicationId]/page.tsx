@@ -105,6 +105,17 @@ export default async function ApplicationDetailPage({ params }: { params: Promis
                         <CardTitle>Candidate Profile</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
+                        {/* Cover Letter */}
+                        {application.cover_letter && (
+                            <div className="bg-[#1B3FA0]/5 rounded-2xl p-4 border border-[#1B3FA0]/10">
+                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <FileText className="h-4 w-4" /> Cover Letter
+                                </h3>
+                                <p className="text-foreground leading-relaxed whitespace-pre-wrap text-sm">
+                                    {application.cover_letter}
+                                </p>
+                            </div>
+                        )}
                         <div>
                             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Summary</h3>
                             <p className="text-foreground leading-relaxed whitespace-pre-wrap">
