@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { publishJobAction, unpublishJobAction } from "./actions";
+import { DeleteJobButton } from "./DeleteJobButton";
 
 const STATUS_BADGE: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
     published: "default",
@@ -146,6 +147,12 @@ export default async function EmployerJobsPage() {
                                                 </Link>
                                             </Button>
 
+                                            <Button variant="outline" size="sm" asChild>
+                                                <Link href={`/employer/jobs/${job.id}/edit`}>
+                                                    <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
+                                                </Link>
+                                            </Button>
+
                                             {job.status === "draft" && (
                                                 <form action={publishJobAction.bind(null, job.id)}>
                                                     <Button size="sm" type="submit" id={`publish-${job.id}`}>
@@ -161,6 +168,8 @@ export default async function EmployerJobsPage() {
                                                     </Button>
                                                 </form>
                                             )}
+
+                                            <DeleteJobButton jobId={job.id} jobTitle={job.title} />
                                         </div>
                                     </div>
                                 </CardContent>

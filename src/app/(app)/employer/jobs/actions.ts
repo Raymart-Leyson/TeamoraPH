@@ -54,3 +54,56 @@ export async function closeJobAction(jobId: string) {
     revalidatePath("/employer/dashboard");
     revalidatePath("/jobs");
 }
+
+export async function updateJobAction(jobId: string, formData: FormData) {
+    const supabase = await assertEmployerOwnsJob(jobId);
+
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const location = formData.get("location") as string;
+    const job_type = formData.get("job_type") as string;
+    const salary_range = formData.get("salary_range") as string;
+    const hours_per_week_raw = formData.get("hours_per_week") as string;
+    const hours_per_week = hours_per_week_raw ? parseInt(hours_per_week_raw, 10) : null;
+
+    if (!title || !description) {
+        return { error: "Title and description are required" };
+    }
+
+    const { error } = await supabase
+        .from("job_posts")
+        .update({
+            title,
+            description,
+            location: location || null,
+            job_type: job_type || null,
+            salary_range: salary_range || null,
+            hours_per_week,
+            status: "pending_review",
+        })
+        .eq("id", jobId);
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/employer/jobs");
+    revalidatePath(`/employer/jobs/${jobId}`);
+    revalidatePath("/jobs");
+    revalidatePath(`/jobs/${jobId}`);
+    return { success: true };
+}
+
+export async function deleteJobAction(jobId: string) {
+    const supabase = await assertEmployerOwnsJob(jobId);
+
+    const { error } = await supabase
+        .from("job_posts")
+        .delete()
+        .eq("id", jobId);
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/employer/jobs");
+    revalidatePath("/employer/dashboard");
+    revalidatePath("/jobs");
+    return { success: true };
+}
