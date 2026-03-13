@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 const JOB_TYPES = [
     { value: "full-time", label: "Full-time" },
@@ -138,13 +139,11 @@ export function EditJobForm({ job }: { job: Job }) {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Job Description *</Label>
-                        <Textarea
-                            id="description"
+                        <Label>Job Description *</Label>
+                        <RichTextEditor
                             name="description"
                             defaultValue={job.description ?? ""}
-                            className="min-h-[250px]"
-                            required
+                            minHeight="250px"
                             disabled={isPending}
                         />
                     </div>

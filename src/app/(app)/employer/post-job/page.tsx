@@ -23,6 +23,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Loader2, ArrowLeft } from "lucide-react";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 const JOB_TYPES = [
     { value: "full-time", label: "Full-time" },
@@ -126,13 +127,11 @@ export default function PostJobPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="description">Job Description *</Label>
-                            <Textarea
-                                id="description"
+                            <Label>Job Description *</Label>
+                            <RichTextEditor
                                 name="description"
                                 placeholder="Describe responsibilities, requirements, and benefits..."
-                                className="min-h-[250px]"
-                                required
+                                minHeight="250px"
                                 disabled={isPending}
                             />
                         </div>

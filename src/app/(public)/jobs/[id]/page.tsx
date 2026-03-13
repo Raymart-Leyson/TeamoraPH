@@ -195,9 +195,10 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                         {/* Description Section */}
                         <div className="bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-6 md:p-8 mb-8">
                             <h3 className="text-2xl font-extrabold tracking-wide text-[#1B3FA0] mb-4 border-b border-white/40 pb-3">Role Overview</h3>
-                            <div className="prose prose-lg text-[#1B3FA0]/90 max-w-none font-medium whitespace-pre-wrap leading-relaxed">
-                                {job.description}
-                            </div>
+                            <div
+                                className="prose prose-lg text-[#1B3FA0]/90 max-w-none font-medium leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>p]:my-2 [&>strong]:font-bold [&>em]:italic"
+                                dangerouslySetInnerHTML={{ __html: job.description ?? "" }}
+                            />
                         </div>
                     </div>
 
