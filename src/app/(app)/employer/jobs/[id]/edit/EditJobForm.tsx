@@ -6,7 +6,6 @@ import { updateJobAction } from "../../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
     Card,
     CardContent,
@@ -24,7 +23,11 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
-import { RichTextEditor } from "@/components/ui/RichTextEditor";
+import dynamic from "next/dynamic";
+const RichTextEditor = dynamic(
+    () => import("@/components/ui/RichTextEditor").then((m) => m.RichTextEditor),
+    { ssr: false }
+);
 
 const JOB_TYPES = [
     { value: "full-time", label: "Full-time" },

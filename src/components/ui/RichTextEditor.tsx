@@ -56,6 +56,7 @@ export function RichTextEditor({
         extensions: [StarterKit],
         content: defaultValue,
         editable: !disabled,
+        immediatelyRender: false,
         editorProps: {
             attributes: {
                 class: cn(
