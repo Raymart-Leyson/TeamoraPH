@@ -21,7 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Loader2, CheckCircle2, AlertCircle, Pencil, BriefcaseBusiness, Mail, Globe, Github, Linkedin, MapPin, FileText, Phone } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, Pencil, BriefcaseBusiness, Mail, Globe, Github, Linkedin, MapPin, FileText, Phone, UploadCloud } from "lucide-react";
 import { TIMEZONES, formatTimezone } from "@/utils/timezones";
 
 interface Defaults {
@@ -62,9 +62,13 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            setAvatarUrl(URL.createObjectURL(file));
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+            alert("Photo is too large. Please choose an image under 2MB.");
+            e.target.value = "";
+            return;
         }
+        setAvatarUrl(URL.createObjectURL(file));
     };
 
     if (!isEditing) {
@@ -369,29 +373,65 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                         />
                     </div>
 
-                    <div className="space-y-4 pt-4">
-                        <Label htmlFor="resume_upload" className="text-[#1B3FA0] font-semibold text-lg flex items-center gap-2">
-                            Resume / CV
+                    <div className="space-y-3 pt-4">
+                        <Label className="text-[#1B3FA0] font-semibold text-lg flex items-center gap-2">
+                            <FileText className="h-5 w-5" /> Resume / CV
                         </Label>
-                        <div className="flex flex-col md:flex-row items-center gap-4 bg-[#3D6EFF]/5 p-6 rounded-2xl border border-[#3D6EFF]/10">
+
+                        {/* Current resume on file */}
+                        {defaults.resume_url && (
+                            <div className="flex items-center justify-between gap-3 bg-green-50 border border-green-200 rounded-2xl px-4 py-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-9 w-9 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                                        <FileText className="h-4 w-4 text-green-600" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-green-700">Resume on file</p>
+                                        <p className="text-xs text-green-600/70">Your current resume is saved and visible to employers.</p>
+                                    </div>
+                                </div>
+                                <a
+                                    href={defaults.resume_url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="shrink-0 text-xs font-bold text-green-700 underline underline-offset-2 hover:text-green-800"
+                                >
+                                    View
+                                </a>
+                            </div>
+                        )}
+
+                        {/* Upload area */}
+                        <label
+                            htmlFor="resume_upload"
+                            className="flex flex-col items-center justify-center gap-3 w-full border-2 border-dashed border-[#3D6EFF]/30 rounded-2xl p-8 bg-[#3D6EFF]/5 hover:bg-[#3D6EFF]/10 hover:border-[#3D6EFF]/50 transition-all cursor-pointer group"
+                        >
+                            <div className="h-12 w-12 rounded-2xl bg-[#3D6EFF]/10 flex items-center justify-center group-hover:bg-[#3D6EFF]/20 transition-colors">
+                                <UploadCloud className="h-6 w-6 text-[#3D6EFF]" />
+                            </div>
+                            <div className="text-center">
+                                <p className="text-sm font-bold text-[#1B3FA0]">
+                                    {defaults.resume_url ? "Replace Resume" : "Upload Resume / CV"}
+                                </p>
+                                <p className="text-xs text-[#1B3FA0]/50 mt-0.5">PDF or Word Document · Max 5MB</p>
+                            </div>
                             <Input
                                 id="resume_upload"
                                 name="resume_upload"
                                 type="file"
                                 accept=".pdf,.doc,.docx"
                                 disabled={isPending}
-                                className="shadow-inner cursor-pointer bg-white"
+                                className="hidden"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file && file.size > 5 * 1024 * 1024) {
+                                        alert("Resume is too large. Please choose a file under 5MB.");
+                                        e.target.value = "";
+                                    }
+                                }}
                             />
-                            <div className="flex flex-col flex-1">
-                                <p className="text-sm font-bold text-[#3D6EFF]">Upload PDF or Word Document</p>
-                                <p className="text-xs text-[#1B3FA0]/60">Max size 5MB. This will replace your current resume.</p>
-                            </div>
-                        </div>
-                        {defaults.resume_url && (
-                            <p className="text-xs text-[#1B3FA0]/60 flex items-center gap-2">
-                                <CheckCircle2 className="h-3 w-3 text-green-500" /> Current resume is on file.
-                            </p>
-                        )}
+                        </label>
+
                         <input type="hidden" name="resume_url" value={defaults.resume_url} />
                     </div>
 

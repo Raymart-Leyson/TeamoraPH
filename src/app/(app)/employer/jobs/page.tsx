@@ -14,6 +14,7 @@ import {
     Pencil,
     PlusCircle,
     CalendarDays,
+    TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
 import { publishJobAction, unpublishJobAction } from "./actions";
@@ -36,7 +37,7 @@ export default async function EmployerJobsPage() {
     const { data: jobs } = await supabase
         .from("job_posts")
         .select(`
-            id, title, location, job_type, status, created_at,
+            id, title, location, job_type, status, created_at, views,
             applications(count)
         `)
         .eq("author_id", profile.id)
@@ -127,6 +128,10 @@ export default async function EmployerJobsPage() {
                                                 <span className="flex items-center gap-1">
                                                     <Users className="h-3.5 w-3.5" />
                                                     {applicantCount} applicant{applicantCount !== 1 ? "s" : ""}
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <TrendingUp className="h-3.5 w-3.5" />
+                                                    {job.views ?? 0} view{(job.views ?? 0) !== 1 ? "s" : ""}
                                                 </span>
                                                 <span className="flex items-center gap-1">
                                                     <CalendarDays className="h-3.5 w-3.5" />

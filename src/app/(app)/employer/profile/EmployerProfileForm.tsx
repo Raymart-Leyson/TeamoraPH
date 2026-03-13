@@ -144,9 +144,13 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
 
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            setLogoUrl(URL.createObjectURL(file));
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+            alert("Logo is too large. Please choose an image under 2MB.");
+            e.target.value = "";
+            return;
         }
+        setLogoUrl(URL.createObjectURL(file));
     };
 
     return (
