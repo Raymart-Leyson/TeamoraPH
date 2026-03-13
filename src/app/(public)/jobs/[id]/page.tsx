@@ -28,9 +28,13 @@ export async function generateMetadata({ params }: JobDetailProps): Promise<Meta
 
     const company = Array.isArray(job.company) ? job.company[0] : (job.company as { name?: string } | null);
     const title = `${job.title}${company?.name ? ` at ${company.name}` : ""}`;
+    // Strip HTML tags (description is stored as rich text HTML)
+    const plainText = job.description
+        ? job.description.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
+        : null;
     const description =
-        job.description?.slice(0, 160) ??
-        `Apply for ${job.title}${company?.name ? ` at ${company.name}` : ""} on TeamoraPH.`;
+        plainText?.slice(0, 160) ??
+        `Apply for ${job.title}${company?.name ? ` at ${company.name}` : ""} on TeamoraPH. Browse remote jobs in the Philippines.`;
 
     return {
         title,

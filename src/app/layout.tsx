@@ -22,9 +22,9 @@ export const metadata: Metadata = {
     template: "%s | TeamoraPH",
   },
   description:
-    "Find top remote jobs and elite Filipino talent. TeamoraPH connects remote-ready candidates with forward-thinking companies worldwide.",
+    "Find top remote jobs and hire elite Filipino talent. TeamoraPH is the Philippines' #1 remote job marketplace connecting remote-ready candidates with forward-thinking companies worldwide.",
   keywords: [
-    // Job seekers
+    // Job seekers – primary
     "remote jobs Philippines",
     "online jobs Philippines",
     "work from home Philippines",
@@ -35,22 +35,43 @@ export const metadata: Metadata = {
     "home based jobs Philippines",
     "legitimate online jobs Philippines",
     "high paying online jobs Philippines",
-    // Employers (international & local)
+    "part time online jobs Philippines",
+    "full time remote jobs Philippines",
+    "remote work no experience Philippines",
+    "entry level remote jobs Philippines",
+    // Job seeker – roles
+    "virtual assistant jobs Philippines",
+    "customer service jobs remote Philippines",
+    "data entry jobs Philippines",
+    "social media manager jobs Philippines",
+    "graphic designer jobs remote Philippines",
+    "web developer jobs remote Philippines",
+    "content writer jobs Philippines",
+    "SEO specialist jobs Philippines",
+    "bookkeeping jobs remote Philippines",
+    "project manager remote jobs Philippines",
+    // Employers – international & local
     "hire Filipino talent",
     "hire Filipino remote workers",
     "hire Filipino virtual assistant",
     "hire Filipino developer",
     "hire Filipino staff online",
+    "hire remote staff Philippines",
     "outsource to Philippines",
     "Philippine outsourcing",
+    "BPO Philippines",
     "Filipino virtual assistant",
     "Filipino freelancers",
     "remote workers Philippines",
+    "offshore staff Philippines",
+    "dedicated remote staff Philippines",
     // General marketplace
     "job marketplace Philippines",
     "Filipino remote talent",
     "remote hiring Philippines",
     "remote work Philippines",
+    "TeamoraPH",
+    "Teamora jobs",
   ],
   authors: [{ name: "TeamoraPH", url: siteUrl }],
   creator: "TeamoraPH",
@@ -72,7 +93,7 @@ export const metadata: Metadata = {
     siteName: "TeamoraPH",
     title: "TeamoraPH — Remote Job Marketplace for Filipino Talent",
     description:
-      "Find top remote jobs and elite Filipino talent. TeamoraPH connects remote-ready candidates with forward-thinking companies worldwide.",
+      "Find top remote jobs and hire elite Filipino talent. TeamoraPH is the Philippines' #1 remote job marketplace.",
     images: [
       {
         url: "/logo.png",
@@ -86,7 +107,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "TeamoraPH — Remote Job Marketplace for Filipino Talent",
     description:
-      "Find top remote jobs and elite Filipino talent on TeamoraPH.",
+      "Find top remote jobs and hire elite Filipino talent on TeamoraPH — the Philippines' #1 remote job marketplace.",
     images: ["/logo.png"],
   },
   icons: {
@@ -104,7 +125,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en-PH">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

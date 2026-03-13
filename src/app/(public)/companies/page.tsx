@@ -7,17 +7,20 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 
 export const metadata = {
-    title: "Companies Hiring Remotely",
-    description: "Browse top companies actively hiring remote Filipino talent on TeamoraPH. Find your next employer today.",
+    title: "Companies Hiring Remote Filipino Talent — Browse Employers",
+    description:
+        "Discover top companies and employers actively hiring remote Filipino talent on TeamoraPH. Browse company profiles, open roles, and apply today.",
     openGraph: {
-        title: "Companies Hiring Remotely | TeamoraPH",
-        description: "Browse top companies actively hiring remote Filipino talent on TeamoraPH.",
+        title: "Companies Hiring Remote Filipino Talent | TeamoraPH",
+        description:
+            "Discover top companies actively hiring remote Filipino professionals. Browse company profiles and open roles on TeamoraPH.",
         url: "/companies",
         type: "website",
     },
     twitter: {
-        title: "Companies Hiring Remotely | TeamoraPH",
-        description: "Browse top companies actively hiring remote Filipino talent.",
+        title: "Companies Hiring Remote Filipino Talent | TeamoraPH",
+        description:
+            "Discover top companies actively hiring remote Filipino professionals on TeamoraPH.",
     },
     alternates: {
         canonical: "/companies",

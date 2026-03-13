@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /candidate/
+Disallow: /employer/
+Disallow: /admin/
+Disallow: /staff/
+Disallow: /owner/
+Disallow: /login
+Disallow: /signup
+Disallow: /auth/
+
+Sitemap: https://teamoraph.selleruniverse.com/sitemap.xml

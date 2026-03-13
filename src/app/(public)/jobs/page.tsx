@@ -14,15 +14,20 @@ import { getUserProfile } from "@/utils/auth";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-    title: "Browse Remote Jobs",
+    title: "Browse Remote Jobs Philippines — Work From Home & Online Jobs",
     description:
-        "Search hundreds of remote job opportunities in the Philippines and globally. Filter by role, location, and job type to find your perfect remote position.",
+        "Browse hundreds of legitimate remote jobs, work from home jobs, and online jobs in the Philippines. Find VA, customer service, developer, design, and more roles hiring now.",
     openGraph: {
-        title: "Browse Remote Jobs | TeamoraPH",
+        title: "Browse Remote Jobs Philippines | TeamoraPH",
         description:
-            "Search hundreds of remote job opportunities. Filter by role, location, and job type.",
+            "Hundreds of legitimate remote jobs in the Philippines — VA, customer service, developer, design & more. Apply now on TeamoraPH.",
         url: "/jobs",
         type: "website",
+    },
+    twitter: {
+        title: "Browse Remote Jobs Philippines | TeamoraPH",
+        description:
+            "Hundreds of legitimate remote jobs in the Philippines — VA, customer service, developer, design & more.",
     },
     alternates: {
         canonical: "/jobs",

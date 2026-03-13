@@ -31,10 +31,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         .eq("id", id)
         .single();
 
-    const title = company ? `${company.name} — Remote Jobs` : "Company | TeamoraPH";
+    const title = company
+        ? `${company.name} — Hiring Remote Filipino Talent`
+        : "Company | TeamoraPH";
+    const plainText = company?.description
+        ? company.description.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
+        : null;
     const description =
-        company?.description?.slice(0, 160) ??
-        `View open remote roles at ${company?.name ?? "this company"} on TeamoraPH.`;
+        plainText?.slice(0, 160) ??
+        `View open remote roles at ${company?.name ?? "this company"} on TeamoraPH and apply today.`;
 
     return {
         title,

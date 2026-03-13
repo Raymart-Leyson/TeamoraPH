@@ -19,17 +19,18 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
     title: "TeamoraPH — Remote Job Marketplace for Filipino Talent",
     description:
-        "Discover your next remote opportunity. Browse curated remote jobs and connect directly with top-tier companies hiring Filipino professionals worldwide.",
+        "Find legitimate remote jobs in the Philippines or hire top Filipino talent. TeamoraPH is the #1 remote job marketplace connecting Filipino professionals with global employers.",
     openGraph: {
         title: "TeamoraPH — Remote Job Marketplace for Filipino Talent",
         description:
-            "Discover your next remote opportunity. Browse curated remote jobs and connect directly with top-tier companies hiring Filipino professionals worldwide.",
+            "Find legitimate remote jobs in the Philippines or hire top Filipino talent. The #1 remote job marketplace for Filipino professionals.",
         url: "/",
         type: "website",
     },
     twitter: {
         title: "TeamoraPH — Remote Job Marketplace for Filipino Talent",
-        description: "Browse curated remote jobs for Filipino professionals.",
+        description:
+            "Find legitimate remote jobs in the Philippines or hire top Filipino talent on TeamoraPH.",
     },
     alternates: {
         canonical: "/",

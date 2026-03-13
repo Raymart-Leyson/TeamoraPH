@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             .select("id, updated_at")
             .eq("status", "published")
             .order("updated_at", { ascending: false })
-            .limit(500),
+            .limit(1000),
         supabase
             .from("companies")
             .select("id, updated_at")
@@ -21,12 +21,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]);
 
     const staticRoutes: MetadataRoute.Sitemap = [
-        { url: siteUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
-        { url: `${siteUrl}/jobs`, lastModified: new Date(), changeFrequency: "hourly", priority: 0.9 },
-        { url: `${siteUrl}/companies`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
-        { url: `${siteUrl}/pricing`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
-        { url: `${siteUrl}/terms`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
-        { url: `${siteUrl}/privacy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+        { url: siteUrl,                   lastModified: new Date(), changeFrequency: "daily",   priority: 1.0 },
+        { url: `${siteUrl}/jobs`,         lastModified: new Date(), changeFrequency: "hourly",  priority: 0.9 },
+        { url: `${siteUrl}/companies`,    lastModified: new Date(), changeFrequency: "daily",   priority: 0.8 },
+        { url: `${siteUrl}/pricing`,      lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+        { url: `${siteUrl}/verification`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+        { url: `${siteUrl}/terms`,        lastModified: new Date(), changeFrequency: "yearly",  priority: 0.3 },
+        { url: `${siteUrl}/privacy`,      lastModified: new Date(), changeFrequency: "yearly",  priority: 0.3 },
     ];
 
     const jobRoutes: MetadataRoute.Sitemap = (jobsRes.data ?? []).map((job) => ({

@@ -4,8 +4,19 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Zap, Building2, Users } from "lucide-react";
 
 export const metadata = {
-    title: "Pricing | Teamora",
-    description: "Simple, transparent pricing for candidates and employers on Teamora.",
+    title: "Pricing — Plans for Job Seekers & Employers",
+    description:
+        "Simple, transparent pricing for Filipino job seekers and global employers on TeamoraPH. Start free — upgrade when you're ready.",
+    openGraph: {
+        title: "Pricing — Plans for Job Seekers & Employers | TeamoraPH",
+        description:
+            "Simple, transparent pricing for Filipino job seekers and global employers. Start free on TeamoraPH.",
+        url: "/pricing",
+        type: "website",
+    },
+    alternates: {
+        canonical: "/pricing",
+    },
 };
 
 const candidatePlans = [
