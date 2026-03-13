@@ -83,7 +83,7 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
         <div className="flex h-full w-full flex-col bg-muted/30 border-r">
             <div className="flex h-16 items-center border-b px-6">
                 <Link href="/" className="flex items-center space-x-2">
-                    <Image src="/logo.png" alt="TeamoraPH Logo" width={24} height={24} className="h-6 w-6 object-contain" />
+                    <Image src="/logo.png" alt="TeamoraPH Logo" width={40} height={40} className="h-10 w-10 object-contain" />
                     <span className="inline-block font-bold">Teamora<span className="text-[#3D6EFF]">PH</span></span>
                     {isPro && (
                         <Badge className="bg-[#1B3FA0] text-white hover:bg-[#1B3FA0] font-black text-[9px] h-4 px-1.5 rounded-sm ml-1 animate-in fade-in zoom-in duration-500">PRO</Badge>

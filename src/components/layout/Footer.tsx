@@ -8,7 +8,7 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div className="md:col-span-1 space-y-4">
                         <Link href="/" className="flex items-center space-x-2">
-                            <Image src="/logo.png" alt="TeamoraPH" width={24} height={24} className="h-6 w-6 object-contain" />
+                            <Image src="/logo.png" alt="TeamoraPH" width={40} height={40} className="h-10 w-10 object-contain" />
                             <span className="inline-block font-bold">Teamora<span className="text-[#3D6EFF]">PH</span></span>
                         </Link>
                         <p className="text-sm text-muted-foreground">

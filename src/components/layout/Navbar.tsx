@@ -51,7 +51,7 @@ export async function Navbar() {
             <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 <div className="flex gap-6 md:gap-10">
                     <Link href="/" className="flex items-center space-x-2">
-                        <Image src="/logo.png" alt="TeamoraPH" width={24} height={24} className="h-6 w-6 object-contain" />
+                        <Image src="/logo.png" alt="TeamoraPH" width={40} height={40} className="h-10 w-10 object-contain" />
                         <span className="inline-block font-bold">Teamora<span className="text-[#3D6EFF]">PH</span></span>
                     </Link>
                     <nav className="hidden md:flex gap-6">
@@ -204,7 +204,7 @@ export async function Navbar() {
                         </SheetTrigger>
                         <SheetContent side="right" className="w-72 flex flex-col pt-10">
                             <Link href="/" className="flex items-center space-x-2 mb-8">
-                                <Image src="/logo.png" alt="TeamoraPH" width={24} height={24} className="h-6 w-6 object-contain" />
+                                <Image src="/logo.png" alt="TeamoraPH" width={40} height={40} className="h-10 w-10 object-contain" />
                                 <span className="font-bold text-lg">Teamora<span className="text-[#3D6EFF]">PH</span></span>
                             </Link>
                             <nav className="flex flex-col gap-1 flex-1">
