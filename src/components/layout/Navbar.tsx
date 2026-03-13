@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getUserProfile } from "@/utils/auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,7 +12,7 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { BriefcaseBusiness, UserCircle2, LayoutDashboard, Menu, User, FileText, Bookmark, Settings, Briefcase, FilePlus, CreditCard, Users, Clock } from "lucide-react";
+import { UserCircle2, LayoutDashboard, Menu, User, FileText, Bookmark, Settings, Briefcase, FilePlus, CreditCard, Users, Clock } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
 export async function Navbar() {
@@ -50,7 +51,7 @@ export async function Navbar() {
             <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 <div className="flex gap-6 md:gap-10">
                     <Link href="/" className="flex items-center space-x-2">
-                        <BriefcaseBusiness className="h-6 w-6 text-primary" />
+                        <Image src="/logo.png" alt="TeamoraPH" width={24} height={24} className="h-6 w-6 object-contain" />
                         <span className="inline-block font-bold">Teamora<span className="text-[#3D6EFF]">PH</span></span>
                     </Link>
                     <nav className="hidden md:flex gap-6">
@@ -203,7 +204,7 @@ export async function Navbar() {
                         </SheetTrigger>
                         <SheetContent side="right" className="w-72 flex flex-col pt-10">
                             <Link href="/" className="flex items-center space-x-2 mb-8">
-                                <BriefcaseBusiness className="h-6 w-6 text-primary" />
+                                <Image src="/logo.png" alt="TeamoraPH" width={24} height={24} className="h-6 w-6 object-contain" />
                                 <span className="font-bold text-lg">Teamora<span className="text-[#3D6EFF]">PH</span></span>
                             </Link>
                             <nav className="flex flex-col gap-1 flex-1">

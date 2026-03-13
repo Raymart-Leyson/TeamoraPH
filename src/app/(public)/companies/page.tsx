@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Globe, BriefcaseBusiness, Search } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 
 export const metadata = {
@@ -39,6 +40,7 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
             name,
             description,
             website,
+            logo_url,
             job_posts(count)
         `)
         .order("name", { ascending: true });
@@ -114,9 +116,11 @@ export default async function CompaniesPage({ searchParams }: CompaniesPageProps
                                 <Link key={company.id} href={`/companies/${company.id}`}>
                                     <Card className="h-full hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer group">
                                         <CardContent className="p-4 md:p-5 flex flex-col gap-4">
-                                            {/* Logo placeholder */}
-                                            <div className="h-12 w-12 rounded-2xl bg-primary/10 border flex items-center justify-center text-primary font-bold text-xl group-hover:bg-primary/15 transition-colors">
-                                                {initials}
+                                            {/* Company logo */}
+                                            <div className="h-12 w-12 rounded-2xl bg-primary/10 border flex items-center justify-center text-primary font-bold text-xl group-hover:bg-primary/15 transition-colors overflow-hidden">
+                                                {company.logo_url ? (
+                                                    <Image src={company.logo_url} alt={company.name} width={48} height={48} className="h-full w-full object-cover rounded-2xl" />
+                                                ) : initials}
                                             </div>
 
                                             <div className="flex-1 space-y-1">
