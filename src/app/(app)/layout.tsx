@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import { redirect } from "next/navigation";
 import { getUserProfile } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
@@ -224,6 +225,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 {/* Scrollable Main Layout Area */}
                 <main className="flex-1 overflow-auto bg-background focus:outline-none">
                     {children}
+                    <Analytics />
                 </main>
             </div>
         </div>
