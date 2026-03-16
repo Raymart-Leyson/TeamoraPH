@@ -203,6 +203,7 @@ export default function PricingPage() {
                     <Zap className="w-10 h-10 mx-auto mb-4 text-[#A8C4FF]" />
                     <h3 className="text-2xl sm:text-3xl font-black">Ready to get started?</h3>
                     <p className="text-white/70 mt-3 font-medium">Create a free account in under 2 minutes. No credit card required.</p>
+                    <p className="text-white/50 mt-2 text-sm">Questions? Email us at <a href="mailto:raymart@selleruniverse.com" className="text-white/80 underline hover:text-white font-semibold">raymart@selleruniverse.com</a></p>
                     <div className="flex flex-wrap gap-4 justify-center mt-8">
                         <Button className="bg-white text-[#1B3FA0] hover:bg-white/90 font-black rounded-xl px-8 h-12 text-base" asChild>
                             <Link href="/signup?role=candidate">Find Remote Work</Link>

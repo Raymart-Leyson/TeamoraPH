@@ -452,6 +452,12 @@ export function VerificationUI({ initialProfile }: { initialProfile: any }) {
                     <p className="text-xs text-[#3D6EFF]/80 font-medium leading-relaxed">
                         Your identification documents are encrypted and stored securely. They are only used for verification and will never be shared with employers or third parties without your consent.
                     </p>
+                    <p className="text-xs text-[#3D6EFF]/70 font-medium mt-2">
+                        Having issues? Contact us at{" "}
+                        <a href="mailto:raymart@selleruniverse.com" className="underline font-bold hover:opacity-80">
+                            raymart@selleruniverse.com
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>

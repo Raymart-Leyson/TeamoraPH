@@ -20,6 +20,12 @@ export default function NotFound() {
                     <p className="text-muted-foreground">
                         The page you&apos;re looking for doesn&apos;t exist or has been moved.
                     </p>
+                    <p className="text-sm text-muted-foreground">
+                        Need help? Email us at{" "}
+                        <a href="mailto:raymart@selleruniverse.com" className="text-primary font-semibold hover:underline">
+                            raymart@selleruniverse.com
+                        </a>
+                    </p>
                 </div>
 
                 {/* CTAs */}

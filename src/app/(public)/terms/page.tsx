@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 const EFFECTIVE_DATE = "February 28, 2026";
-const CONTACT_EMAIL = "legal@teamoraph.selleruniverse.com";
+const CONTACT_EMAIL = "raymart@selleruniverse.com";
 
 export default function TermsOfServicePage() {
     return (

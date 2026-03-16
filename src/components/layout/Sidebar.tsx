@@ -121,6 +121,17 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
                         );
                     })}
                 </nav>
+
+                {/* Support */}
+                <div className="px-3 pb-4 mt-auto pt-4 border-t border-border/40">
+                    <a
+                        href="mailto:raymart@selleruniverse.com"
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors"
+                    >
+                        <MessageSquare className="h-4 w-4 shrink-0" />
+                        <span>Contact Support</span>
+                    </a>
+                </div>
             </div>
         </div>
     );

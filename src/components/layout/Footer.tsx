@@ -38,6 +38,17 @@ export function Footer() {
                             <li><Link href="/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
                         </ul>
                     </div>
+                    <div>
+                        <h3 className="font-semibold mb-4">Support</h3>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                            <li>
+                                <a href="mailto:raymart@selleruniverse.com" className="hover:text-foreground">
+                                    Contact Support
+                                </a>
+                            </li>
+                            <li className="text-xs break-all">raymart@selleruniverse.com</li>
+                        </ul>
+                    </div>
                 </div>
                 <div className="mt-12 border-t pt-8 flex text-sm text-muted-foreground flex-col md:flex-row justify-between items-center">
                     <p>© {new Date().getFullYear()} Teamora. All rights reserved.</p>

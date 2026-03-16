@@ -28,7 +28,7 @@ async function getSettings() {
 
     return {
         site_name: map["site_name"] ?? "TeamoraPH",
-        support_email: map["support_email"] ?? "support@teamora.ph",
+        support_email: map["support_email"] ?? "raymart@selleruniverse.com",
         meta_description: map["meta_description"] ?? "Premium Remote Job Marketplace for Filipinos",
         auto_publish_verified: map["auto_publish_verified"] === "true",
         flagged_notifications: map["flagged_notifications"] !== "false",

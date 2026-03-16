@@ -56,7 +56,7 @@ export default function BillingClient({ currency }: BillingClientProps) {
 
             {canceled && (
                 <div className="bg-amber-500/10 border border-amber-500/20 rounded-3xl p-6 flex items-center gap-4 text-amber-700 font-bold">
-                    <span>Purchase canceled. No charges were made.</span>
+                    <span>Purchase canceled. No charges were made. Need help? Email <a href="mailto:raymart@selleruniverse.com" className="underline hover:opacity-80">raymart@selleruniverse.com</a></span>
                 </div>
             )}
 
