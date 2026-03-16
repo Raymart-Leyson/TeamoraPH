@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useState, useActionState, useRef } from "react";
+import { ImageCropModal } from "@/components/ui/ImageCropModal";
 import { updateEmployerProfile } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -141,16 +142,29 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
 
     const [mode, setMode] = useState<"edit" | "preview">("edit");
     const [logoUrl, setLogoUrl] = useState(defaults.logo_url || "");
+    const [cropSrc, setCropSrc] = useState<string | null>(null);
+    const logoInputRef = useRef<HTMLInputElement>(null);
 
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        if (file.size > 2 * 1024 * 1024) {
-            alert("Logo is too large. Please choose an image under 2MB.");
+        if (file.size > 10 * 1024 * 1024) {
+            alert("Logo is too large. Please choose an image under 10MB.");
             e.target.value = "";
             return;
         }
-        setLogoUrl(URL.createObjectURL(file));
+        setCropSrc(URL.createObjectURL(file));
+        e.target.value = "";
+    };
+
+    const handleCropConfirm = (croppedFile: File) => {
+        if (logoInputRef.current) {
+            const dt = new DataTransfer();
+            dt.items.add(croppedFile);
+            logoInputRef.current.files = dt.files;
+        }
+        setLogoUrl(URL.createObjectURL(croppedFile));
+        setCropSrc(null);
     };
 
     return (
@@ -310,6 +324,7 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                                             accept="image/*"
                                             onChange={handleLogoChange}
                                             disabled={isPending}
+                                            ref={logoInputRef}
                                             className="shadow-inner focus-visible:ring-[#3D6EFF] cursor-pointer"
                                         />
                                         <p className="text-xs text-[#1B3FA0]/60">Select a PNG or JPG file. Recommended size: 400x400px.</p>
@@ -383,6 +398,14 @@ export function EmployerProfileForm({ defaults }: { defaults: Defaults }) {
                     </form>
                 </Card>
             )}
+        {cropSrc && (
+            <ImageCropModal
+                imageSrc={cropSrc}
+                onConfirm={handleCropConfirm}
+                onCancel={() => setCropSrc(null)}
+                aspectRatio={1}
+            />
+        )}
         </div>
     );
 }

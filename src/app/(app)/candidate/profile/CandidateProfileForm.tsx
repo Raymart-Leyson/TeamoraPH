@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState, useEffect } from "react";
+import { useActionState, useState, useEffect, useRef } from "react";
+import { ImageCropModal } from "@/components/ui/ImageCropModal";
 import { updateCandidateProfile } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +54,8 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
     // State for avatar preview
     const [avatarUrl, setAvatarUrl] = useState(defaults.avatar_url || "");
     const [isEditing, setIsEditing] = useState(false);
+    const [cropSrc, setCropSrc] = useState<string | null>(null);
+    const avatarInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (state?.success) {
@@ -63,12 +66,25 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        if (file.size > 2 * 1024 * 1024) {
-            alert("Photo is too large. Please choose an image under 2MB.");
+        if (file.size > 10 * 1024 * 1024) {
+            alert("Photo is too large. Please choose an image under 10MB.");
             e.target.value = "";
             return;
         }
-        setAvatarUrl(URL.createObjectURL(file));
+        setCropSrc(URL.createObjectURL(file));
+        // reset input so same file can be re-selected after cancel
+        e.target.value = "";
+    };
+
+    const handleCropConfirm = (croppedFile: File) => {
+        // Inject the cropped file back into the file input via DataTransfer
+        if (avatarInputRef.current) {
+            const dt = new DataTransfer();
+            dt.items.add(croppedFile);
+            avatarInputRef.current.files = dt.files;
+        }
+        setAvatarUrl(URL.createObjectURL(croppedFile));
+        setCropSrc(null);
     };
 
     if (!isEditing) {
@@ -181,6 +197,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
     }
 
     return (
+        <>
         <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-xl rounded-[2rem] overflow-hidden">
             <form action={formAction}>
                 <CardHeader>
@@ -217,6 +234,7 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                                 accept="image/*"
                                 disabled={isPending}
                                 onChange={handleImageChange}
+                                ref={avatarInputRef}
                                 className="shadow-inner cursor-pointer file:text-[#1B3FA0] file:font-semibold file:bg-[#1B3FA0]/10 file:rounded-md file:border-0 hover:file:bg-[#1B3FA0]/20"
                             />
                             <p className="text-xs text-[#1B3FA0]/60 font-medium pt-1">Upload a professional headshot (JPG, PNG)</p>
@@ -491,5 +509,13 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                 </CardFooter>
             </form>
         </Card>
+        {cropSrc && (
+            <ImageCropModal
+                imageSrc={cropSrc}
+                onConfirm={handleCropConfirm}
+                onCancel={() => setCropSrc(null)}
+            />
+        )}
+        </>
     );
 }
