@@ -333,13 +333,15 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
                                     {ratedSkills && ratedSkills.length > 0 ? (
                                         <div className="space-y-4">
                                             {ratedSkills.slice(0, 5).map((skill: any) => (
-                                                <div key={skill.id} className="flex flex-col gap-1">
-                                                    <div className="flex justify-between items-center text-sm font-bold text-[#1B3FA0]">
-                                                        <span>{skill.skill_name}</span>
-                                                        <span className="text-slate-400">{skill.rating}/10</span>
-                                                    </div>
-                                                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                                                        <div className="h-full bg-[#3D6EFF] rounded-full" style={{ width: `${(skill.rating / 10) * 100}%` }}></div>
+                                                <div key={skill.id} className="flex items-center justify-between">
+                                                    <span className="text-sm font-bold text-[#1B3FA0]">{skill.skill_name}</span>
+                                                    <div className="flex items-center gap-0.5">
+                                                        {[1, 2, 3, 4, 5].map((star) => (
+                                                            <Star
+                                                                key={star}
+                                                                className={`h-4 w-4 ${skill.rating >= star ? "fill-[#3D6EFF] text-[#3D6EFF]" : "text-slate-200"}`}
+                                                            />
+                                                        ))}
                                                     </div>
                                                 </div>
                                             ))}
