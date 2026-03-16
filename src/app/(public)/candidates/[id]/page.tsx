@@ -106,13 +106,21 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
                                     <AvatarFallback className="text-3xl font-black text-[#1B3FA0]">{initials}</AvatarFallback>
                                 </Avatar>
 
-                                {isVerified && (
-                                    <div className="mt-14 shrink-0">
+                                <div className="mt-14 flex items-center gap-2 shrink-0">
+                                    {isVerified && (
                                         <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700 border-emerald-200 text-sm font-bold shadow-sm py-1.5 px-3">
                                             <ShieldCheck className="w-4 h-4 mr-1.5" /> ID Verified
                                         </Badge>
-                                    </div>
-                                )}
+                                    )}
+                                    {currentUser?.id === id && (
+                                        <a
+                                            href="/candidate/profile"
+                                            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#1B3FA0] text-white text-sm font-bold shadow hover:bg-[#1B3FA0]/90 transition-colors"
+                                        >
+                                            <User className="w-4 h-4" /> Edit Profile
+                                        </a>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="mt-5 w-full">
