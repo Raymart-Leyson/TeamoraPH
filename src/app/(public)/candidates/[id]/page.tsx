@@ -332,7 +332,7 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
 
                                     {ratedSkills && ratedSkills.length > 0 ? (
                                         <div className="space-y-4">
-                                            {ratedSkills.map((skill: any) => (
+                                            {ratedSkills.slice(0, 5).map((skill: any) => (
                                                 <div key={skill.id} className="flex flex-col gap-1">
                                                     <div className="flex justify-between items-center text-sm font-bold text-[#1B3FA0]">
                                                         <span>{skill.skill_name}</span>
