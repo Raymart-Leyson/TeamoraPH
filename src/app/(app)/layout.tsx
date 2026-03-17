@@ -76,7 +76,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
             {/* Desktop Sidebar */}
             <aside className="hidden border-r bg-muted/30 lg:block lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
-                <Sidebar role={validRole} unreadMessages={unreadMessages} isPro={isPro} />
+                <Sidebar role={validRole} unreadMessages={unreadMessages} unreadNotifications={unreadNotifications ?? 0} isPro={isPro} />
             </aside>
 
             {/* Main Container */}
@@ -91,7 +91,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="flex flex-col p-0 w-72">
-                            <Sidebar role={validRole} unreadMessages={unreadMessages} isPro={isPro} />
+                            <Sidebar role={validRole} unreadMessages={unreadMessages} unreadNotifications={unreadNotifications ?? 0} isPro={isPro} />
                         </SheetContent>
                     </Sheet>
                     <div className="w-full flex-1">

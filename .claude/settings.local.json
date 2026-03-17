@@ -6,7 +6,11 @@
       "Bash(grep -n \"views\\\\|job_posts\" /c/Users/rayma/OneDrive/Documents/Projects/TeamoraPH/supabase/migrations/*.sql)",
       "Bash(find /c/Users/rayma/OneDrive/Documents/Projects/TeamoraPH -type f -name \"*.sql\" -exec grep -l \"verif\\\\|badge\" {} ;)",
       "Bash(grep -n \"ALTER TABLE.*candidate_profiles\" /c/Users/rayma/OneDrive/Documents/Projects/TeamoraPH/supabase/migrations/*.sql)",
-      "Bash(npm i:*)"
+      "Bash(npm i:*)",
+      "Bash(find \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(public\\)\" -name \"page.tsx\")",
+      "Bash(xargs grep:*)",
+      "Bash(grep -l \"last_read\" /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/supabase/migrations/*.sql)",
+      "Bash(npm install:*)"
     ]
   }
 }

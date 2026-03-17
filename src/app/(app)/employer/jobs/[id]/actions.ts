@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { sendApplicationStatusEmail } from "@/lib/email";
 
 export async function updateApplicationStatus(applicationId: string, newStatus: string, jobId: string) {
     const supabase = await createClient();
@@ -41,10 +42,25 @@ export async function updateApplicationStatus(applicationId: string, newStatus: 
         await supabase.from('notifications').insert({
             user_id: application.candidate_id,
             type: 'application_update',
-            title: 'Application Status Changed',
-            content: `Your application for ${jobTitle} has been moved to ${newStatus.toUpperCase()}.`,
-            link: '/candidate/dashboard'
+            title: 'Application Status Updated',
+            content: `Your application for "${jobTitle}" has been moved to ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}.`,
+            link: '/candidate/applications'
         });
+
+        // Send email to candidate
+        const { data: candidateProfile } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('id', application.candidate_id)
+            .single();
+
+        if (candidateProfile?.email) {
+            await sendApplicationStatusEmail({
+                toEmail: candidateProfile.email,
+                jobTitle,
+                newStatus,
+            });
+        }
     }
 
     revalidatePath(`/employer/jobs/${jobId}`);

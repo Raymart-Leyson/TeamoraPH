@@ -19,12 +19,14 @@ import {
     AlertTriangle,
     Search,
     Monitor,
-    Clock
+    Clock,
+    Bell,
 } from "lucide-react";
 
 interface SidebarProps {
     role: "candidate" | "employer" | "admin";
     unreadMessages?: number;
+    unreadNotifications?: number;
     isPro?: boolean;
 }
 
@@ -35,7 +37,7 @@ interface NavLink {
     badge?: number;
 }
 
-export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProps) {
+export function Sidebar({ role, unreadMessages = 0, unreadNotifications = 0, isPro = false }: SidebarProps) {
     const pathname = usePathname();
 
     const candidateLinks: NavLink[] = [
@@ -46,6 +48,7 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
         { name: "Applications", href: "/candidate/applications", icon: BriefcaseBusiness },
         { name: "Saved Jobs", href: "/candidate/saved-jobs", icon: Bookmark },
         { name: "Messages", href: "/candidate/messages", icon: MessageSquare, badge: unreadMessages },
+        { name: "Notifications", href: "/notifications", icon: Bell, badge: unreadNotifications },
         { name: "Tracker", href: "/candidate/tracker", icon: Monitor },
         { name: "Verification", href: "/verification", icon: ShieldCheck },
     ];
@@ -58,6 +61,7 @@ export function Sidebar({ role, unreadMessages = 0, isPro = false }: SidebarProp
         { name: "My Company", href: "/employer/profile", icon: Building2 },
         { name: "My Jobs", href: "/employer/jobs", icon: BriefcaseBusiness },
         { name: "Messages", href: "/employer/messages", icon: MessageSquare, badge: unreadMessages },
+        { name: "Notifications", href: "/notifications", icon: Bell, badge: unreadNotifications },
         { name: "Time Proof", href: "/employer/timeproof", icon: Clock },
         { name: "Billing", href: "/employer/billing", icon: Settings },
         { name: "Verification", href: "/verification", icon: ShieldCheck },

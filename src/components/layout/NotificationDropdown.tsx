@@ -14,6 +14,7 @@ import {
 import { getNotifications, markAllNotificationsAsRead, clearAllNotifications, markNotificationAsRead } from "@/app/(app)/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 
 interface Notification {
     id: string;
@@ -42,6 +43,41 @@ export function NotificationDropdown({ initialCount }: { initialCount: number })
                 setLoading(false);
             });
         }
+    }, [open]);
+
+    // Real-time: bump unread count when a new notification arrives
+    useEffect(() => {
+        const supabase = createClient();
+        let userId: string | null = null;
+
+        supabase.auth.getUser().then(({ data }) => {
+            userId = data.user?.id ?? null;
+            if (!userId) return;
+
+            const channel = supabase
+                .channel("notifications-realtime")
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "INSERT",
+                        schema: "public",
+                        table: "notifications",
+                        filter: `user_id=eq.${userId}`,
+                    },
+                    (payload) => {
+                        setUnreadCount((prev) => prev + 1);
+                        // If dropdown is open, prepend the new notification
+                        if (open) {
+                            setNotifications((prev) => [payload.new as Notification, ...prev]);
+                        }
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(channel);
+            };
+        });
     }, [open]);
 
     const handleMarkAllRead = async (e: React.MouseEvent) => {
@@ -130,6 +166,16 @@ export function NotificationDropdown({ initialCount }: { initialCount: number })
                             </DropdownMenuItem>
                         ))
                     )}
+                </div>
+                <DropdownMenuSeparator />
+                <div className="p-2">
+                    <Link
+                        href="/notifications"
+                        className="flex items-center justify-center w-full text-xs text-[#3D6EFF] hover:underline py-1"
+                        onClick={() => setOpen(false)}
+                    >
+                        View all notifications →
+                    </Link>
                 </div>
             </DropdownMenuContent>
         </DropdownMenu>
