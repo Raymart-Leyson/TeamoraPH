@@ -1,12 +1,17 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://teamoraph.selleruniverse.com";
-const FROM = "TeamoraPH <no-reply@teamoraph.selleruniverse.com>";
+const FROM = `TeamoraPH <${process.env.GMAIL_USER ?? "no-reply@teamoraph.com"}>`;
 
-function getResend() {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) return null;
-    return new Resend(apiKey);
+function getTransporter() {
+    const user = process.env.GMAIL_USER;
+    const pass = process.env.GMAIL_APP_PASSWORD;
+    if (!user || !pass) return null;
+
+    return nodemailer.createTransport({
+        service: "gmail",
+        auth: { user, pass },
+    });
 }
 
 // ─── Templates ────────────────────────────────────────────────────────────────
@@ -121,13 +126,13 @@ export async function sendNewMessageEmail({
     conversationId: string;
     recipientRole: "candidate" | "employer";
 }) {
-    const resend = getResend();
-    if (!resend) return; // silently skip if not configured
+    const transporter = getTransporter();
+    if (!transporter) return;
 
     const conversationUrl = `${APP_URL}/${recipientRole}/messages/${conversationId}`;
     const preview = messagePreview.length > 120 ? messagePreview.slice(0, 117) + "..." : messagePreview;
 
-    await resend.emails.send({
+    await transporter.sendMail({
         from: FROM,
         to: toEmail,
         subject: `${senderName} sent you a message — TeamoraPH`,
@@ -144,12 +149,12 @@ export async function sendApplicationStatusEmail({
     jobTitle: string;
     newStatus: string;
 }) {
-    const resend = getResend();
-    if (!resend) return;
+    const transporter = getTransporter();
+    if (!transporter) return;
 
     const applicationsUrl = `${APP_URL}/candidate/applications`;
 
-    await resend.emails.send({
+    await transporter.sendMail({
         from: FROM,
         to: toEmail,
         subject: `Your application for "${jobTitle}" has been updated — TeamoraPH`,
