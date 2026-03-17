@@ -4,7 +4,7 @@ import { getUserProfile } from "@/utils/auth";
 import { hasActiveSubscription } from "@/lib/entitlements";
 import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Lock, Users, Search as SearchIcon, MapPin, Briefcase, Mail } from "lucide-react";
+import { Lock, Users, Search as SearchIcon, MapPin, Briefcase, Mail, CircleDot } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +14,26 @@ export const metadata = {
     description: "Search for top talent directly.",
 };
 
+const AVAILABILITY_OPTIONS = [
+    "Immediately Available",
+    "Available in 1-2 weeks",
+    "Available in 1 month",
+    "Open to Opportunities",
+    "Not Available",
+];
+
+const AVAILABILITY_COLORS: Record<string, string> = {
+    "Immediately Available": "bg-green-100 text-green-700 border-green-200",
+    "Available in 1-2 weeks": "bg-blue-100 text-blue-700 border-blue-200",
+    "Available in 1 month": "bg-yellow-100 text-yellow-700 border-yellow-200",
+    "Open to Opportunities": "bg-purple-100 text-purple-700 border-purple-200",
+    "Not Available": "bg-red-100 text-red-600 border-red-200",
+};
+
 export default async function TalentSearchPage({
     searchParams,
 }: {
-    searchParams: { q?: string };
+    searchParams: { q?: string; availability?: string };
 }) {
     const profile = await getUserProfile();
 
@@ -55,7 +71,7 @@ export default async function TalentSearchPage({
         );
     }
 
-    const { q = "" } = searchParams;
+    const { q = "", availability = "" } = searchParams;
     const supabase = await createClient();
 
     let query = supabase
@@ -69,6 +85,7 @@ export default async function TalentSearchPage({
             location_city,
             location_country,
             skills,
+            availability,
             profiles!inner(email)
         `)
         .not("first_name", "is", null)
@@ -79,8 +96,11 @@ export default async function TalentSearchPage({
         .limit(20);
 
     if (q) {
-        // simple text search on first name, last name, or bio
         query = query.or(`first_name.ilike.%${q}%,last_name.ilike.%${q}%,bio.ilike.%${q}%`);
+    }
+
+    if (availability) {
+        query = query.eq("availability", availability);
     }
 
     const { data: candidates, error } = await query;
@@ -94,23 +114,37 @@ export default async function TalentSearchPage({
                 </div>
             </div>
 
-            <div className="bg-background rounded-2xl p-4 shadow-sm border flex items-center max-w-2xl gap-3">
-                <SearchIcon className="w-5 h-5 text-muted-foreground ml-2" />
-                <form className="flex-1" action="/employer/talent-search">
+            <form action="/employer/talent-search" className="space-y-3 max-w-2xl">
+                <div className="bg-background rounded-2xl p-4 shadow-sm border flex items-center gap-3">
+                    <SearchIcon className="w-5 h-5 text-muted-foreground ml-2 shrink-0" />
                     <Input
                         name="q"
                         defaultValue={q}
                         placeholder="Search by name, role, or keywords..."
-                        className="border-0 shadow-none focus-visible:ring-0 text-base px-0"
+                        className="border-0 shadow-none focus-visible:ring-0 text-base px-0 flex-1"
                     />
-                </form>
-                {q && (
-                    <Button variant="ghost" size="sm" asChild className="rounded-xl hidden sm:flex">
-                        <Link href="/employer/talent-search">Clear</Link>
-                    </Button>
-                )}
-                <Button type="submit" className="rounded-xl px-6 font-bold">Search</Button>
-            </div>
+                    {(q || availability) && (
+                        <Button variant="ghost" size="sm" asChild className="rounded-xl hidden sm:flex shrink-0">
+                            <Link href="/employer/talent-search">Clear</Link>
+                        </Button>
+                    )}
+                    <Button type="submit" className="rounded-xl px-6 font-bold shrink-0">Search</Button>
+                </div>
+                <div className="flex flex-wrap gap-2 items-center">
+                    <span className="text-xs text-muted-foreground font-medium">Filter by availability:</span>
+                    <button type="submit" name="availability" value=""
+                        className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-colors ${!availability ? "bg-primary text-white border-primary" : "bg-background text-muted-foreground hover:border-primary/40"}`}>
+                        All
+                    </button>
+                    {AVAILABILITY_OPTIONS.map((opt) => (
+                        <button key={opt} type="submit" name="availability" value={opt}
+                            className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-colors ${availability === opt ? AVAILABILITY_COLORS[opt] + " font-bold" : "bg-background text-muted-foreground hover:border-primary/40"}`}>
+                            {opt}
+                        </button>
+                    ))}
+                    {q && <input type="hidden" name="q" value={q} />}
+                </div>
+            </form>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {candidates?.map((candidate) => (
@@ -140,6 +174,13 @@ export default async function TalentSearchPage({
                                 {Array.isArray(candidate.profiles) ? candidate.profiles[0]?.email : (candidate.profiles as any)?.email}
                             </span>
                         </div>
+
+                        {(candidate as any).availability && (
+                            <div className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full border mb-3 ${AVAILABILITY_COLORS[(candidate as any).availability] ?? "bg-muted text-muted-foreground border-border"}`}>
+                                <CircleDot className="w-3 h-3" />
+                                {(candidate as any).availability}
+                            </div>
+                        )}
 
                         <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-10 w-full">
                             {candidate.bio || "No biography provided."}

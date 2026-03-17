@@ -342,15 +342,18 @@ export function CandidateProfileForm({ defaults }: { defaults: Defaults }) {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="availability" className="text-[#1B3FA0] font-semibold">Availability *</Label>
-                            <Input
-                                id="availability"
-                                name="availability"
-                                placeholder="Immediate, 1-2 weeks..."
-                                required
-                                defaultValue={defaults.availability}
-                                disabled={isPending}
-                                className="shadow-inner"
-                            />
+                            <Select name="availability" defaultValue={defaults.availability || undefined} disabled={isPending} required>
+                                <SelectTrigger id="availability" className="shadow-inner bg-white">
+                                    <SelectValue placeholder="Select your availability" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-white shadow-xl border-[#1B3FA0]/20">
+                                    <SelectItem value="Immediately Available">Immediately Available</SelectItem>
+                                    <SelectItem value="Available in 1-2 weeks">Available in 1-2 weeks</SelectItem>
+                                    <SelectItem value="Available in 1 month">Available in 1 month</SelectItem>
+                                    <SelectItem value="Open to Opportunities">Open to Opportunities</SelectItem>
+                                    <SelectItem value="Not Available">Not Available</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 

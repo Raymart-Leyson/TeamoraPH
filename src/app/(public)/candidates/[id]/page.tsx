@@ -147,11 +147,21 @@ export default async function PublicCandidatePage({ params }: { params: Promise<
                                             <BriefcaseBusiness className="w-4 h-4 text-slate-400" /> {profile.primary_role} Target
                                         </span>
                                     )}
-                                    {profile.availability && (
-                                        <Badge variant="outline" className="bg-[#1B3FA0]/5 text-[#1B3FA0] border-[#1B3FA0]/20 font-bold">
-                                            {profile.availability}
-                                        </Badge>
-                                    )}
+                                    {profile.availability && (() => {
+                                        const colors: Record<string, string> = {
+                                            "Immediately Available": "bg-green-100 text-green-700 border-green-200",
+                                            "Available in 1-2 weeks": "bg-blue-100 text-blue-700 border-blue-200",
+                                            "Available in 1 month": "bg-yellow-100 text-yellow-700 border-yellow-200",
+                                            "Open to Opportunities": "bg-purple-100 text-purple-700 border-purple-200",
+                                            "Not Available": "bg-red-100 text-red-600 border-red-200",
+                                        };
+                                        const colorClass = colors[profile.availability] ?? "bg-[#1B3FA0]/5 text-[#1B3FA0] border-[#1B3FA0]/20";
+                                        return (
+                                            <Badge variant="outline" className={`font-bold ${colorClass}`}>
+                                                {profile.availability}
+                                            </Badge>
+                                        );
+                                    })()}
                                 </div>
 
                                 <div className="mt-6 flex flex-wrap gap-3">
