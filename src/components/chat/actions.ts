@@ -126,14 +126,26 @@ export async function sendMessage(formData: FormData) {
                 .single();
 
             if (recipientProfile?.email) {
-                await sendNewMessageEmail({
-                    toEmail: recipientProfile.email,
-                    toName: "",
-                    senderName,
-                    messagePreview: body,
-                    conversationId: conversation_id,
-                    recipientRole,
-                });
+                // Only email if recipient hasn't been seen in the last 5 minutes
+                const { data: recipientActivity } = await supabase
+                    .from("profiles")
+                    .select("last_seen_at")
+                    .eq("id", recipientId)
+                    .single();
+
+                const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+                const isOnline = recipientActivity?.last_seen_at && recipientActivity.last_seen_at > fiveMinutesAgo;
+
+                if (!isOnline) {
+                    await sendNewMessageEmail({
+                        toEmail: recipientProfile.email,
+                        toName: "",
+                        senderName,
+                        messagePreview: body,
+                        conversationId: conversation_id,
+                        recipientRole,
+                    });
+                }
             }
         }
     } catch {

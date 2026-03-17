@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { NotificationDropdown } from "@/components/layout/NotificationDropdown";
+import { LastSeenTracker } from "@/components/layout/LastSeenTracker";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
     const profile = await getUserProfile();
@@ -224,6 +225,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
                 {/* Scrollable Main Layout Area */}
                 <main className="flex-1 overflow-auto bg-background focus:outline-none">
+                    <LastSeenTracker />
                     {children}
                     <Analytics />
                 </main>

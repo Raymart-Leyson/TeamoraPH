@@ -10,7 +10,8 @@
       "Bash(find \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(public\\)\" -name \"page.tsx\")",
       "Bash(xargs grep:*)",
       "Bash(grep -l \"last_read\" /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/supabase/migrations/*.sql)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npx supabase:*)"
     ]
   }
 }
