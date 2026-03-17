@@ -47,14 +47,14 @@ export async function updateApplicationStatus(applicationId: string, newStatus: 
             link: '/candidate/applications'
         });
 
-        // Send email to candidate
+        // Send email to candidate (respects their notification preferences)
         const { data: candidateProfile } = await supabase
             .from('profiles')
-            .select('email')
+            .select('email, email_notif_applications')
             .eq('id', application.candidate_id)
             .single();
 
-        if (candidateProfile?.email) {
+        if (candidateProfile?.email && candidateProfile?.email_notif_applications !== false) {
             await sendApplicationStatusEmail({
                 toEmail: candidateProfile.email,
                 jobTitle,

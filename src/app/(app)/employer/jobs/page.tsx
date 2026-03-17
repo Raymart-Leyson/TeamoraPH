@@ -37,7 +37,7 @@ export default async function EmployerJobsPage() {
     const { data: jobs } = await supabase
         .from("job_posts")
         .select(`
-            id, title, location, job_type, status, created_at, views,
+            id, title, location, job_type, status, created_at, views, expires_at,
             applications(count)
         `)
         .eq("author_id", profile.id)
@@ -113,6 +113,14 @@ export default async function EmployerJobsPage() {
                                                 <Badge variant={STATUS_BADGE[job.status] ?? "secondary"} className="capitalize shrink-0">
                                                     {job.status}
                                                 </Badge>
+                                                {job.expires_at && new Date(job.expires_at) < new Date() && (
+                                                    <Badge variant="destructive" className="shrink-0">Expired</Badge>
+                                                )}
+                                                {job.expires_at && new Date(job.expires_at) >= new Date() && (
+                                                    <span className="text-xs text-muted-foreground shrink-0">
+                                                        Expires {new Date(job.expires_at).toLocaleDateString()}
+                                                    </span>
+                                                )}
                                             </div>
                                             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                                                 {job.location && (

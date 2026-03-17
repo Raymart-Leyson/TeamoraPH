@@ -59,7 +59,7 @@ export function ChatInput({ conversationId, role }: { conversationId: string, ro
     );
 }
 
-export function ChatMessages({ initialMessages, conversationId, currentUserId, role }: { initialMessages: any[], conversationId: string, currentUserId: string, role: "employer" | "candidate" }) {
+export function ChatMessages({ initialMessages, conversationId, currentUserId, role, otherLastRead }: { initialMessages: any[], conversationId: string, currentUserId: string, role: "employer" | "candidate", otherLastRead?: string | null }) {
     const [messages, setMessages] = useState(initialMessages);
     const bottomRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
@@ -114,6 +114,13 @@ export function ChatMessages({ initialMessages, conversationId, currentUserId, r
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    // Find the last message sent by ME that the other party has seen
+    const lastSeenMsgId = otherLastRead
+        ? [...messages].reverse().find(
+            (m) => m.sender_id === currentUserId && new Date(m.created_at) <= new Date(otherLastRead)
+          )?.id
+        : null;
+
     return (
         <div className="flex-1 overflow-y-auto p-6 space-y-6 max-w-5xl mx-auto w-full scrollbar-hide">
             {messages.length === 0 ? (
@@ -143,7 +150,7 @@ export function ChatMessages({ initialMessages, conversationId, currentUserId, r
                                     </span>
                                 </div>
                             )}
-                            <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                            <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
                                 <div
                                     className={`relative group max-w-[75%] md:max-w-[65%] px-4 py-2.5 text-sm md:text-base leading-relaxed tracking-wide shadow-sm transition-all hover:shadow-md ${isMe
                                         ? 'bg-gradient-to-br from-[#1B3FA0] to-[#1B3FA0]/90 text-white rounded-[1.25rem] rounded-br-[0.25rem]'
@@ -155,6 +162,9 @@ export function ChatMessages({ initialMessages, conversationId, currentUserId, r
                                         {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                 </div>
+                                {isMe && lastSeenMsgId === msg.id && (
+                                    <span className="text-[10px] text-[#1B3FA0]/50 font-semibold mt-0.5 mr-1">Seen</span>
+                                )}
                             </div>
                         </div>
                     );

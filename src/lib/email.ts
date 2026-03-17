@@ -109,6 +109,47 @@ function applicationStatusHtml(jobTitle: string, newStatus: string, applications
     `);
 }
 
+function welcomeHtml(name: string, role: "candidate" | "employer", appUrl: string) {
+    const isEmployer = role === "employer";
+    const ctaUrl = isEmployer ? `${appUrl}/employer/dashboard` : `${appUrl}/candidate/dashboard`;
+    const ctaText = isEmployer ? "Go to Dashboard" : "Complete Your Profile";
+    const bodyText = isEmployer
+        ? `Start posting jobs, searching for talent, and building your team on TeamoraPH.`
+        : `Complete your profile to start applying for jobs and getting noticed by top employers.`;
+
+    return baseTemplate(`
+      <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#111827;">Welcome to TeamoraPH${name ? `, ${name}` : ""}! 🎉</h2>
+      <p style="margin:0 0 20px;font-size:15px;color:#6b7280;">${bodyText}</p>
+      <a href="${ctaUrl}"
+         style="display:inline-block;background:#3D6EFF;color:#ffffff;font-size:14px;font-weight:600;
+                text-decoration:none;padding:12px 28px;border-radius:8px;">
+        ${ctaText}
+      </a>
+    `);
+}
+
+function applicationConfirmationHtml(jobTitle: string, companyName: string, applicationsUrl: string) {
+    return baseTemplate(`
+      <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#111827;">Application Submitted!</h2>
+      <p style="margin:0 0 20px;font-size:15px;color:#6b7280;">
+        Your application for <strong style="color:#111827;">${jobTitle}</strong>
+        ${companyName ? `at <strong style="color:#111827;">${companyName}</strong>` : ""}
+        has been successfully submitted.
+      </p>
+      <div style="background:#f4f6fb;border-left:3px solid #3D6EFF;border-radius:6px;padding:14px 18px;margin-bottom:24px;">
+        <p style="margin:0;font-size:14px;color:#374151;">
+          The employer will review your application and reach out if you're a good fit.
+          We'll notify you of any status updates.
+        </p>
+      </div>
+      <a href="${applicationsUrl}"
+         style="display:inline-block;background:#3D6EFF;color:#ffffff;font-size:14px;font-weight:600;
+                text-decoration:none;padding:12px 28px;border-radius:8px;">
+        View My Applications
+      </a>
+    `);
+}
+
 // ─── Send helpers ──────────────────────────────────────────────────────────────
 
 export async function sendNewMessageEmail({
@@ -159,5 +200,47 @@ export async function sendApplicationStatusEmail({
         to: toEmail,
         subject: `Your application for "${jobTitle}" has been updated — TeamoraPH`,
         html: applicationStatusHtml(jobTitle, newStatus, applicationsUrl),
+    });
+}
+
+export async function sendWelcomeEmail({
+    toEmail,
+    name,
+    role,
+}: {
+    toEmail: string;
+    name?: string;
+    role: "candidate" | "employer";
+}) {
+    const transporter = getTransporter();
+    if (!transporter) return;
+
+    await transporter.sendMail({
+        from: FROM,
+        to: toEmail,
+        subject: `Welcome to TeamoraPH${name ? `, ${name}` : ""}!`,
+        html: welcomeHtml(name ?? "", role, APP_URL),
+    });
+}
+
+export async function sendApplicationConfirmationEmail({
+    toEmail,
+    jobTitle,
+    companyName,
+}: {
+    toEmail: string;
+    jobTitle: string;
+    companyName?: string;
+}) {
+    const transporter = getTransporter();
+    if (!transporter) return;
+
+    const applicationsUrl = `${APP_URL}/candidate/applications`;
+
+    await transporter.sendMail({
+        from: FROM,
+        to: toEmail,
+        subject: `Application submitted for "${jobTitle}" — TeamoraPH`,
+        html: applicationConfirmationHtml(jobTitle, companyName ?? "", applicationsUrl),
     });
 }

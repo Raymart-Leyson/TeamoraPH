@@ -38,6 +38,11 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
         .eq("conversation_id", conversation.id)
         .order("created_at", { ascending: true });
 
+    // The timestamp when the OTHER party last read the conversation
+    const otherLastRead = profile.role === "employer"
+        ? conversation.candidate_last_read_at
+        : conversation.employer_last_read_at;
+
     const app = Array.isArray(conversation.application) ? conversation.application[0] : conversation.application;
     const candidate = Array.isArray(app.candidate) ? app.candidate[0] : app.candidate;
 
@@ -86,6 +91,7 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
                     conversationId={conversation.id}
                     currentUserId={profile.id}
                     role={profile.role as "employer" | "candidate"}
+                    otherLastRead={otherLastRead ?? null}
                 />
                 <ChatInput conversationId={conversation.id} role={profile.role} />
             </div>

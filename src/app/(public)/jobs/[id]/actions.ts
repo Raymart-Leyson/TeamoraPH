@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { refreshCreditsIfNeeded } from "@/utils/credits";
+import { sendApplicationConfirmationEmail } from "@/lib/email";
 
 export async function applyAction(formData: FormData) {
     const supabase = await createClient();
@@ -30,10 +31,10 @@ export async function applyAction(formData: FormData) {
     // 1. Refresh daily credits if needed
     await refreshCreditsIfNeeded(user.id);
 
-    // 2. Fetch job info for notification (author + title)
+    // 2. Fetch job info for notification (author + title + company)
     const { data: jobInfo } = await supabase
         .from("job_posts")
-        .select("author_id, title")
+        .select("author_id, title, companies(name)")
         .eq("id", job_id)
         .single();
 
@@ -82,6 +83,19 @@ export async function applyAction(formData: FormData) {
             content: `A candidate applied for your job: ${jobInfo.title}.`,
             link: `/employer/jobs/${job_id}`,
         });
+    }
+
+    // 6. Send confirmation email to candidate (non-blocking)
+    if (jobInfo?.title) {
+        const companyName = Array.isArray(jobInfo.companies)
+            ? jobInfo.companies[0]?.name
+            : (jobInfo.companies as any)?.name;
+
+        sendApplicationConfirmationEmail({
+            toEmail: email,
+            jobTitle: jobInfo.title,
+            companyName,
+        }).catch(() => {});
     }
 
     revalidatePath(`/jobs/${job_id}`);

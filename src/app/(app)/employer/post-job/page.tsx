@@ -130,6 +130,18 @@ export default function PostJobPage() {
                         </div>
 
                         <div className="space-y-2">
+                            <Label htmlFor="expires_at">Listing Expires On (Optional)</Label>
+                            <Input
+                                id="expires_at"
+                                name="expires_at"
+                                type="date"
+                                min={new Date(Date.now() + 86400000).toISOString().split("T")[0]}
+                                disabled={isPending}
+                            />
+                            <p className="text-xs text-muted-foreground">The job will auto-close on this date. Leave blank to keep it open indefinitely.</p>
+                        </div>
+
+                        <div className="space-y-2">
                             <Label>Job Description *</Label>
                             <RichTextEditor
                                 name="description"

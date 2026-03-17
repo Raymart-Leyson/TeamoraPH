@@ -126,17 +126,18 @@ export async function sendMessage(formData: FormData) {
                 .single();
 
             if (recipientProfile?.email) {
-                // Only email if recipient hasn't been seen in the last 5 minutes
+                // Check recipient's notification preferences + online status in one query
                 const { data: recipientActivity } = await supabase
                     .from("profiles")
-                    .select("last_seen_at")
+                    .select("last_seen_at, email_notif_messages")
                     .eq("id", recipientId)
                     .single();
 
                 const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
                 const isOnline = recipientActivity?.last_seen_at && recipientActivity.last_seen_at > fiveMinutesAgo;
+                const wantsEmail = recipientActivity?.email_notif_messages !== false;
 
-                if (!isOnline) {
+                if (!isOnline && wantsEmail) {
                     await sendNewMessageEmail({
                         toEmail: recipientProfile.email,
                         toName: "",

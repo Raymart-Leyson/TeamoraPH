@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { sendWelcomeEmail } from "@/lib/email";
 
 export async function login(formData: FormData) {
     const supabase = await createClient();
@@ -81,6 +82,9 @@ export async function signup(formData: FormData) {
     if (error) {
         return { error: error.message };
     }
+
+    // Send welcome email (non-blocking)
+    sendWelcomeEmail({ toEmail: email, role }).catch(() => {});
 
     revalidatePath("/", "layout");
 

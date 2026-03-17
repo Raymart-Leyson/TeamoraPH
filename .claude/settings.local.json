@@ -11,7 +11,13 @@
       "Bash(xargs grep:*)",
       "Bash(grep -l \"last_read\" /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/supabase/migrations/*.sql)",
       "Bash(npm install:*)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(ls -la \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(app\\)\\\\candidate\")",
+      "Bash(ls -la \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(app\\)\\\\employer\")",
+      "Bash(ls -la \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(public\\)\")",
+      "Bash(ls -la /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/src/app/\\\\\\(app\\\\\\)/candidate/)",
+      "Bash(ls -la /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/src/app/\\\\\\(app\\\\\\)/employer/)",
+      "Bash(ls -la \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(app\\)\\\\candidate\\\\profile\")"
     ]
   }
 }
