@@ -17,7 +17,8 @@
       "Bash(ls -la \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(public\\)\")",
       "Bash(ls -la /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/src/app/\\\\\\(app\\\\\\)/candidate/)",
       "Bash(ls -la /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/src/app/\\\\\\(app\\\\\\)/employer/)",
-      "Bash(ls -la \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(app\\)\\\\candidate\\\\profile\")"
+      "Bash(ls -la \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(app\\)\\\\candidate\\\\profile\")",
+      "Bash(npm run:*)"
     ]
   }
 }

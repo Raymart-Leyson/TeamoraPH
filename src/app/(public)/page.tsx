@@ -148,6 +148,7 @@ export default async function Home() {
 
                     {/* Featured Job Cards (Floating) */}
                     {(featuredJobs ?? []).length > 0 && (
+                        <>
                         <div className="w-full grid mt-12 grid-cols-1 md:grid-cols-3 gap-6 text-left pt-8 px-4 sm:px-0">
                             {featuredJobs!.slice(0, 3).map((job) => {
                                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -189,6 +190,7 @@ export default async function Home() {
                                 View All Jobs <ArrowRight className="h-4 w-4" />
                             </Link>
                         </div>
+                        </>
                     )}
                 </div>
             </section>
