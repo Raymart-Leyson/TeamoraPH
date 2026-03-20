@@ -113,7 +113,7 @@ export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
     return (
         <div className="w-full overflow-x-auto pb-4">
             <DragDropContext onDragEnd={handleDragEnd}>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 w-full">
+                <div className="flex gap-4 min-w-max">
                     {COLUMNS.map((column) => {
                         const columnApplicants = applicants.filter(app => app.status === column.id);
 
@@ -121,7 +121,7 @@ export function KanbanBoard({ jobId, initialApplicants }: KanbanBoardProps) {
                             <Droppable key={column.id} droppableId={column.id}>
                                 {(provided, snapshot) => (
                                     <div
-                                        className={`flex flex-col rounded-xl border ${column.color} p-3 transition-colors w-full duration-200 ${snapshot.isDraggingOver ? "opacity-80 ring-2 ring-primary/50" : ""}`}
+                                        className={`flex flex-col rounded-xl border ${column.color} p-3 transition-colors w-[260px] shrink-0 duration-200 ${snapshot.isDraggingOver ? "opacity-80 ring-2 ring-primary/50" : ""}`}
                                         style={{ minHeight: "300px" }}
                                     >
                                         <div className="flex items-center justify-between mb-4 px-2">
