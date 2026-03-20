@@ -184,6 +184,11 @@ export default async function Home() {
                                 );
                             })}
                         </div>
+                        <div className="flex justify-center mt-8">
+                            <Link href="/jobs" className="inline-flex items-center gap-2 px-6 py-3 bg-white/40 backdrop-blur-xl border border-white/30 shadow-lg rounded-full text-[#1B3FA0] font-semibold hover:bg-white/60 transition-colors">
+                                View All Jobs <ArrowRight className="h-4 w-4" />
+                            </Link>
+                        </div>
                     )}
                 </div>
             </section>
