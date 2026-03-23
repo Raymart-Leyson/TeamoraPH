@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Clock, Loader2, Upload } from "lucide-react";
+import { ArrowLeft, Clock, Loader2, Upload } from "lucide-react";
 import { submitEmployerPaymentProofAction, cancelEmployerProofAction } from "./actions";
 import { PaymentOptions } from "@/components/wise/PaymentOptions";
 import type { PaymentMethod } from "@/components/wise/PaymentOptions";
@@ -19,6 +19,7 @@ interface EmployerPaymentFormProps {
     priceLabel: string;
     paymentMethods: PaymentMethod[];
     hasProof: boolean;
+    onBack?: () => void;
 }
 
 export function EmployerPaymentForm({
@@ -28,6 +29,7 @@ export function EmployerPaymentForm({
     priceLabel,
     paymentMethods,
     hasProof,
+    onBack,
 }: EmployerPaymentFormProps) {
     const router = useRouter();
     const [fileName, setFileName] = useState<string | null>(null);
@@ -36,7 +38,8 @@ export function EmployerPaymentForm({
 
     async function handleCancel() {
         await cancelEmployerProofAction(proofId);
-        router.push("/employer/billing");
+        if (onBack) onBack();
+        else router.push("/employer/billing");
     }
 
     // ── Submitted confirmation ─────────────────────────────────────────────────
@@ -65,6 +68,15 @@ export function EmployerPaymentForm({
 
     return (
         <div className="space-y-5">
+            {onBack && (
+                <button
+                    onClick={handleCancel}
+                    className="flex items-center gap-2 text-sm font-bold text-[#3D6EFF] hover:text-[#1B3FA0]"
+                >
+                    <ArrowLeft className="w-4 h-4" /> Change plan
+                </button>
+            )}
+
             {/* Step 1 — Payment instructions */}
             <Card className="border-none shadow-xl rounded-3xl bg-white/70 backdrop-blur-md">
                 <CardHeader className="pb-2 px-6 pt-6">
