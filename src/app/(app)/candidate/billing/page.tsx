@@ -3,9 +3,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import BillingClient from "./BillingClient";
-
-const WISE_PHP_ACCOUNT_NUMBER = process.env.WISE_PHP_ACCOUNT_NUMBER ?? "0000-0000-0000";
-const WISE_ACCOUNT_HOLDER = process.env.WISE_ACCOUNT_HOLDER_NAME ?? "TeamoraPH Inc.";
+import type { PaymentMethod } from "@/components/wise/PaymentOptions";
 
 export default async function CandidateBillingPage() {
     const profile = await getUserProfile();
@@ -21,14 +19,13 @@ export default async function CandidateBillingPage() {
     // Fetch any existing pending purchase
     const { data: pending } = await supabase
         .from("candidate_credit_purchases")
-        .select("id, package_key, credits, wise_reference, amount, currency, check_attempts, last_check_date")
+        .select("id, package_key, credits, wise_reference, amount, currency, notes, screenshot_url")
         .eq("candidate_id", profile.id)
         .eq("status", "pending")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
 
-    const todayUTC = new Date().toISOString().slice(0, 10);
     const pendingPurchase = pending
         ? {
             id: pending.id,
@@ -37,18 +34,42 @@ export default async function CandidateBillingPage() {
             wiseReference: pending.wise_reference ?? "",
             amount: Number(pending.amount),
             currency: pending.currency,
-            attemptsLeft: Math.max(
-                0,
-                3 - (pending.last_check_date === todayUTC ? (pending.check_attempts ?? 0) : 0)
-            ),
+            hasProof: !!(pending.notes || pending.screenshot_url),
         }
         : null;
+
+    // Build available payment methods (only include those with env vars set)
+    const paymentMethods: PaymentMethod[] = [];
+
+    if (process.env.WISE_PHP_ACCOUNT_NUMBER) {
+        paymentMethods.push({
+            id: "wise",
+            label: "Wise / InstaPay",
+            logo: "🏦",
+            number: process.env.WISE_PHP_ACCOUNT_NUMBER,
+            name: process.env.WISE_ACCOUNT_HOLDER_NAME ?? "TeamoraPH Inc.",
+            color: "bg-[#3D6EFF]/10",
+            textColor: "text-[#3D6EFF]",
+        });
+    }
+
+    // Fallback so the form is never empty
+    if (paymentMethods.length === 0) {
+        paymentMethods.push({
+            id: "wise",
+            label: "Wise / InstaPay",
+            logo: "🏦",
+            number: "0000-0000-0000",
+            name: "TeamoraPH Inc.",
+            color: "bg-[#3D6EFF]/10",
+            textColor: "text-[#3D6EFF]",
+        });
+    }
 
     return (
         <BillingClient
             currency={currency}
-            accountNumber={WISE_PHP_ACCOUNT_NUMBER}
-            accountHolderName={WISE_ACCOUNT_HOLDER}
+            paymentMethods={paymentMethods}
             pendingPurchase={pendingPurchase}
         />
     );

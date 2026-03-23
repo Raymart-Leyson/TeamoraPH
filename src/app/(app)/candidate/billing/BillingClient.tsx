@@ -1,20 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useActionState, useRef } from "react";
 import { toast } from "sonner";
 import { CREDIT_PACKAGES } from "@/lib/pricing";
-import { createCreditPurchaseIntentAction, checkCandidateWisePaymentAction, submitCandidateSupportTicketAction } from "./actions";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    createCreditPurchaseIntentAction,
+    submitCandidatePaymentProofAction,
+    cancelCandidatePurchaseAction,
+} from "./actions";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Coins, Loader2, Star, CheckCircle2, ArrowLeft } from "lucide-react";
-import { WisePaymentCard } from "@/components/wise/WisePaymentCard";
-import { PaymentChecker } from "@/components/wise/PaymentChecker";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Coins, Loader2, Star, ArrowLeft, Clock, Upload } from "lucide-react";
+import { PaymentOptions } from "@/components/wise/PaymentOptions";
+import type { PaymentMethod } from "@/components/wise/PaymentOptions";
 
 interface BillingClientProps {
     currency: "php" | "usd";
-    accountNumber: string;
-    accountHolderName: string;
-    // Pre-existing pending purchase (if any)
+    paymentMethods: PaymentMethod[];
     pendingPurchase?: {
         id: string;
         packageKey: string;
@@ -22,14 +27,13 @@ interface BillingClientProps {
         wiseReference: string;
         amount: number;
         currency: string;
-        attemptsLeft: number;
+        hasProof: boolean;
     } | null;
 }
 
 export default function BillingClient({
     currency,
-    accountNumber,
-    accountHolderName,
+    paymentMethods,
     pendingPurchase,
 }: BillingClientProps) {
     const [selected, setSelected] = useState<{
@@ -38,7 +42,6 @@ export default function BillingClient({
         packageKey: string;
         credits: number;
         priceLabel: string;
-        attemptsLeft: number;
     } | null>(
         pendingPurchase
             ? {
@@ -49,20 +52,24 @@ export default function BillingClient({
                 priceLabel: currency === "php"
                     ? `₱${pendingPurchase.amount.toLocaleString()}`
                     : `$${pendingPurchase.amount.toLocaleString()}`,
-                attemptsLeft: pendingPurchase.attemptsLeft,
             }
             : null
     );
     const [loading, setLoading] = useState<string | null>(null);
+    const [proofSubmitted] = useState(pendingPurchase?.hasProof ?? false);
+    const fileRef = useRef<HTMLInputElement>(null);
+    const [fileName, setFileName] = useState<string | null>(null);
+
+    const [formState, formAction, formPending] = useActionState(
+        submitCandidatePaymentProofAction,
+        null
+    );
 
     async function handleSelect(packageKey: string) {
         setLoading(packageKey);
         try {
             const result = await createCreditPurchaseIntentAction(packageKey, currency === "php" ? "PHP" : "USD");
-            if (result.error) {
-                toast.error(result.error);
-                return;
-            }
+            if (result.error) { toast.error(result.error); return; }
 
             const pkg = CREDIT_PACKAGES[packageKey as keyof typeof CREDIT_PACKAGES];
             const price = pkg.prices[currency];
@@ -73,7 +80,6 @@ export default function BillingClient({
                 packageKey,
                 credits: pkg.credits,
                 priceLabel: price.label,
-                attemptsLeft: 3,
             });
         } catch {
             toast.error("Something went wrong. Please try again.");
@@ -82,39 +88,189 @@ export default function BillingClient({
         }
     }
 
-    // ── Payment detail view ────────────────────────────────────────────────────
-    if (selected) {
-        const pkg = CREDIT_PACKAGES[selected.packageKey as keyof typeof CREDIT_PACKAGES];
+    async function handleCancel() {
+        if (!selected) return;
+        const result = await cancelCandidatePurchaseAction(selected.purchaseId);
+        if (result.error) { toast.error(result.error); return; }
+        setSelected(null);
+        setFileName(null);
+    }
+
+    // ── Submitted confirmation ─────────────────────────────────────────────────
+    if (selected && (proofSubmitted || formState?.success)) {
         return (
-            <div className="flex-1 max-w-lg mx-auto p-4 md:p-8 pt-10 space-y-6">
+            <div className="flex-1 max-w-lg mx-auto p-4 md:p-8 pt-10">
+                <Card className="border-none shadow-xl rounded-3xl bg-white/70 backdrop-blur-md">
+                    <CardContent className="p-8 flex flex-col items-center text-center gap-5">
+                        <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center">
+                            <Clock className="w-8 h-8 text-amber-500" />
+                        </div>
+                        <div>
+                            <p className="text-xl font-black text-[#1B3FA0]">Payment Submitted!</p>
+                            <p className="text-sm font-bold text-[#1B3FA0]/60 mt-2">
+                                We&apos;re reviewing your payment for <span className="text-[#3D6EFF]">{selected.credits} credits</span>. Your credits will be added once confirmed — usually within a few hours.
+                            </p>
+                        </div>
+                        <div className="bg-[#F0F4FF] rounded-2xl px-5 py-3 w-full text-left">
+                            <p className="text-xs font-bold text-[#1B3FA0]/50 mb-1">Your reference</p>
+                            <p className="font-black text-[#3D6EFF] tracking-widest text-sm">{selected.wiseReference}</p>
+                        </div>
+                        <p className="text-xs text-[#1B3FA0]/40">
+                            Need help? Contact us at support@teamoraph.com
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    // ── Payment form view ──────────────────────────────────────────────────────
+    if (selected) {
+        return (
+            <div className="flex-1 max-w-lg mx-auto p-4 md:p-8 pt-10 space-y-5">
                 <button
-                    onClick={() => setSelected(null)}
+                    onClick={handleCancel}
                     className="flex items-center gap-2 text-sm font-bold text-[#3D6EFF] hover:text-[#1B3FA0]"
                 >
-                    <ArrowLeft className="w-4 h-4" /> Back to packages
+                    <ArrowLeft className="w-4 h-4" /> Change package
                 </button>
 
+                {/* Step 1 — Payment instructions */}
                 <Card className="border-none shadow-xl rounded-3xl bg-white/70 backdrop-blur-md">
-                    <CardContent className="p-6">
-                        <WisePaymentCard
-                            wiseReference={selected.wiseReference}
-                            label={`${pkg.name} — ${selected.credits} Credits`}
-                            priceLabel={selected.priceLabel}
-                            accountNumber={accountNumber}
-                            accountHolderName={accountHolderName}
-                            changeHref="/candidate/billing"
-                            changeLabel="Change package"
-                            successMessage="your credits will be automatically added to your account"
-                        />
-                        <PaymentChecker
-                            recordId={selected.purchaseId}
-                            wiseReference={selected.wiseReference}
-                            checkAction={checkCandidateWisePaymentAction}
-                            supportAction={submitCandidateSupportTicketAction}
-                            initialAttemptsLeft={selected.attemptsLeft}
-                            successMessage="Your credits have been added! Refresh to see your updated balance."
+                    <CardHeader className="pb-2 px-6 pt-6">
+                        <CardTitle className="text-base font-black text-[#1B3FA0]">
+                            Step 1 — Send Payment
+                        </CardTitle>
+                        <CardDescription className="text-xs font-bold text-[#1B3FA0]/50">
+                            Choose any payment method below and send the exact amount.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="px-6 pb-6">
+                        <PaymentOptions
+                            methods={paymentMethods}
+                            reference={selected.wiseReference}
+                            amount={selected.priceLabel}
                         />
                     </CardContent>
+                </Card>
+
+                {/* Step 2 — Proof submission */}
+                <Card className="border-none shadow-xl rounded-3xl bg-white/70 backdrop-blur-md">
+                    <CardHeader className="pb-2 px-6 pt-6">
+                        <CardTitle className="text-base font-black text-[#1B3FA0]">
+                            Step 2 — Confirm Your Payment
+                        </CardTitle>
+                        <CardDescription className="text-xs font-bold text-[#1B3FA0]/50">
+                            Fill this in after you&apos;ve sent the transfer.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="px-6 pb-2">
+                        <form action={formAction} className="space-y-4">
+                            <input type="hidden" name="purchase_id" value={selected.purchaseId} />
+
+                            <div className="space-y-1.5">
+                                <Label className="font-black text-[#1B3FA0] text-sm">
+                                    Payment Method <span className="text-red-500">*</span>
+                                </Label>
+                                <select
+                                    name="payment_method"
+                                    required
+                                    defaultValue=""
+                                    className="w-full rounded-xl border-none bg-[#F0F4FF] font-medium text-sm px-3 py-2.5 text-[#1B3FA0] focus:outline-none focus:ring-2 focus:ring-[#3D6EFF]/30"
+                                >
+                                    <option value="" disabled>Select how you paid...</option>
+                                    {paymentMethods.map(m => (
+                                        <option key={m.id} value={m.label}>{m.logo} {m.label}</option>
+                                    ))}
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label className="font-black text-[#1B3FA0] text-sm">
+                                    Your Name / Sender Name <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    name="sender_name"
+                                    placeholder="e.g. Juan Dela Cruz"
+                                    required
+                                    className="rounded-xl border-none bg-[#F0F4FF] font-medium"
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label className="font-black text-[#1B3FA0] text-sm">
+                                    Reference / Description You Used
+                                </Label>
+                                <Input
+                                    name="transfer_ref"
+                                    placeholder={`e.g. ${selected.wiseReference}`}
+                                    className="rounded-xl border-none bg-[#F0F4FF] font-medium"
+                                />
+                                <p className="text-xs text-[#1B3FA0]/40">What you typed in the notes/reference field</p>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label className="font-black text-[#1B3FA0] text-sm">
+                                    Screenshot of Payment <span className="text-[#1B3FA0]/40">(recommended)</span>
+                                </Label>
+                                <div
+                                    onClick={() => fileRef.current?.click()}
+                                    className="border-2 border-dashed border-[#3D6EFF]/30 rounded-2xl p-4 text-center cursor-pointer hover:border-[#3D6EFF] transition-colors bg-[#F0F4FF]"
+                                >
+                                    <Upload className="w-5 h-5 mx-auto mb-1 text-[#3D6EFF]/50" />
+                                    <p className="text-xs font-bold text-[#1B3FA0]/50">
+                                        {fileName ?? "Click to attach screenshot"}
+                                    </p>
+                                    <input
+                                        ref={fileRef}
+                                        name="screenshot"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        className="hidden"
+                                        onChange={e => setFileName(e.target.files?.[0]?.name ?? null)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label className="font-black text-[#1B3FA0] text-sm">Additional Notes</Label>
+                                <Textarea
+                                    name="notes"
+                                    placeholder="Any other details about your transfer..."
+                                    rows={2}
+                                    className="rounded-xl border-none bg-[#F0F4FF] font-medium"
+                                />
+                            </div>
+
+                            {formState?.error && (
+                                <p className="text-xs font-bold text-red-600 bg-red-50 rounded-xl px-3 py-2">
+                                    {formState.error}
+                                </p>
+                            )}
+
+                            <Button
+                                type="submit"
+                                disabled={formPending}
+                                className="w-full bg-[#3D6EFF] hover:bg-[#3D6EFF]/90 text-white font-black rounded-2xl h-12 text-base"
+                            >
+                                {formPending
+                                    ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Submitting...</>
+                                    : "I've Sent the Payment"}
+                            </Button>
+                        </form>
+                    </CardContent>
+                    <CardFooter className="px-6 pb-6 pt-2 flex flex-col gap-3">
+                        <p className="text-xs text-[#1B3FA0]/40 text-center w-full">
+                            Credits will be added after we verify your payment — usually within a few hours.
+                        </p>
+                        <button
+                            onClick={handleCancel}
+                            className="text-xs font-bold text-[#1B3FA0]/40 hover:text-red-500 transition-colors"
+                        >
+                            Cancel this purchase
+                        </button>
+                    </CardFooter>
                 </Card>
             </div>
         );

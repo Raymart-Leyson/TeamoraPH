@@ -4,17 +4,11 @@ import { createClient } from "@/utils/supabase/server";
 import { PLANS } from "@/lib/pricing";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Clock, XCircle, AlertCircle } from "lucide-react";
-import { createWisePaymentIntentAction, checkWisePaymentAction, submitSupportTicketAction } from "./actions";
-import { WisePaymentCard } from "./WisePaymentCard";
+import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { createWisePaymentIntentAction } from "./actions";
 import { PlanSelector } from "./PlanSelector";
-import { PaymentChecker } from "./PaymentChecker";
-
-// Account details shown to employers — update these with your real Wise PHP account
-const WISE_PHP_ACCOUNT_NUMBER =
-    process.env.WISE_PHP_ACCOUNT_NUMBER ?? "0000-0000-0000";
-const WISE_ACCOUNT_HOLDER =
-    process.env.WISE_ACCOUNT_HOLDER_NAME ?? "TeamoraPH Inc.";
+import { EmployerPaymentForm } from "./EmployerPaymentForm";
+import type { PaymentMethod } from "@/components/wise/PaymentOptions";
 
 export default async function BillingPage({
     searchParams,
@@ -37,7 +31,7 @@ export default async function BillingPage({
     // Latest payment proof
     const { data: latestProof } = await supabase
         .from("payment_proofs")
-        .select("id, plan, status, notes, wise_reference, amount, created_at, check_attempts, last_check_date")
+        .select("id, plan, status, notes, wise_reference, amount, created_at, screenshot_url")
         .eq("employer_id", profile.id)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -75,6 +69,15 @@ export default async function BillingPage({
             ? PLANS[activePlan as keyof typeof PLANS]?.prices.php.label ?? ""
             : "";
 
+    // Build available payment methods
+    const paymentMethods: PaymentMethod[] = [];
+    if (process.env.WISE_PHP_ACCOUNT_NUMBER) {
+        paymentMethods.push({ id: "wise", label: "Wise / InstaPay", logo: "🏦", number: process.env.WISE_PHP_ACCOUNT_NUMBER, name: process.env.WISE_ACCOUNT_HOLDER_NAME ?? "TeamoraPH Inc.", color: "bg-[#3D6EFF]/10", textColor: "text-[#3D6EFF]" });
+    }
+    if (paymentMethods.length === 0) {
+        paymentMethods.push({ id: "wise", label: "Wise / InstaPay", logo: "🏦", number: "0000-0000-0000", name: "TeamoraPH Inc.", color: "bg-[#3D6EFF]/10", textColor: "text-[#3D6EFF]" });
+    }
+
     return (
         <div className="max-w-3xl mx-auto space-y-10">
             <div>
@@ -82,7 +85,7 @@ export default async function BillingPage({
                     Billing &amp; Subscription
                 </h1>
                 <p className="text-[#1B3FA0]/70 font-bold mt-2">
-                    Upgrade your account with a Wise / InstaPay transfer.
+                    Pay via GCash, Maya, Wise, or InstaPay — we&apos;ll activate your plan once confirmed.
                 </p>
             </div>
 
@@ -200,42 +203,16 @@ export default async function BillingPage({
                 </>
             )}
 
-            {/* Wise payment card — shown after plan is selected */}
+            {/* Payment form — shown after plan is selected */}
             {wiseReference && activePlan && activeProofId && (
-                <Card className="border-none shadow-xl rounded-3xl bg-white/70 backdrop-blur-md">
-                    <CardContent className="p-6">
-                        <div className="flex items-center gap-2 mb-5">
-                            <Clock className="w-5 h-5 text-amber-500" />
-                            <h2 className="text-lg font-black text-[#1B3FA0]">
-                                Complete Your Payment
-                            </h2>
-                        </div>
-                        <WisePaymentCard
-                            wiseReference={wiseReference}
-                            label={PLANS[activePlan as keyof typeof PLANS]?.name ?? activePlan}
-                            priceLabel={planPriceLabel}
-                            accountNumber={WISE_PHP_ACCOUNT_NUMBER}
-                            accountHolderName={WISE_ACCOUNT_HOLDER}
-                            changeHref="/employer/billing"
-                            changeLabel="Change plan"
-                            successMessage="your subscription will be automatically activated"
-                        />
-                        <PaymentChecker
-                            recordId={activeProofId}
-                            wiseReference={wiseReference}
-                            checkAction={checkWisePaymentAction}
-                            supportAction={submitSupportTicketAction}
-                            initialAttemptsLeft={(() => {
-                                const todayUTC = new Date().toISOString().slice(0, 10);
-                                const used = pendingProof?.last_check_date === todayUTC
-                                    ? (pendingProof.check_attempts ?? 0)
-                                    : 0;
-                                return Math.max(0, 3 - used);
-                            })()}
-                            successMessage="Your subscription is now active. Refresh to see updated status."
-                        />
-                    </CardContent>
-                </Card>
+                <EmployerPaymentForm
+                    proofId={activeProofId}
+                    wiseReference={wiseReference}
+                    planName={PLANS[activePlan as keyof typeof PLANS]?.name ?? activePlan}
+                    priceLabel={planPriceLabel}
+                    paymentMethods={paymentMethods}
+                    hasProof={!!(pendingProof?.notes || pendingProof?.screenshot_url)}
+                />
             )}
         </div>
     );

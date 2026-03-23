@@ -167,6 +167,87 @@ export async function checkWisePaymentAction(proofId: string): Promise<CheckResu
 }
 
 /**
+ * Employer submits their payment details (sender name, transfer ref, screenshot)
+ * after sending money via Wise/InstaPay. Admin reviews and approves.
+ */
+export async function submitEmployerPaymentProofAction(
+    _prev: ProofState,
+    formData: FormData
+): Promise<ProofState> {
+    const profile = await getUserProfile();
+    if (!profile || profile.role !== "employer") return { error: "Unauthorized" };
+
+    const proofId = formData.get("proof_id") as string;
+    const paymentMethod = formData.get("payment_method") as string;
+    const senderName = formData.get("sender_name") as string;
+    const transferRef = formData.get("transfer_ref") as string;
+    const notes = formData.get("notes") as string;
+    const screenshot = formData.get("screenshot") as File | null;
+
+    if (!proofId || !senderName?.trim()) return { error: "Please fill in all required fields." };
+
+    const supabase = await createClient();
+
+    const { data: proof } = await supabase
+        .from("payment_proofs")
+        .select("id, status")
+        .eq("id", proofId)
+        .eq("employer_id", profile.id)
+        .single();
+
+    if (!proof || proof.status !== "pending") return { error: "Invalid payment record." };
+
+    let screenshotUrl: string | null = null;
+
+    if (screenshot && screenshot.size > 0) {
+        if (screenshot.size > 5 * 1024 * 1024) return { error: "Screenshot must be under 5 MB." };
+        const ext = screenshot.name.split(".").pop() ?? "jpg";
+        const path = `${profile.id}/${Date.now()}.${ext}`;
+        const { error: uploadError } = await supabase.storage
+            .from("payment-proofs")
+            .upload(path, screenshot, { contentType: screenshot.type });
+        if (uploadError) return { error: "Failed to upload screenshot." };
+        const { data: { publicUrl } } = supabase.storage.from("payment-proofs").getPublicUrl(path);
+        screenshotUrl = publicUrl;
+    }
+
+    const submittedNotes = [
+        paymentMethod?.trim() ? `Payment method: ${paymentMethod.trim()}` : null,
+        `Sender name: ${senderName.trim()}`,
+        transferRef?.trim() ? `Transfer reference: ${transferRef.trim()}` : null,
+        notes?.trim() ? `Notes: ${notes.trim()}` : null,
+    ].filter(Boolean).join("\n");
+
+    await supabase
+        .from("payment_proofs")
+        .update({
+            notes: submittedNotes,
+            ...(screenshotUrl ? { screenshot_url: screenshotUrl } : {}),
+        })
+        .eq("id", proofId);
+
+    revalidatePath("/employer/billing");
+    return { success: true };
+}
+
+export async function cancelEmployerProofAction(proofId: string): Promise<{ error?: string }> {
+    const profile = await getUserProfile();
+    if (!profile || profile.role !== "employer") return { error: "Unauthorized" };
+
+    const supabase = await createClient();
+    const { error } = await supabase
+        .from("payment_proofs")
+        .delete()
+        .eq("id", proofId)
+        .eq("employer_id", profile.id)
+        .eq("status", "pending");
+
+    if (error) return { error: error.message };
+    revalidatePath("/employer/billing");
+    return {};
+}
+
+/**
  * Fallback: employer uploads screenshot + reference for manual admin review.
  */
 export async function submitSupportTicketAction(
