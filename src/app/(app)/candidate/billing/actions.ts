@@ -5,6 +5,8 @@ import { getUserProfile } from "@/utils/auth";
 import { revalidatePath } from "next/cache";
 import { generateWiseReference } from "@/lib/wise";
 import { CREDIT_PACKAGES } from "@/lib/pricing";
+import { sendAdminPaymentProofEmail } from "@/lib/email";
+import { supabaseAdmin } from "@/utils/supabase/admin";
 
 export async function createCreditPurchaseIntentAction(
     packageKey: string,
@@ -112,6 +114,33 @@ export async function submitCandidatePaymentProofAction(
             ...(screenshotUrl ? { screenshot_url: screenshotUrl } : {}),
         })
         .eq("id", purchaseId);
+
+    // Notify admin/staff
+    const { data: purchaseData } = await supabase
+        .from("candidate_credit_purchases")
+        .select("amount, currency, wise_reference")
+        .eq("id", purchaseId)
+        .single();
+
+    const { data: adminRows } = await supabaseAdmin
+        .from("profiles")
+        .select("email")
+        .in("role", ["admin", "staff", "owner"]);
+
+    const adminEmails = (adminRows ?? []).map(r => r.email).filter(Boolean) as string[];
+
+    if (adminEmails.length > 0 && purchaseData) {
+        const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://teamoraph.selleruniverse.com";
+        sendAdminPaymentProofEmail({
+            toEmails: adminEmails,
+            senderName: senderName.trim(),
+            paymentMethod: paymentMethod?.trim() || "Not specified",
+            reference: purchaseData.wise_reference ?? "",
+            amount: `${purchaseData.currency} ${purchaseData.amount}`,
+            userType: "candidate",
+            reviewUrl: `${APP_URL}/admin/payments`,
+        }).catch(() => {});
+    }
 
     revalidatePath("/candidate/billing");
     return { success: true };

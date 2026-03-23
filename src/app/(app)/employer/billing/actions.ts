@@ -8,7 +8,8 @@ import { revalidatePath } from "next/cache";
 import { generateWiseReference, findTransactionByReference } from "@/lib/wise";
 import type { CheckResult } from "@/components/wise/types";
 import { PLANS as PRICING_PLANS } from "@/lib/pricing";
-import { sendPaymentStatusEmail } from "@/lib/email";
+import { sendPaymentStatusEmail, sendAdminPaymentProofEmail } from "@/lib/email";
+import { supabaseAdmin } from "@/utils/supabase/admin";
 
 const WISE_PROFILE_ID = parseInt(process.env.WISE_PROFILE_ID ?? "0", 10);
 const WISE_PHP_BALANCE_ACCOUNT_ID = process.env.WISE_PHP_BALANCE_ACCOUNT_ID ?? "";
@@ -225,6 +226,33 @@ export async function submitEmployerPaymentProofAction(
             ...(screenshotUrl ? { screenshot_url: screenshotUrl } : {}),
         })
         .eq("id", proofId);
+
+    // Notify admin/staff
+    const { data: proofData } = await supabase
+        .from("payment_proofs")
+        .select("amount, currency, wise_reference, plan")
+        .eq("id", proofId)
+        .single();
+
+    const { data: adminRows } = await supabaseAdmin
+        .from("profiles")
+        .select("email")
+        .in("role", ["admin", "staff", "owner"]);
+
+    const adminEmails = (adminRows ?? []).map(r => r.email).filter(Boolean) as string[];
+
+    if (adminEmails.length > 0 && proofData) {
+        const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://teamoraph.selleruniverse.com";
+        sendAdminPaymentProofEmail({
+            toEmails: adminEmails,
+            senderName: senderName.trim(),
+            paymentMethod: paymentMethod?.trim() || "Not specified",
+            reference: proofData.wise_reference ?? "",
+            amount: `${proofData.currency ?? "PHP"} ${proofData.amount}`,
+            userType: "employer",
+            reviewUrl: `${APP_URL}/admin/payments`,
+        }).catch(() => {});
+    }
 
     revalidatePath("/employer/billing");
     return { success: true };

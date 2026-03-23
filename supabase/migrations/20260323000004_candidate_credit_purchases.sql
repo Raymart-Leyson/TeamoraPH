@@ -39,13 +39,7 @@ CREATE POLICY "Candidate can view own purchases"
 
 CREATE POLICY "Candidate can insert own purchase"
     ON public.candidate_credit_purchases FOR INSERT
-    WITH CHECK (
-        candidate_id = auth.uid()
-        AND NOT EXISTS (
-            SELECT 1 FROM public.candidate_credit_purchases p
-            WHERE p.candidate_id = auth.uid() AND p.status = 'pending'
-        )
-    );
+    WITH CHECK (candidate_id = auth.uid());
 
 -- Candidates need UPDATE to allow check_attempts to be recorded
 CREATE POLICY "Candidate can update own purchase"

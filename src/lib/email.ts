@@ -371,6 +371,55 @@ export async function sendAdminNewUserEmail({
     });
 }
 
+export async function sendAdminPaymentProofEmail({
+    toEmails,
+    senderName,
+    paymentMethod,
+    reference,
+    amount,
+    userType,
+    reviewUrl,
+}: {
+    toEmails: string[];
+    senderName: string;
+    paymentMethod: string;
+    reference: string;
+    amount: string;
+    userType: "employer" | "candidate";
+    reviewUrl: string;
+}) {
+    const transporter = getTransporter();
+    if (!transporter || toEmails.length === 0) return;
+
+    const label = userType === "employer" ? "Employer Subscription" : "Candidate Credits";
+
+    const html = baseTemplate(`
+      <h2 style="color:#1B3FA0;font-size:22px;font-weight:900;margin:0 0 8px;">
+        💳 New Payment Proof Submitted
+      </h2>
+      <p style="color:#555;font-size:15px;margin:0 0 24px;">
+        A <strong>${userType}</strong> has submitted payment proof for <strong>${label}</strong>. Please review and activate their account.
+      </p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F4FF;border-radius:12px;padding:20px;margin-bottom:24px;">
+        <tr><td style="padding:6px 0;color:#1B3FA0;font-size:13px;font-weight:700;width:140px;">Sender Name</td><td style="padding:6px 0;color:#1B3FA0;font-size:13px;">${senderName}</td></tr>
+        <tr><td style="padding:6px 0;color:#1B3FA0;font-size:13px;font-weight:700;">Payment Method</td><td style="padding:6px 0;color:#1B3FA0;font-size:13px;">${paymentMethod}</td></tr>
+        <tr><td style="padding:6px 0;color:#1B3FA0;font-size:13px;font-weight:700;">Reference</td><td style="padding:6px 0;color:#3D6EFF;font-size:13px;font-weight:900;letter-spacing:1px;">${reference}</td></tr>
+        <tr><td style="padding:6px 0;color:#1B3FA0;font-size:13px;font-weight:700;">Amount</td><td style="padding:6px 0;color:#1B3FA0;font-size:13px;">${amount}</td></tr>
+        <tr><td style="padding:6px 0;color:#1B3FA0;font-size:13px;font-weight:700;">Type</td><td style="padding:6px 0;color:#1B3FA0;font-size:13px;">${label}</td></tr>
+      </table>
+      <a href="${reviewUrl}" style="display:inline-block;background:#3D6EFF;color:#fff;font-weight:900;font-size:15px;padding:14px 32px;border-radius:999px;text-decoration:none;">
+        Review Payment →
+      </a>
+    `);
+
+    await transporter.sendMail({
+        from: FROM,
+        to: toEmails.join(", "),
+        subject: `[Action Required] New payment proof from ${senderName} — TeamoraPH`,
+        html,
+    });
+}
+
 export async function sendApplicationConfirmationEmail({
     toEmail,
     jobTitle,
