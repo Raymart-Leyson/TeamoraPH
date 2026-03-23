@@ -54,23 +54,20 @@ export default async function BillingPage({
     // If employer selected a plan (via PlanSelector), generate/fetch reference
     let wiseReference: string | null = null;
     let activePlan: string | null = null;
+    let activeProofId: string | null = null;
 
     if (selectedPlan && ["pro", "premium"].includes(selectedPlan)) {
-        // Reuse pending reference or create a new one
-        if (pendingProof?.plan === selectedPlan && pendingProof.wise_reference) {
-            wiseReference = pendingProof.wise_reference;
+        const result = await createWisePaymentIntentAction(selectedPlan);
+        if (result.wiseReference && result.proofId) {
+            wiseReference = result.wiseReference;
             activePlan = selectedPlan;
-        } else if (!pendingProof) {
-            const result = await createWisePaymentIntentAction(selectedPlan);
-            if (result.wiseReference) {
-                wiseReference = result.wiseReference;
-                activePlan = selectedPlan;
-            }
+            activeProofId = result.proofId;
         }
     } else if (pendingProof?.wise_reference) {
-        // Employer already has a pending payment — show it
+        // Employer already has a pending payment — show it without URL param
         wiseReference = pendingProof.wise_reference;
         activePlan = pendingProof.plan;
+        activeProofId = pendingProof.id;
     }
 
     const planPriceLabel =
@@ -204,7 +201,7 @@ export default async function BillingPage({
             )}
 
             {/* Wise payment card — shown after plan is selected */}
-            {wiseReference && activePlan && pendingProof && (
+            {wiseReference && activePlan && activeProofId && (
                 <Card className="border-none shadow-xl rounded-3xl bg-white/70 backdrop-blur-md">
                     <CardContent className="p-6">
                         <div className="flex items-center gap-2 mb-5">
@@ -223,24 +220,20 @@ export default async function BillingPage({
                             changeLabel="Change plan"
                             successMessage="your subscription will be automatically activated"
                         />
-                        {(() => {
-                            const todayUTC = new Date().toISOString().slice(0, 10);
-                            const usedToday =
-                                pendingProof.last_check_date === todayUTC
+                        <PaymentChecker
+                            recordId={activeProofId}
+                            wiseReference={wiseReference}
+                            checkAction={checkWisePaymentAction}
+                            supportAction={submitSupportTicketAction}
+                            initialAttemptsLeft={(() => {
+                                const todayUTC = new Date().toISOString().slice(0, 10);
+                                const used = pendingProof?.last_check_date === todayUTC
                                     ? (pendingProof.check_attempts ?? 0)
                                     : 0;
-                            const attemptsLeft = Math.max(0, 3 - usedToday);
-                            return (
-                                <PaymentChecker
-                                    recordId={pendingProof.id}
-                                    wiseReference={wiseReference}
-                                    checkAction={checkWisePaymentAction}
-                                    supportAction={submitSupportTicketAction}
-                                    initialAttemptsLeft={attemptsLeft}
-                                    successMessage="Your subscription is now active. Refresh to see updated status."
-                                />
-                            );
-                        })()}
+                                return Math.max(0, 3 - used);
+                            })()}
+                            successMessage="Your subscription is now active. Refresh to see updated status."
+                        />
                     </CardContent>
                 </Card>
             )}

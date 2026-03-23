@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { CREDIT_PACKAGES } from "@/lib/pricing";
 import { createCreditPurchaseIntentAction, checkCandidateWisePaymentAction, submitCandidateSupportTicketAction } from "./actions";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -56,21 +57,29 @@ export default function BillingClient({
 
     async function handleSelect(packageKey: string) {
         setLoading(packageKey);
-        const result = await createCreditPurchaseIntentAction(packageKey, currency === "php" ? "PHP" : "USD");
-        if (result.error) { setLoading(null); return; }
+        try {
+            const result = await createCreditPurchaseIntentAction(packageKey, currency === "php" ? "PHP" : "USD");
+            if (result.error) {
+                toast.error(result.error);
+                return;
+            }
 
-        const pkg = CREDIT_PACKAGES[packageKey as keyof typeof CREDIT_PACKAGES];
-        const price = pkg.prices[currency];
+            const pkg = CREDIT_PACKAGES[packageKey as keyof typeof CREDIT_PACKAGES];
+            const price = pkg.prices[currency];
 
-        setSelected({
-            purchaseId: result.purchaseId!,
-            wiseReference: result.wiseReference!,
-            packageKey,
-            credits: pkg.credits,
-            priceLabel: price.label,
-            attemptsLeft: 3,
-        });
-        setLoading(null);
+            setSelected({
+                purchaseId: result.purchaseId!,
+                wiseReference: result.wiseReference!,
+                packageKey,
+                credits: pkg.credits,
+                priceLabel: price.label,
+                attemptsLeft: 3,
+            });
+        } catch {
+            toast.error("Something went wrong. Please try again.");
+        } finally {
+            setLoading(null);
+        }
     }
 
     // ── Payment detail view ────────────────────────────────────────────────────

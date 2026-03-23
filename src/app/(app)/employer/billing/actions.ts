@@ -23,6 +23,7 @@ type ProofState = { error?: string; success?: boolean } | null;
 export async function createWisePaymentIntentAction(plan: string): Promise<{
     error?: string;
     wiseReference?: string;
+    proofId?: string;
 }> {
     const profile = await getUserProfile();
     if (!profile || profile.role !== "employer") return { error: "Unauthorized" };
@@ -31,7 +32,7 @@ export async function createWisePaymentIntentAction(plan: string): Promise<{
 
     const supabase = await createClient();
 
-    // Check no pending proof already exists
+    // Reuse existing pending proof for this plan
     const { data: existing } = await supabase
         .from("payment_proofs")
         .select("id, wise_reference")
@@ -40,15 +41,14 @@ export async function createWisePaymentIntentAction(plan: string): Promise<{
         .maybeSingle();
 
     if (existing) {
-        // Return the existing reference so the employer can still pay
-        return { wiseReference: existing.wise_reference ?? undefined };
+        return { proofId: existing.id, wiseReference: existing.wise_reference ?? undefined };
     }
 
     const wiseReference = generateWiseReference(plan);
     const planConfig = PRICING_PLANS[plan as keyof typeof PRICING_PLANS];
-    const amount = planConfig.prices.php.amount / 100; // Convert centavos → PHP (e.g. 390000 → 3900)
+    const amount = planConfig.prices.php.amount / 100;
 
-    const { error } = await supabase.from("payment_proofs").insert({
+    const { data, error } = await supabase.from("payment_proofs").insert({
         employer_id: profile.id,
         plan,
         reference_number: wiseReference,
@@ -57,12 +57,12 @@ export async function createWisePaymentIntentAction(plan: string): Promise<{
         currency: "PHP",
         payment_method: "wise",
         screenshot_url: null,
-    });
+    }).select("id").single();
 
     if (error) return { error: error.message };
 
     revalidatePath("/employer/billing");
-    return { wiseReference };
+    return { proofId: data.id, wiseReference };
 }
 
 

@@ -27,6 +27,12 @@ CREATE INDEX IF NOT EXISTS candidate_credit_purchases_wise_ref_idx
 
 ALTER TABLE public.candidate_credit_purchases ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Candidate can view own purchases" ON public.candidate_credit_purchases;
+DROP POLICY IF EXISTS "Candidate can insert own purchase" ON public.candidate_credit_purchases;
+DROP POLICY IF EXISTS "Candidate can update own purchase" ON public.candidate_credit_purchases;
+DROP POLICY IF EXISTS "Moderators can view all candidate purchases" ON public.candidate_credit_purchases;
+DROP POLICY IF EXISTS "Moderators can update candidate purchases" ON public.candidate_credit_purchases;
+
 CREATE POLICY "Candidate can view own purchases"
     ON public.candidate_credit_purchases FOR SELECT
     USING (candidate_id = auth.uid());
@@ -40,6 +46,11 @@ CREATE POLICY "Candidate can insert own purchase"
             WHERE p.candidate_id = auth.uid() AND p.status = 'pending'
         )
     );
+
+-- Candidates need UPDATE to allow check_attempts to be recorded
+CREATE POLICY "Candidate can update own purchase"
+    ON public.candidate_credit_purchases FOR UPDATE
+    USING (candidate_id = auth.uid());
 
 CREATE POLICY "Moderators can view all candidate purchases"
     ON public.candidate_credit_purchases FOR SELECT
