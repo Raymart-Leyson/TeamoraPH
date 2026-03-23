@@ -3,6 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { getUserProfile } from "@/utils/auth";
+import { sendAdminNewJobReviewEmail } from "@/lib/email";
+
+async function getAdminEmails(supabase: Awaited<ReturnType<typeof createClient>>) {
+    const { data } = await supabase
+        .from("profiles")
+        .select("email")
+        .in("role", ["admin", "staff", "owner"]);
+    return (data ?? []).map((p) => p.email).filter(Boolean) as string[];
+}
 
 async function assertEmployerOwnsJob(jobId: string) {
     const supabase = await createClient();
@@ -24,10 +33,29 @@ async function assertEmployerOwnsJob(jobId: string) {
 
 export async function publishJobAction(jobId: string) {
     const supabase = await assertEmployerOwnsJob(jobId);
+    const profile = await getUserProfile();
+
+    const { data: job } = await supabase
+        .from("job_posts")
+        .select("title")
+        .eq("id", jobId)
+        .single();
+
     await supabase
         .from("job_posts")
         .update({ status: "pending_review" })
         .eq("id", jobId);
+
+    if (job?.title && profile?.email) {
+        const adminEmails = await getAdminEmails(supabase);
+        sendAdminNewJobReviewEmail({
+            toEmails: adminEmails,
+            jobTitle: job.title,
+            employerEmail: profile.email,
+            jobId,
+        }).catch(() => {});
+    }
+
     revalidatePath("/employer/jobs");
     revalidatePath("/employer/dashboard");
     revalidatePath("/jobs");
@@ -84,6 +112,17 @@ export async function updateJobAction(jobId: string, formData: FormData) {
         .eq("id", jobId);
 
     if (error) return { error: error.message };
+
+    const profile = await getUserProfile();
+    if (title && profile?.email) {
+        const adminEmails = await getAdminEmails(supabase);
+        sendAdminNewJobReviewEmail({
+            toEmails: adminEmails,
+            jobTitle: title,
+            employerEmail: profile.email,
+            jobId,
+        }).catch(() => {});
+    }
 
     revalidatePath("/employer/jobs");
     revalidatePath(`/employer/jobs/${jobId}`);

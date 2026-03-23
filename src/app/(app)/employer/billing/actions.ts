@@ -5,6 +5,88 @@ import { createClient } from "@/utils/supabase/server";
 import { getUserProfile } from "@/utils/auth";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
+
+type ProofState = { error?: string; success?: boolean } | null;
+
+export async function submitPaymentProofAction(
+    _prev: ProofState,
+    formData: FormData
+): Promise<ProofState> {
+    const profile = await getUserProfile();
+    if (!profile || profile.role !== "employer") {
+        return { error: "Unauthorized" };
+    }
+
+    const plan = formData.get("plan") as string;
+    const reference_number = formData.get("reference_number") as string;
+    const amountRaw = formData.get("amount") as string;
+    const screenshot = formData.get("screenshot") as File | null;
+
+    if (!plan || !reference_number || !amountRaw || !screenshot || screenshot.size === 0) {
+        return { error: "All fields are required." };
+    }
+
+    if (!["pro", "premium"].includes(plan)) {
+        return { error: "Invalid plan selected." };
+    }
+
+    const amount = parseFloat(amountRaw);
+    if (isNaN(amount) || amount <= 0) {
+        return { error: "Invalid amount." };
+    }
+
+    if (screenshot.size > 5 * 1024 * 1024) {
+        return { error: "Screenshot must be under 5 MB." };
+    }
+
+    const supabase = await createClient();
+
+    // Check no pending proof already exists
+    const { data: existing } = await supabase
+        .from("payment_proofs")
+        .select("id")
+        .eq("employer_id", profile.id)
+        .eq("status", "pending")
+        .maybeSingle();
+
+    if (existing) {
+        return { error: "You already have a pending payment proof. Please wait for it to be reviewed." };
+    }
+
+    // Upload screenshot to storage
+    const ext = screenshot.name.split(".").pop() ?? "jpg";
+    const path = `${profile.id}/${Date.now()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+        .from("payment-proofs")
+        .upload(path, screenshot, { contentType: screenshot.type, upsert: false });
+
+    if (uploadError) {
+        return { error: "Failed to upload screenshot. Please try again." };
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+        .from("payment-proofs")
+        .getPublicUrl(path);
+
+    // Insert proof record
+    const { error: insertError } = await supabase.from("payment_proofs").insert({
+        employer_id: profile.id,
+        plan,
+        reference_number,
+        amount,
+        currency: "PHP",
+        screenshot_url: publicUrl,
+    });
+
+    if (insertError) {
+        return { error: insertError.message };
+    }
+
+    revalidatePath("/employer/billing");
+    return { success: true };
+}
 
 export async function createCheckoutSession(priceId: string) {
     const profile = await getUserProfile();

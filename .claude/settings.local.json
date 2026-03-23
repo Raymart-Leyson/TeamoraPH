@@ -18,7 +18,11 @@
       "Bash(ls -la /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/src/app/\\\\\\(app\\\\\\)/candidate/)",
       "Bash(ls -la /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/src/app/\\\\\\(app\\\\\\)/employer/)",
       "Bash(ls -la \"c:\\\\Users\\\\Drayley\\\\OneDrive\\\\Desktop\\\\Codes\\\\TeamoraPH\\\\src\\\\app\\\\\\(app\\)\\\\candidate\\\\profile\")",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(find /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/supabase -type f -name *.sql)",
+      "Bash(grep -r \"sendEmail\\\\|send.*mail\\\\|transporter\\\\|nodemailer\" /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/src --include=*.ts --include=*.tsx)",
+      "Bash(grep -A 5 \"CREATE TYPE user_role\\\\|ALTER TYPE user_role\" /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/supabase/migrations/*.sql)",
+      "Bash(grep \"ALTER TYPE user_role\\\\|''owner''\\\\|''staff''\" /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/supabase/migrations/*.sql)"
     ]
   }
 }

@@ -4,7 +4,7 @@ import { getUserProfile } from "@/utils/auth";
 import { hasActiveSubscription } from "@/lib/entitlements";
 import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Lock, Users, Search as SearchIcon, MapPin, Briefcase, Mail, CircleDot } from "lucide-react";
+import { Lock, Users, Search as SearchIcon, MapPin, Briefcase, Mail, CircleDot, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +33,7 @@ const AVAILABILITY_COLORS: Record<string, string> = {
 export default async function TalentSearchPage({
     searchParams,
 }: {
-    searchParams: { q?: string; availability?: string };
+    searchParams: Promise<{ q?: string; availability?: string }>;
 }) {
     const profile = await getUserProfile();
 
@@ -71,7 +71,7 @@ export default async function TalentSearchPage({
         );
     }
 
-    const { q = "", availability = "" } = searchParams;
+    const { q = "", availability = "" } = await searchParams;
     const supabase = await createClient();
 
     let query = supabase
@@ -82,6 +82,8 @@ export default async function TalentSearchPage({
             last_name,
             avatar_url,
             bio,
+            headline,
+            primary_role,
             location_city,
             location_country,
             skills,
@@ -96,7 +98,10 @@ export default async function TalentSearchPage({
         .limit(20);
 
     if (q) {
-        query = query.or(`first_name.ilike.%${q}%,last_name.ilike.%${q}%,bio.ilike.%${q}%`);
+        const safe = q.replace(/[%_\\]/g, "\\$&");
+        query = query.or(
+            `first_name.ilike.%${safe}%,last_name.ilike.%${safe}%,bio.ilike.%${safe}%,headline.ilike.%${safe}%,primary_role.ilike.%${safe}%`
+        );
     }
 
     if (availability) {
@@ -159,6 +164,13 @@ export default async function TalentSearchPage({
                         <h3 className="font-bold text-lg mb-1 truncate w-full">
                             {[candidate.first_name, candidate.last_name].filter(Boolean).join(" ") || "Candidate User"}
                         </h3>
+
+                        {((candidate as any).headline || (candidate as any).primary_role) && (
+                            <p className="text-xs font-semibold text-primary/70 mb-2 truncate w-full flex items-center justify-center gap-1">
+                                <Sparkles className="w-3 h-3 shrink-0" />
+                                {(candidate as any).headline || (candidate as any).primary_role}
+                            </p>
+                        )}
 
                         <div className="flex items-center text-muted-foreground text-xs font-medium mb-3">
                             <MapPin className="w-3 h-3 mr-1 shrink-0" />

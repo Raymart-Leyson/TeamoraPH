@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { sendWelcomeEmail } from "@/lib/email";
+import { sendWelcomeEmail, sendAdminNewUserEmail } from "@/lib/email";
 
 export async function login(formData: FormData) {
     const supabase = await createClient();
@@ -85,6 +85,16 @@ export async function signup(formData: FormData) {
 
     // Send welcome email (non-blocking)
     sendWelcomeEmail({ toEmail: email, role }).catch(() => {});
+
+    // Notify admins/staff of new registration (non-blocking)
+    ;(async () => {
+        const { data: admins } = await supabase
+            .from("profiles")
+            .select("email")
+            .in("role", ["admin", "staff", "owner"]);
+        const adminEmails = (admins ?? []).map((p) => p.email).filter(Boolean) as string[];
+        sendAdminNewUserEmail({ toEmails: adminEmails, userEmail: email, role }).catch(() => {});
+    })();
 
     revalidatePath("/", "layout");
 

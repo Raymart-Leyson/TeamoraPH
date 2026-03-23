@@ -11,7 +11,8 @@ import {
     LogOut,
     Menu,
     AlertTriangle,
-    Database
+    Database,
+    CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +41,7 @@ export default async function AdminLayout({
         { label: "Overview", href: `${basePath}`, icon: LayoutDashboard, roles: ["owner", "admin", "staff"] },
         { label: "Job Reviews", href: `${basePath}/jobs`, icon: BriefcaseBusiness, roles: ["owner", "admin", "staff"] },
         { label: "Verifications", href: `${basePath}/verifications`, icon: ShieldCheck, roles: ["owner", "admin"] },
+        { label: "Payments", href: `${basePath}/payments`, icon: CreditCard, roles: ["owner", "admin"] },
         { label: "Reports", href: `${basePath}/reports`, icon: AlertTriangle, roles: ["owner", "admin", "staff"] },
         { label: "Audit Logs", href: `${basePath}/logs`, icon: Database, roles: ["owner"] },
         { label: "User Management", href: `${basePath}/users`, icon: Users, roles: ["owner"] },

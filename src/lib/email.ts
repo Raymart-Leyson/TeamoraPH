@@ -128,6 +128,49 @@ function welcomeHtml(name: string, role: "candidate" | "employer", appUrl: strin
     `);
 }
 
+function adminNewJobReviewHtml(jobTitle: string, employerEmail: string, reviewUrl: string) {
+    return baseTemplate(`
+      <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#111827;">New Job Post Pending Review</h2>
+      <p style="margin:0 0 20px;font-size:15px;color:#6b7280;">
+        A job post has been submitted and is waiting for your review.
+      </p>
+      <div style="background:#f4f6fb;border-left:3px solid #f59e0b;border-radius:6px;padding:14px 18px;margin-bottom:24px;">
+        <p style="margin:0 0 6px;font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Job Title</p>
+        <p style="margin:0 0 12px;font-size:15px;font-weight:600;color:#111827;">${jobTitle}</p>
+        <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Submitted By</p>
+        <p style="margin:0;font-size:14px;color:#374151;">${employerEmail}</p>
+      </div>
+      <a href="${reviewUrl}"
+         style="display:inline-block;background:#f59e0b;color:#ffffff;font-size:14px;font-weight:600;
+                text-decoration:none;padding:12px 28px;border-radius:8px;">
+        Review Job Post
+      </a>
+    `);
+}
+
+function adminNewUserHtml(userEmail: string, role: string, dashboardUrl: string) {
+    const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
+    const roleColor = role === "employer" ? "#2563eb" : "#16a34a";
+
+    return baseTemplate(`
+      <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#111827;">New User Registered</h2>
+      <p style="margin:0 0 20px;font-size:15px;color:#6b7280;">
+        A new user has signed up on TeamoraPH.
+      </p>
+      <div style="background:#f4f6fb;border-left:3px solid #3D6EFF;border-radius:6px;padding:14px 18px;margin-bottom:24px;">
+        <p style="margin:0 0 6px;font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Email</p>
+        <p style="margin:0 0 12px;font-size:15px;font-weight:600;color:#111827;">${userEmail}</p>
+        <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Role</p>
+        <span style="font-size:13px;font-weight:700;color:${roleColor};background:${roleColor}1a;padding:3px 10px;border-radius:999px;">${roleLabel}</span>
+      </div>
+      <a href="${dashboardUrl}"
+         style="display:inline-block;background:#3D6EFF;color:#ffffff;font-size:14px;font-weight:600;
+                text-decoration:none;padding:12px 28px;border-radius:8px;">
+        View Dashboard
+      </a>
+    `);
+}
+
 function applicationConfirmationHtml(jobTitle: string, companyName: string, applicationsUrl: string) {
     return baseTemplate(`
       <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#111827;">Application Submitted!</h2>
@@ -220,6 +263,111 @@ export async function sendWelcomeEmail({
         to: toEmail,
         subject: `Welcome to TeamoraPH${name ? `, ${name}` : ""}!`,
         html: welcomeHtml(name ?? "", role, APP_URL),
+    });
+}
+
+export async function sendPaymentStatusEmail({
+    toEmail,
+    employerName,
+    plan,
+    status,
+    notes,
+}: {
+    toEmail: string;
+    employerName?: string;
+    plan: string;
+    status: "approved" | "rejected";
+    notes?: string;
+}) {
+    const transporter = getTransporter();
+    if (!transporter) return;
+
+    const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
+    const isApproved = status === "approved";
+    const statusColor = isApproved ? "#16a34a" : "#dc2626";
+    const statusLabel = isApproved ? "Approved ✅" : "Rejected ❌";
+    const billingUrl = `${APP_URL}/employer/billing`;
+
+    const html = baseTemplate(`
+      <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#111827;">
+        Payment ${statusLabel}
+      </h2>
+      <p style="margin:0 0 20px;font-size:15px;color:#6b7280;">
+        ${employerName ? `Hi <strong style="color:#111827;">${employerName}</strong>, your` : "Your"} payment submission for the
+        <strong style="color:#111827;">${planLabel}</strong> plan has been reviewed.
+      </p>
+      <div style="background:#f4f6fb;border-left:3px solid ${statusColor};border-radius:6px;padding:14px 18px;margin-bottom:24px;">
+        <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Status</p>
+        <span style="font-size:16px;font-weight:700;color:${statusColor};">${statusLabel}</span>
+        ${notes ? `
+        <p style="margin:12px 0 4px;font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">${isApproved ? "Note" : "Reason"}</p>
+        <p style="margin:0;font-size:14px;color:#374151;">${notes}</p>
+        ` : ""}
+      </div>
+      ${isApproved
+        ? `<p style="margin:0 0 20px;font-size:14px;color:#6b7280;">Your subscription is now <strong style="color:#16a34a;">active</strong>. You can start enjoying all ${planLabel} plan features right away.</p>`
+        : `<p style="margin:0 0 20px;font-size:14px;color:#6b7280;">Please review the reason above and resubmit your payment proof with the correct details.</p>`
+      }
+      <a href="${billingUrl}"
+         style="display:inline-block;background:#3D6EFF;color:#ffffff;font-size:14px;font-weight:600;
+                text-decoration:none;padding:12px 28px;border-radius:8px;">
+        ${isApproved ? "Go to Billing" : "Resubmit Payment"}
+      </a>
+    `);
+
+    await transporter.sendMail({
+        from: FROM,
+        to: toEmail,
+        subject: isApproved
+            ? `Your ${planLabel} plan is now active — TeamoraPH`
+            : `Payment submission update for ${planLabel} plan — TeamoraPH`,
+        html,
+    });
+}
+
+export async function sendAdminNewJobReviewEmail({
+    toEmails,
+    jobTitle,
+    employerEmail,
+    jobId,
+}: {
+    toEmails: string[];
+    jobTitle: string;
+    employerEmail: string;
+    jobId: string;
+}) {
+    const transporter = getTransporter();
+    if (!transporter || toEmails.length === 0) return;
+
+    const reviewUrl = `${APP_URL}/admin/jobs?highlight=${jobId}`;
+
+    await transporter.sendMail({
+        from: FROM,
+        to: toEmails.join(", "),
+        subject: `[Action Required] New job post pending review: "${jobTitle}" — TeamoraPH`,
+        html: adminNewJobReviewHtml(jobTitle, employerEmail, reviewUrl),
+    });
+}
+
+export async function sendAdminNewUserEmail({
+    toEmails,
+    userEmail,
+    role,
+}: {
+    toEmails: string[];
+    userEmail: string;
+    role: string;
+}) {
+    const transporter = getTransporter();
+    if (!transporter || toEmails.length === 0) return;
+
+    const dashboardUrl = `${APP_URL}/admin/dashboard`;
+
+    await transporter.sendMail({
+        from: FROM,
+        to: toEmails.join(", "),
+        subject: `New ${role} registered on TeamoraPH: ${userEmail}`,
+        html: adminNewUserHtml(userEmail, role, dashboardUrl),
     });
 }
 
