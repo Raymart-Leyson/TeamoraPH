@@ -93,7 +93,7 @@ export function PaymentChecker({
                 </div>
             )}
 
-            {attemptsLeft === 0 && checkResult?.status !== "activated" && (
+            {attemptsLeft === 0 && (
                 <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-center">
                     <p className="text-sm font-black text-[#1B3FA0]">Daily check limit reached</p>
                     <p className="text-xs text-[#1B3FA0]/50 mt-1">Try again tomorrow or contact support below.</p>
