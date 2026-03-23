@@ -2,69 +2,141 @@
 
 import { useState } from "react";
 import { CREDIT_PACKAGES } from "@/lib/pricing";
-import { createCandidateCheckoutSession } from "./actions";
+import { createCreditPurchaseIntentAction, checkCandidateWisePaymentAction, submitCandidateSupportTicketAction } from "./actions";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Coins, Loader2, Star, CheckCircle2 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { Coins, Loader2, Star, CheckCircle2, ArrowLeft } from "lucide-react";
+import { WisePaymentCard } from "@/components/wise/WisePaymentCard";
+import { PaymentChecker } from "@/components/wise/PaymentChecker";
 
 interface BillingClientProps {
     currency: "php" | "usd";
+    accountNumber: string;
+    accountHolderName: string;
+    // Pre-existing pending purchase (if any)
+    pendingPurchase?: {
+        id: string;
+        packageKey: string;
+        credits: number;
+        wiseReference: string;
+        amount: number;
+        currency: string;
+        attemptsLeft: number;
+    } | null;
 }
 
-export default function BillingClient({ currency }: BillingClientProps) {
+export default function BillingClient({
+    currency,
+    accountNumber,
+    accountHolderName,
+    pendingPurchase,
+}: BillingClientProps) {
+    const [selected, setSelected] = useState<{
+        purchaseId: string;
+        wiseReference: string;
+        packageKey: string;
+        credits: number;
+        priceLabel: string;
+        attemptsLeft: number;
+    } | null>(
+        pendingPurchase
+            ? {
+                purchaseId: pendingPurchase.id,
+                wiseReference: pendingPurchase.wiseReference,
+                packageKey: pendingPurchase.packageKey,
+                credits: pendingPurchase.credits,
+                priceLabel: currency === "php"
+                    ? `₱${pendingPurchase.amount.toLocaleString()}`
+                    : `$${pendingPurchase.amount.toLocaleString()}`,
+                attemptsLeft: pendingPurchase.attemptsLeft,
+            }
+            : null
+    );
     const [loading, setLoading] = useState<string | null>(null);
-    const searchParams = useSearchParams();
-    const success = searchParams.get("success");
-    const canceled = searchParams.get("canceled");
 
-    const handlePurchase = async (key: string) => {
-        setLoading(key);
-        try {
-            await createCandidateCheckoutSession(key as any);
-        } catch (error) {
-            console.error(error);
-            setLoading(null);
-        }
-    };
+    async function handleSelect(packageKey: string) {
+        setLoading(packageKey);
+        const result = await createCreditPurchaseIntentAction(packageKey, currency === "php" ? "PHP" : "USD");
+        if (result.error) { setLoading(null); return; }
 
+        const pkg = CREDIT_PACKAGES[packageKey as keyof typeof CREDIT_PACKAGES];
+        const price = pkg.prices[currency];
+
+        setSelected({
+            purchaseId: result.purchaseId!,
+            wiseReference: result.wiseReference!,
+            packageKey,
+            credits: pkg.credits,
+            priceLabel: price.label,
+            attemptsLeft: 3,
+        });
+        setLoading(null);
+    }
+
+    // ── Payment detail view ────────────────────────────────────────────────────
+    if (selected) {
+        const pkg = CREDIT_PACKAGES[selected.packageKey as keyof typeof CREDIT_PACKAGES];
+        return (
+            <div className="flex-1 max-w-lg mx-auto p-4 md:p-8 pt-10 space-y-6">
+                <button
+                    onClick={() => setSelected(null)}
+                    className="flex items-center gap-2 text-sm font-bold text-[#3D6EFF] hover:text-[#1B3FA0]"
+                >
+                    <ArrowLeft className="w-4 h-4" /> Back to packages
+                </button>
+
+                <Card className="border-none shadow-xl rounded-3xl bg-white/70 backdrop-blur-md">
+                    <CardContent className="p-6">
+                        <WisePaymentCard
+                            wiseReference={selected.wiseReference}
+                            label={`${pkg.name} — ${selected.credits} Credits`}
+                            priceLabel={selected.priceLabel}
+                            accountNumber={accountNumber}
+                            accountHolderName={accountHolderName}
+                            changeHref="/candidate/billing"
+                            changeLabel="Change package"
+                            successMessage="your credits will be automatically added to your account"
+                        />
+                        <PaymentChecker
+                            recordId={selected.purchaseId}
+                            wiseReference={selected.wiseReference}
+                            checkAction={checkCandidateWisePaymentAction}
+                            supportAction={submitCandidateSupportTicketAction}
+                            initialAttemptsLeft={selected.attemptsLeft}
+                            successMessage="Your credits have been added! Refresh to see your updated balance."
+                        />
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    // ── Package selection view ─────────────────────────────────────────────────
     return (
         <div className="flex-1 space-y-8 p-4 md:p-8 max-w-5xl mx-auto pt-10">
             <div className="text-center space-y-3">
-                <h1 className="text-2xl sm:text-4xl font-black text-[#1B3FA0] tracking-tight">Boost Your Visibility</h1>
+                <h1 className="text-2xl sm:text-4xl font-black text-[#1B3FA0] tracking-tight">
+                    Boost Your Visibility
+                </h1>
                 <p className="text-[#1B3FA0]/70 text-lg font-medium max-w-2xl mx-auto">
-                    Purchase Booster Credits to pin your applications at the top of the employer&apos;s list and stand out from the crowd.
+                    Purchase Booster Credits to pin your applications at the top of the employer&apos;s list.
                 </p>
-                {currency === "usd" && (
+                {currency === "usd" ? (
                     <p className="text-xs font-bold text-[#3D6EFF] bg-[#3D6EFF]/5 w-fit mx-auto px-3 py-1 rounded-full border border-[#3D6EFF]/10">
                         🌎 International Pricing (USD)
                     </p>
-                )}
-                {currency === "php" && (
+                ) : (
                     <p className="text-xs font-bold text-green-600 bg-green-50 w-fit mx-auto px-3 py-1 rounded-full border border-green-100">
                         🇵🇭 Special Local Pricing (PHP)
                     </p>
                 )}
             </div>
 
-            {success && (
-                <div className="bg-green-500/10 border border-green-500/20 rounded-3xl p-6 flex items-center gap-4 text-green-700 animate-in fade-in slide-in-from-top-4">
-                    <CheckCircle2 className="h-6 w-6 shrink-0" />
-                    <p className="font-bold">Purchase successful! Your credits will appear on your dashboard shortly.</p>
-                </div>
-            )}
-
-            {canceled && (
-                <div className="bg-amber-500/10 border border-amber-500/20 rounded-3xl p-6 flex items-center gap-4 text-amber-700 font-bold">
-                    <span>Purchase canceled. No charges were made. Need help? Email <a href="mailto:raymart@selleruniverse.com" className="underline hover:opacity-80">raymart@selleruniverse.com</a></span>
-                </div>
-            )}
-
             <div className="grid gap-6 md:grid-cols-3">
                 {Object.entries(CREDIT_PACKAGES).map(([key, pkg]) => {
                     const price = pkg.prices[currency];
                     return (
-                        <Card key={key} className={`border-none shadow-xl rounded-[2.5rem] overflow-hidden transition-all duration-300 hover:-translate-y-2 ${key === 'standard' ? 'ring-4 ring-[#3D6EFF] ring-offset-4 ring-offset-[#F8F9FF]' : ''}`}>
+                        <Card key={key} className={`border-none shadow-xl rounded-[2.5rem] overflow-hidden transition-all duration-300 hover:-translate-y-2 ${key === "standard" ? "ring-4 ring-[#3D6EFF] ring-offset-4 ring-offset-[#F8F9FF]" : ""}`}>
                             <CardHeader className="text-center pt-10">
                                 <div className="mx-auto bg-[#3D6EFF]/10 p-4 rounded-3xl w-fit mb-4">
                                     <Coins className="h-8 w-8 text-[#3D6EFF]" />
@@ -90,15 +162,11 @@ export default function BillingClient({ currency }: BillingClientProps) {
                             </CardContent>
                             <CardFooter className="pb-10 px-8">
                                 <Button
-                                    onClick={() => handlePurchase(key)}
+                                    onClick={() => handleSelect(key)}
                                     disabled={!!loading}
-                                    className={`w-full rounded-full py-7 text-xl font-black shadow-xl transition-all ${key === 'standard' ? 'bg-[#3D6EFF] hover:bg-[#3D6EFF]/90 text-white' : 'bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white'}`}
+                                    className={`w-full rounded-full py-7 text-xl font-black shadow-xl ${key === "standard" ? "bg-[#3D6EFF] hover:bg-[#3D6EFF]/90 text-white" : "bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white"}`}
                                 >
-                                    {loading === key ? (
-                                        <Loader2 className="h-6 w-6 animate-spin" />
-                                    ) : (
-                                        "Purchase Now"
-                                    )}
+                                    {loading === key ? <Loader2 className="h-6 w-6 animate-spin" /> : "Purchase Now"}
                                 </Button>
                             </CardFooter>
                         </Card>
@@ -112,15 +180,7 @@ export default function BillingClient({ currency }: BillingClientProps) {
                 </div>
                 <h3 className="text-2xl font-black text-[#1B3FA0]">You Already Get Free Credits</h3>
                 <p className="text-[#1B3FA0]/70 font-semibold max-w-2xl mx-auto leading-relaxed">
-                    Every day, <span className="text-[#3D6EFF] font-black">+10 free credits</span> are automatically added to your account — up to a lifetime maximum of <span className="text-[#3D6EFF] font-black">50 free credits</span>. Free credits are spent first whenever you apply to a job.
-                </p>
-                <p className="text-xs text-[#1B3FA0]/50 font-bold">Booster Credits are for when you want to go above and beyond.</p>
-            </div>
-
-            <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-[3rem] p-10 text-center space-y-4 shadow-sm">
-                <h3 className="text-2xl font-black text-[#1B3FA0]">Why use credits?</h3>
-                <p className="text-[#1B3FA0]/70 font-semibold max-w-3xl mx-auto leading-relaxed">
-                    When you apply for a job using Booster Credits, your application is displayed with a special icon and prioritized in the employer&apos;s view. Higher credit allocations push your profile to the very top, ensuring you&apos;re seen first by hiring managers.
+                    Every day, <span className="text-[#3D6EFF] font-black">+10 free credits</span> are automatically added to your account — up to a lifetime maximum of <span className="text-[#3D6EFF] font-black">50 free credits</span>.
                 </p>
             </div>
         </div>

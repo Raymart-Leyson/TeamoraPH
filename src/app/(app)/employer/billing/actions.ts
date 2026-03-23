@@ -6,8 +6,219 @@ import { getUserProfile } from "@/utils/auth";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { generateWiseReference, findTransactionByReference } from "@/lib/wise";
+import type { CheckResult } from "@/components/wise/types";
+import { PLANS as PRICING_PLANS } from "@/lib/pricing";
+import { sendPaymentStatusEmail } from "@/lib/email";
+
+const WISE_PROFILE_ID = parseInt(process.env.WISE_PROFILE_ID ?? "0", 10);
+const WISE_PHP_BALANCE_ACCOUNT_ID = process.env.WISE_PHP_BALANCE_ACCOUNT_ID ?? "";
+const MAX_CHECKS_PER_DAY = 3;
 
 type ProofState = { error?: string; success?: boolean } | null;
+
+/**
+ * Creates a Wise payment intent: generates a unique reference code and
+ * stores a pending proof record so the webhook can match it later.
+ */
+export async function createWisePaymentIntentAction(plan: string): Promise<{
+    error?: string;
+    wiseReference?: string;
+}> {
+    const profile = await getUserProfile();
+    if (!profile || profile.role !== "employer") return { error: "Unauthorized" };
+
+    if (!["pro", "premium"].includes(plan)) return { error: "Invalid plan" };
+
+    const supabase = await createClient();
+
+    // Check no pending proof already exists
+    const { data: existing } = await supabase
+        .from("payment_proofs")
+        .select("id, wise_reference")
+        .eq("employer_id", profile.id)
+        .eq("status", "pending")
+        .maybeSingle();
+
+    if (existing) {
+        // Return the existing reference so the employer can still pay
+        return { wiseReference: existing.wise_reference ?? undefined };
+    }
+
+    const wiseReference = generateWiseReference(plan);
+    const planConfig = PRICING_PLANS[plan as keyof typeof PRICING_PLANS];
+    const amount = planConfig.prices.php.amount / 100; // Convert centavos → PHP (e.g. 390000 → 3900)
+
+    const { error } = await supabase.from("payment_proofs").insert({
+        employer_id: profile.id,
+        plan,
+        reference_number: wiseReference,
+        wise_reference: wiseReference,
+        amount,
+        currency: "PHP",
+        payment_method: "wise",
+        screenshot_url: null,
+    });
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/employer/billing");
+    return { wiseReference };
+}
+
+
+/**
+ * Called when employer clicks "I've Already Paid".
+ * Checks Wise transaction history for the reference, activates if found.
+ * Rate-limited to MAX_CHECKS_PER_DAY per calendar day (UTC).
+ */
+export async function checkWisePaymentAction(proofId: string): Promise<CheckResult> {
+    const profile = await getUserProfile();
+    if (!profile || profile.role !== "employer") return { status: "error", message: "Unauthorized" };
+
+    const supabase = await createClient();
+
+    const { data: proof } = await supabase
+        .from("payment_proofs")
+        .select("id, employer_id, plan, wise_reference, amount, status, check_attempts, last_check_date")
+        .eq("id", proofId)
+        .eq("employer_id", profile.id)
+        .single();
+
+    if (!proof) return { status: "error", message: "Payment record not found." };
+    if (proof.status !== "pending") return { status: "error", message: "This payment is already processed." };
+    if (!proof.wise_reference) return { status: "error", message: "No reference found." };
+
+    // Daily retry reset
+    const todayUTC = new Date().toISOString().slice(0, 10);
+    const attempts = proof.last_check_date === todayUTC ? (proof.check_attempts ?? 0) : 0;
+
+    if (attempts >= MAX_CHECKS_PER_DAY) {
+        return { status: "no_retries" };
+    }
+
+    // Record the attempt first (prevents spam on slow network)
+    await supabase
+        .from("payment_proofs")
+        .update({
+            check_attempts: attempts + 1,
+            last_check_date: todayUTC,
+            last_check_at: new Date().toISOString(),
+        })
+        .eq("id", proofId);
+
+    // Check Wise for a matching transaction
+    let transaction = null;
+    try {
+        transaction = await findTransactionByReference(
+            WISE_PROFILE_ID,
+            WISE_PHP_BALANCE_ACCOUNT_ID,
+            proof.wise_reference
+        );
+    } catch (e: any) {
+        return { status: "error", message: "Could not reach Wise. Please try again shortly." };
+    }
+
+    if (!transaction) {
+        const attemptsLeft = MAX_CHECKS_PER_DAY - (attempts + 1);
+        return { status: "not_found", attemptsLeft };
+    }
+
+    // ── Payment confirmed ─────────────────────────────────────────────────────
+
+    await supabase
+        .from("payment_proofs")
+        .update({
+            status: "approved",
+            wise_transfer_id: transaction.referenceNumber ?? proof.wise_reference,
+            notes: `Auto-verified via Wise. Received: PHP ${transaction.amount.value}`,
+            reviewed_at: new Date().toISOString(),
+        })
+        .eq("id", proofId);
+
+    const periodEnd = new Date();
+    periodEnd.setDate(periodEnd.getDate() + 30);
+
+    await supabase.from("subscriptions").upsert({
+        employer_id: profile.id,
+        status: "active",
+        current_period_end: periodEnd.toISOString(),
+        stripe_subscription_id: `wise_${proofId}`,
+        updated_at: new Date().toISOString(),
+    }, { onConflict: "employer_id" });
+
+    await supabase.from("notifications").insert({
+        user_id: profile.id,
+        type: "application_update",
+        title: "Payment Confirmed ✅",
+        content: `Your ${proof.plan.charAt(0).toUpperCase() + proof.plan.slice(1)} plan is now active!`,
+        link: "/employer/billing",
+        read_status: false,
+    });
+
+    sendPaymentStatusEmail({
+        toEmail: profile.email,
+        plan: proof.plan,
+        status: "approved",
+        notes: "Payment was verified via Wise.",
+    }).catch(() => {});
+
+    revalidatePath("/employer/billing");
+    return { status: "activated" };
+}
+
+/**
+ * Fallback: employer uploads screenshot + reference for manual admin review.
+ */
+export async function submitSupportTicketAction(
+    _prev: ProofState,
+    formData: FormData
+): Promise<ProofState> {
+    const profile = await getUserProfile();
+    if (!profile || profile.role !== "employer") return { error: "Unauthorized" };
+
+    const proofId = formData.get("proof_id") as string;
+    const screenshot = formData.get("screenshot") as File | null;
+    const notes = formData.get("notes") as string;
+
+    if (!screenshot || screenshot.size === 0) return { error: "Please attach a screenshot." };
+    if (screenshot.size > 5 * 1024 * 1024) return { error: "Screenshot must be under 5 MB." };
+
+    const supabase = await createClient();
+
+    // Verify proof belongs to employer
+    const { data: proof } = await supabase
+        .from("payment_proofs")
+        .select("id, status")
+        .eq("id", proofId)
+        .eq("employer_id", profile.id)
+        .single();
+
+    if (!proof || proof.status !== "pending") return { error: "Invalid payment record." };
+
+    // Upload screenshot
+    const ext = screenshot.name.split(".").pop() ?? "jpg";
+    const path = `${profile.id}/${Date.now()}-support.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+        .from("payment-proofs")
+        .upload(path, screenshot, { contentType: screenshot.type });
+
+    if (uploadError) return { error: "Failed to upload screenshot." };
+
+    const { data: { publicUrl } } = supabase.storage.from("payment-proofs").getPublicUrl(path);
+
+    await supabase
+        .from("payment_proofs")
+        .update({
+            screenshot_url: publicUrl,
+            notes: notes || "Employer submitted screenshot for manual review.",
+        })
+        .eq("id", proofId);
+
+    revalidatePath("/employer/billing");
+    return { success: true };
+}
 
 export async function submitPaymentProofAction(
     _prev: ProofState,

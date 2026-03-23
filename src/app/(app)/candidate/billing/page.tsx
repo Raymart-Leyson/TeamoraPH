@@ -1,30 +1,55 @@
 import { getUserProfile } from "@/utils/auth";
 import { redirect } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
-import { Clock } from "lucide-react";
+import { headers } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
+import BillingClient from "./BillingClient";
+
+const WISE_PHP_ACCOUNT_NUMBER = process.env.WISE_PHP_ACCOUNT_NUMBER ?? "0000-0000-0000";
+const WISE_ACCOUNT_HOLDER = process.env.WISE_ACCOUNT_HOLDER_NAME ?? "TeamoraPH Inc.";
 
 export default async function CandidateBillingPage() {
     const profile = await getUserProfile();
-    if (!profile || profile.role !== "candidate") {
-        redirect("/login");
-    }
+    if (!profile || profile.role !== "candidate") redirect("/login");
+
+    // Detect country from Vercel edge header
+    const headersList = await headers();
+    const country = headersList.get("x-vercel-ip-country") ?? "PH";
+    const currency: "php" | "usd" = country === "PH" ? "php" : "usd";
+
+    const supabase = await createClient();
+
+    // Fetch any existing pending purchase
+    const { data: pending } = await supabase
+        .from("candidate_credit_purchases")
+        .select("id, package_key, credits, wise_reference, amount, currency, check_attempts, last_check_date")
+        .eq("candidate_id", profile.id)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+    const todayUTC = new Date().toISOString().slice(0, 10);
+    const pendingPurchase = pending
+        ? {
+            id: pending.id,
+            packageKey: pending.package_key,
+            credits: pending.credits,
+            wiseReference: pending.wise_reference ?? "",
+            amount: Number(pending.amount),
+            currency: pending.currency,
+            attemptsLeft: Math.max(
+                0,
+                3 - (pending.last_check_date === todayUTC ? (pending.check_attempts ?? 0) : 0)
+            ),
+        }
+        : null;
 
     return (
-        <div className="flex-1 flex items-center justify-center p-6">
-            <Card className="max-w-md w-full border-none shadow-xl rounded-2xl bg-white/60 backdrop-blur-xl">
-                <CardContent className="flex flex-col items-center text-center gap-4 py-12 px-8">
-                    <div className="h-16 w-16 rounded-2xl bg-[#1B3FA0]/10 flex items-center justify-center">
-                        <Clock className="h-8 w-8 text-[#1B3FA0]" />
-                    </div>
-                    <h2 className="text-2xl font-black text-[#1B3FA0]">Coming Soon</h2>
-                    <p className="text-[#1B3FA0]/60 font-medium text-sm leading-relaxed">
-                        Subscriptions and billing are not available yet. We&apos;re working on it and will notify you once it&apos;s ready.
-                    </p>
-                    <p className="text-xs text-[#1B3FA0]/40 font-bold uppercase tracking-widest">
-                        Payments · Stripe · Plans
-                    </p>
-                </CardContent>
-            </Card>
-        </div>
+        <BillingClient
+            currency={currency}
+            accountNumber={WISE_PHP_ACCOUNT_NUMBER}
+            accountHolderName={WISE_ACCOUNT_HOLDER}
+            pendingPurchase={pendingPurchase}
+        />
     );
 }

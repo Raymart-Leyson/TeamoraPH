@@ -6,7 +6,11 @@ export const PLANS = {
         name: "Pro Talent",
         description: "Perfect for scaling startups hiring multiple roles.",
         priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
-        monthlyAmount: 6900, // $69.00
+        monthlyAmount: 6900, // $69.00 USD
+        prices: {
+            php: { amount: 390000, label: "₱3,900/month" }, // ~$69 USD
+            usd: { amount: 6900,   label: "$69/month" },
+        },
         features: [
             "Unlimited Job Postings",
             "Unlimited Candidate Messaging",
@@ -18,7 +22,11 @@ export const PLANS = {
         name: "Premium Search",
         description: "Full service hiring with priority support and tools.",
         priceId: process.env.STRIPE_PREMIUM_PRICE_ID ?? "",
-        monthlyAmount: 9900, // $99.00
+        monthlyAmount: 9900, // $99.00 USD
+        prices: {
+            php: { amount: 560000, label: "₱5,600/month" }, // ~$99 USD
+            usd: { amount: 9900,   label: "$99/month" },
+        },
         features: [
             "Everything in Pro",
             "Priority Job Placement",
