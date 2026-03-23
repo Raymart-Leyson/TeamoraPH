@@ -1,6 +1,5 @@
 "use server";
 
-import { stripe, PLANS } from "@/lib/stripe";
 import { createClient } from "@/utils/supabase/server";
 import { getUserProfile } from "@/utils/auth";
 import { redirect } from "next/navigation";
@@ -300,6 +299,7 @@ export async function submitPaymentProofAction(
 }
 
 export async function createCheckoutSession(priceId: string) {
+    const { stripe } = await import("@/lib/stripe");
     const profile = await getUserProfile();
     if (!profile || profile.role !== "employer") {
         throw new Error("Unauthorized");
@@ -376,6 +376,7 @@ export async function createCheckoutSession(priceId: string) {
 }
 
 export async function createBillingPortalSession() {
+    const { stripe } = await import("@/lib/stripe");
     const profile = await getUserProfile();
     if (!profile || profile.role !== "employer") {
         throw new Error("Unauthorized");
