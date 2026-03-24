@@ -292,6 +292,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                                                 defaultEmail={profile.email}
                                                 freeCredits={candidateData?.free_credits || 0}
                                                 boughtCredits={candidateData?.bought_credits || 0}
+                                                creditsRequired={job.credits_required ?? 1}
                                             />
                                             <form action={async () => {
                                                 "use server";
