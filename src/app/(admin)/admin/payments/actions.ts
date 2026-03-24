@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { getUserProfile } from "@/utils/auth";
 import { sendPaymentStatusEmail } from "@/lib/email";
+import { supabaseAdmin } from "@/utils/supabase/admin";
 
 async function assertModerator() {
     const profile = await getUserProfile();
@@ -132,6 +133,121 @@ export async function rejectPaymentAction(proofId: string, reason: string) {
         sendPaymentStatusEmail({
             toEmail: employerProfile.email,
             plan: proof.plan,
+            status: "rejected",
+            notes: reason,
+        }).catch(() => {});
+    }
+
+    revalidatePath("/admin/payments");
+    revalidatePath("/owner/payments");
+    return { success: true };
+}
+
+export async function approveCandidatePurchaseAction(purchaseId: string, notes?: string) {
+    const moderator = await assertModerator();
+    const supabase = await createClient();
+
+    const { data: purchase, error: purchaseErr } = await supabase
+        .from("candidate_credit_purchases")
+        .select("id, candidate_id, credits, status")
+        .eq("id", purchaseId)
+        .single();
+
+    if (purchaseErr || !purchase) throw new Error("Purchase not found");
+    if (purchase.status !== "pending") throw new Error("Purchase is not pending");
+
+    const { error: updateErr } = await supabase
+        .from("candidate_credit_purchases")
+        .update({
+            status: "approved",
+            ...(notes ? { notes } : {}),
+            reviewed_by: moderator.id,
+            reviewed_at: new Date().toISOString(),
+        })
+        .eq("id", purchaseId);
+
+    if (updateErr) throw new Error(updateErr.message);
+
+    const { error: rpcErr } = await supabaseAdmin.rpc("increment_bought_credits", {
+        p_candidate_id: purchase.candidate_id,
+        p_amount: purchase.credits,
+    });
+
+    if (rpcErr) throw new Error(rpcErr.message);
+
+    await supabase.from("notifications").insert({
+        user_id: purchase.candidate_id,
+        type: "application_update",
+        title: "Payment Approved ✅",
+        content: `Your payment for ${purchase.credits} credits has been confirmed. Your credits are now active!`,
+        link: "/candidate/billing",
+        read_status: false,
+    });
+
+    const { data: candidateProfile } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("id", purchase.candidate_id)
+        .single();
+
+    if (candidateProfile?.email) {
+        sendPaymentStatusEmail({
+            toEmail: candidateProfile.email,
+            plan: `${purchase.credits} Credits`,
+            status: "approved",
+            notes: notes ?? undefined,
+        }).catch(() => {});
+    }
+
+    revalidatePath("/admin/payments");
+    revalidatePath("/owner/payments");
+    return { success: true };
+}
+
+export async function rejectCandidatePurchaseAction(purchaseId: string, reason: string) {
+    const moderator = await assertModerator();
+    const supabase = await createClient();
+
+    const { data: purchase, error: purchaseErr } = await supabase
+        .from("candidate_credit_purchases")
+        .select("id, candidate_id, credits, status")
+        .eq("id", purchaseId)
+        .single();
+
+    if (purchaseErr || !purchase) throw new Error("Purchase not found");
+    if (purchase.status !== "pending") throw new Error("Purchase is not pending");
+
+    const { error: updateErr } = await supabase
+        .from("candidate_credit_purchases")
+        .update({
+            status: "rejected",
+            notes: reason,
+            reviewed_by: moderator.id,
+            reviewed_at: new Date().toISOString(),
+        })
+        .eq("id", purchaseId);
+
+    if (updateErr) throw new Error(updateErr.message);
+
+    await supabase.from("notifications").insert({
+        user_id: purchase.candidate_id,
+        type: "application_update",
+        title: "Payment Proof Rejected ❌",
+        content: `Your payment proof for ${purchase.credits} credits was not approved. Reason: ${reason}`,
+        link: "/candidate/billing",
+        read_status: false,
+    });
+
+    const { data: candidateProfile } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("id", purchase.candidate_id)
+        .single();
+
+    if (candidateProfile?.email) {
+        sendPaymentStatusEmail({
+            toEmail: candidateProfile.email,
+            plan: `${purchase.credits} Credits`,
             status: "rejected",
             notes: reason,
         }).catch(() => {});

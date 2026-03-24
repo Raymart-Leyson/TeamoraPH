@@ -23,7 +23,13 @@
       "Bash(grep -r \"sendEmail\\\\|send.*mail\\\\|transporter\\\\|nodemailer\" /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/src --include=*.ts --include=*.tsx)",
       "Bash(grep -A 5 \"CREATE TYPE user_role\\\\|ALTER TYPE user_role\" /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/supabase/migrations/*.sql)",
       "Bash(grep \"ALTER TYPE user_role\\\\|''owner''\\\\|''staff''\" /c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/supabase/migrations/*.sql)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(npx next:*)",
+      "Bash(npx eslint:*)",
+      "Read(//c/Users/Drayley/OneDrive/Desktop/Codes/TeamoraPH/**)",
+      "Bash(node -e \"const c = require\\(''''./node_modules/eslint-config-next/core-web-vitals.js''''\\); console.log\\(Object.keys\\(c\\)\\)\")",
+      "Bash(node -e \"import\\(''''./node_modules/eslint-config-next/dist/core-web-vitals.js''''\\).then\\(m => console.log\\(JSON.stringify\\(m.default?.map ? m.default.map\\(c => Object.keys\\(c.plugins||{}\\)\\) : ''''not array''''\\)\\)\\)\")",
+      "Bash(node -e \"import\\(''./node_modules/eslint-config-next/dist/typescript.js''\\).then\\(m => console.log\\(JSON.stringify\\(m.default?.map ? m.default.map\\(c => Object.keys\\(c.plugins||{}\\)\\) : ''not array''\\)\\)\\)\")"
     ]
   }
 }

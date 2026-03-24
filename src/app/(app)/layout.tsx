@@ -30,39 +30,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     const validRole = profile.role as "candidate" | "employer" | "admin";
     const supabase = await createClient();
 
-    // Fetch unread message count
-    let unreadMessages = 0;
-    try {
-        const field = validRole === "employer" ? "employer_last_read_at" : "candidate_last_read_at";
-        const userIdField = validRole === "employer" ? "employer_id" : "candidate_id";
-
-        const { data: convs } = await supabase
-            .from("conversations")
-            .select(`id, ${field}`)
-            .eq(userIdField, profile.id);
-
-        if (convs && convs.length > 0) {
-            for (const conv of convs) {
-                const { count } = await supabase
-                    .from("messages")
-                    .select("id", { count: "exact", head: true })
-                    .eq("conversation_id", conv.id)
-                    .neq("sender_id", profile.id)
-                    .gt("created_at", (conv as any)[field]);
-                unreadMessages += count ?? 0;
-            }
-        }
-    } catch (e) {
-        console.error("Unread count error:", e);
-        unreadMessages = 0;
-    }
-
-    // Fetch unread notification count
-    const { count: unreadNotifications } = await supabase
-        .from("notifications")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", profile.id)
-        .eq("read_status", false);
+    // Single-query unread counts (replaces N+1 loop)
+    const [{ data: unreadMsgData }, { count: unreadNotifications }] = await Promise.all([
+        supabase.rpc("get_unread_message_count", {
+            p_user_id: profile.id,
+            p_role: validRole,
+        }),
+        supabase
+            .from("notifications")
+            .select("id", { count: "exact", head: true })
+            .eq("user_id", profile.id)
+            .eq("read_status", false),
+    ]);
+    const unreadMessages: number = unreadMsgData ?? 0;
 
     // Fetch subscription status for Pro badge
     const { data: subData } = await supabase

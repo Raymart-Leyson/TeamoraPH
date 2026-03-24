@@ -13,6 +13,7 @@ import {
     AlertTriangle,
     Database,
     CreditCard,
+    LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,36 +22,14 @@ import {
     SheetTrigger
 } from "@/components/ui/sheet";
 
-export default async function AdminLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
-    const profile = await getUserProfile();
+interface NavItem {
+    label: string;
+    href: string;
+    icon: LucideIcon;
+}
 
-    // Auth guard: Only owner, admin, and staff allowed
-    if (!profile || !["owner", "admin", "staff"].includes(profile.role)) {
-        redirect("/"); // Send non-admins back to home
-    }
-
-    const role = profile.role;
-    const basePath = `/${role}`; // e.g., /owner, /admin, /staff
-
-    // Define all possible nav items
-    const allNavItems = [
-        { label: "Overview", href: `${basePath}`, icon: LayoutDashboard, roles: ["owner", "admin", "staff"] },
-        { label: "Job Reviews", href: `${basePath}/jobs`, icon: BriefcaseBusiness, roles: ["owner", "admin", "staff"] },
-        { label: "Verifications", href: `${basePath}/verifications`, icon: ShieldCheck, roles: ["owner", "admin"] },
-        { label: "Payments", href: `${basePath}/payments`, icon: CreditCard, roles: ["owner", "admin"] },
-        { label: "Reports", href: `${basePath}/reports`, icon: AlertTriangle, roles: ["owner", "admin", "staff"] },
-        { label: "Audit Logs", href: `${basePath}/logs`, icon: Database, roles: ["owner"] },
-        { label: "User Management", href: `${basePath}/users`, icon: Users, roles: ["owner"] },
-        { label: "Settings", href: `${basePath}/settings`, icon: Settings, roles: ["owner"] },
-    ];
-
-    const filteredNavItems = allNavItems.filter(item => item.roles.includes(role));
-
-    const SidebarContent = () => (
+function AdminSidebar({ navItems, basePath, role }: { navItems: NavItem[]; basePath: string; role: string }) {
+    return (
         <div className="flex flex-col h-full py-6">
             <div className="px-6 mb-10">
                 <Link href={basePath} className="flex items-center gap-2">
@@ -60,12 +39,12 @@ export default async function AdminLayout({
                     <span className="text-xl font-black text-[#1B3FA0] tracking-tighter">Admin Panel</span>
                 </Link>
                 <div className="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest bg-[#3D6EFF]/10 text-[#3D6EFF]">
-                    {profile.role}
+                    {role}
                 </div>
             </div>
 
             <nav className="flex-1 px-4 space-y-1">
-                {filteredNavItems.map((item) => (
+                {navItems.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
@@ -87,12 +66,36 @@ export default async function AdminLayout({
             </div>
         </div>
     );
+}
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+    const profile = await getUserProfile();
+
+    if (!profile || !["owner", "admin", "staff"].includes(profile.role)) {
+        redirect("/");
+    }
+
+    const role = profile.role;
+    const basePath = `/${role}`;
+
+    const allNavItems = [
+        { label: "Overview",         href: `${basePath}`,               icon: LayoutDashboard, roles: ["owner", "admin", "staff"] },
+        { label: "Job Reviews",      href: `${basePath}/jobs`,           icon: BriefcaseBusiness, roles: ["owner", "admin", "staff"] },
+        { label: "Verifications",    href: `${basePath}/verifications`,  icon: ShieldCheck,     roles: ["owner", "admin"] },
+        { label: "Payments",         href: `${basePath}/payments`,       icon: CreditCard,      roles: ["owner", "admin"] },
+        { label: "Reports",          href: `${basePath}/reports`,        icon: AlertTriangle,   roles: ["owner", "admin", "staff"] },
+        { label: "Audit Logs",       href: `${basePath}/logs`,           icon: Database,        roles: ["owner"] },
+        { label: "User Management",  href: `${basePath}/users`,          icon: Users,           roles: ["owner"] },
+        { label: "Settings",         href: `${basePath}/settings`,       icon: Settings,        roles: ["owner"] },
+    ];
+
+    const navItems = allNavItems.filter(item => item.roles.includes(role));
 
     return (
         <div className="flex min-h-screen bg-[#F8F9FF]">
             {/* Desktop Sidebar */}
             <aside className="hidden lg:block w-72 border-r border-white/20 bg-white/30 backdrop-blur-xl sticky top-0 h-screen overflow-y-auto">
-                <SidebarContent />
+                <AdminSidebar navItems={navItems} basePath={basePath} role={role} />
             </aside>
 
             {/* Mobile Nav Top Bar */}
@@ -111,7 +114,7 @@ export default async function AdminLayout({
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="p-0 border-none bg-[#F8F9FF] w-72">
-                            <SidebarContent />
+                            <AdminSidebar navItems={navItems} basePath={basePath} role={role} />
                         </SheetContent>
                     </Sheet>
                 </header>

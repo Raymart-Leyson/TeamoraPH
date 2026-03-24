@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { getUserProfile } from "@/utils/auth";
 import { createClient } from "@/utils/supabase/server";
 import { notFound, redirect } from "next/navigation";

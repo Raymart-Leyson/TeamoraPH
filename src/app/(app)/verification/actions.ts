@@ -133,15 +133,27 @@ export async function adminReviewVerificationAction(requestId: string, status: '
 
     if (updateReqError) return { error: updateReqError.message };
 
-    // 3. Determine overall verification_status for the profile
-    // Query all requests for this user to compute overall status
+    // 3. Determine overall verification_status for the profile.
+    //    Both id_doc AND selfie must be individually verified.
+    //    social_link is optional and does not gate the verified badge.
+    const REQUIRED_TYPES = ["id_doc", "selfie"] as const;
+
     const { data: allRequests } = await supabase
         .from("verification_requests")
-        .select("status")
-        .eq("user_id", request.user_id);
+        .select("type, status")
+        .eq("user_id", request.user_id)
+        .order("created_at", { ascending: false });
 
-    const hasAnyVerified = (allRequests ?? []).some((r: any) => r.status === 'verified');
-    const overallStatus = hasAnyVerified ? 'verified' : 'pending';
+    const latestByType = new Map<string, string>();
+    for (const r of allRequests ?? []) {
+        // Keep the most recently seen status per type (rows are ordered by created_at DESC via the query above)
+        if (!latestByType.has(r.type)) latestByType.set(r.type, r.status);
+    }
+
+    const allRequiredVerified = REQUIRED_TYPES.every(
+        t => latestByType.get(t) === "verified"
+    );
+    const overallStatus = allRequiredVerified ? "verified" : "pending";
 
     const { error: updateUserError } = await supabase
         .from("profiles")

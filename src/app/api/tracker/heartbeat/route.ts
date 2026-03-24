@@ -12,12 +12,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/utils/supabase/admin";
 import { authenticateTracker } from "@/lib/tracker/auth";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import type { HeartbeatRequest, HeartbeatResponse } from "@/lib/tracker/types";
 
 export async function POST(req: NextRequest) {
     const auth = await authenticateTracker(req);
     if (!auth.ok) return auth.response;
     const { deviceId, userId } = auth;
+
+    // 1 heartbeat per 20 seconds per device (app sends every 30s, allow slight jitter)
+    const rl = checkRateLimit(`heartbeat:${deviceId}`, 3, 60_000);
+    if (!rl.allowed) return rateLimitResponse(rl.resetAt);
 
     let body: HeartbeatRequest;
     try {

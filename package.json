@@ -6,7 +6,7 @@
         "dev": "NODE_OPTIONS=--max-http-header-size=65536 next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "echo 'Linting disabled'"
+        "lint": "eslint src --ext .ts,.tsx"
     },
     "dependencies": {
         "@hello-pangea/dnd": "^18.0.1",

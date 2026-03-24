@@ -11,12 +11,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/utils/supabase/admin";
 import { authenticateTracker } from "@/lib/tracker/auth";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import type { SessionStartRequest, SessionStartResponse } from "@/lib/tracker/types";
 
 export async function POST(req: NextRequest) {
     const auth = await authenticateTracker(req);
     if (!auth.ok) return auth.response;
     const { deviceId, userId } = auth;
+
+    // Max 10 session starts per device per hour
+    const rl = checkRateLimit(`session-start:${deviceId}`, 10, 60 * 60_000);
+    if (!rl.allowed) return rateLimitResponse(rl.resetAt);
 
     let body: SessionStartRequest = {};
     try {

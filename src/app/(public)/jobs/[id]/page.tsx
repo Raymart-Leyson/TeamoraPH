@@ -86,7 +86,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
     let hasApplied = false;
     let candidateData = null;
     let isSaved = false;
-    let missingProfileFields: string[] = [];
+    const missingProfileFields: string[] = [];
     if (profile?.role === 'candidate') {
         const [appRes, candidateRes, savedRes, profileRes] = await Promise.all([
             supabase.from('applications').select('id').eq('job_id', job.id).eq('candidate_id', profile.id).single(),

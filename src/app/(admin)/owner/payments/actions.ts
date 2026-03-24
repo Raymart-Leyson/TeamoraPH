@@ -1,3 +1,3 @@
 "use server";
 
-export { approvePaymentAction, rejectPaymentAction } from "@/app/(admin)/admin/payments/actions";
+export { approvePaymentAction, rejectPaymentAction, approveCandidatePurchaseAction, rejectCandidatePurchaseAction } from "@/app/(admin)/admin/payments/actions";

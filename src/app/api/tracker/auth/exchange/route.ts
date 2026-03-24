@@ -13,9 +13,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/utils/supabase/admin";
 import { sha256, generateDeviceToken } from "@/lib/tracker/token";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import type { PairExchangeRequest, PairExchangeResponse } from "@/lib/tracker/types";
 
 export async function POST(req: NextRequest) {
+    // 5 attempts per IP per 15 minutes — prevents brute-forcing pairing codes
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const rl = checkRateLimit(`pair-exchange:${clientIp}`, 5, 15 * 60_000);
+    if (!rl.allowed) return rateLimitResponse(rl.resetAt);
+
     let body: PairExchangeRequest;
     try {
         body = await req.json();
