@@ -17,6 +17,8 @@ export async function createJobAction(formData: FormData) {
     const hours_per_week = hours_per_week_raw ? parseInt(hours_per_week_raw, 10) : null;
     const expires_at_raw = formData.get("expires_at") as string;
     const expires_at = expires_at_raw ? new Date(expires_at_raw).toISOString() : null;
+    const credits_required_raw = formData.get("credits_required") as string;
+    const credits_required = credits_required_raw ? Math.max(0, parseInt(credits_required_raw, 10)) : 1;
 
     if (!title || !description) {
         return { error: "Title and description are required" };
@@ -71,6 +73,7 @@ export async function createJobAction(formData: FormData) {
         salary_range,
         hours_per_week,
         expires_at,
+        credits_required,
         status: "pending_review",
         review_priority: reviewPriority,
     });

@@ -22,11 +22,14 @@ interface ApplyButtonProps {
     defaultEmail: string | null;
     freeCredits: number;
     boughtCredits: number;
+    creditsRequired: number;
 }
 
-export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, boughtCredits }: ApplyButtonProps) {
+export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, boughtCredits, creditsRequired }: ApplyButtonProps) {
     const [open, setOpen] = useState(false);
-    const [credits, setCredits] = useState(1);
+    const [credits, setCredits] = useState(Math.max(creditsRequired, 1));
+    const totalCredits = freeCredits + boughtCredits;
+    const canAfford = creditsRequired === 0 || totalCredits >= creditsRequired;
 
     const [state, formAction, isPending] = useActionState(
         async (prevState: unknown, formData: FormData) => {
@@ -42,10 +45,20 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, bou
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-                <Button className="w-full rounded-full py-6 text-lg tracking-wider font-bold bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white shadow-xl hover:-translate-y-1 transition-transform">
-                    Apply Now
+                <Button
+                    disabled={!canAfford}
+                    className="w-full rounded-full py-6 text-lg tracking-wider font-bold bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white shadow-xl hover:-translate-y-1 transition-transform disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                    {creditsRequired === 0
+                        ? "Apply Now · Free"
+                        : `Apply Now · ${creditsRequired} Credit${creditsRequired !== 1 ? "s" : ""}`}
                 </Button>
             </SheetTrigger>
+            {!canAfford && (
+                <p className="text-center text-xs font-bold text-red-500 mt-2">
+                    You need {creditsRequired} credit{creditsRequired !== 1 ? "s" : ""} to apply. <a href="/candidate/billing" className="underline">Buy credits</a>
+                </p>
+            )}
             <SheetContent side="right" className="w-full sm:max-w-xl bg-[#F8F9FF] border-none shadow-2xl overflow-y-auto px-8 md:px-12">
                 <SheetHeader className="mb-12 pt-10">
                     <SheetTitle className="text-4xl font-extrabold text-[#1B3FA0] leading-tight">Submit Application</SheetTitle>
@@ -98,7 +111,7 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, bou
                                 <Label className="text-[#1B3FA0] font-extrabold flex items-center gap-2">
                                     <Coins className="h-4 w-4 text-[#3D6EFF]" /> Total Available Credits
                                 </Label>
-                                <span className="text-sm font-bold text-[#3D6EFF]">{freeCredits + boughtCredits}</span>
+                                <span className="text-sm font-bold text-[#3D6EFF]">{totalCredits}</span>
                             </div>
                             <div className="flex justify-between items-center text-[10px] font-bold text-[#1B3FA0]/60 px-1">
                                 <span>Free: {freeCredits} / 50 | Premium: {boughtCredits}</span>
@@ -106,37 +119,53 @@ export function ApplyButton({ jobId, candidateId, defaultEmail, freeCredits, bou
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4">
-                            <div className="flex-1 flex items-center gap-2 bg-white p-1 rounded-2xl border border-white/40 shadow-inner">
-                                {[1, 5, 10, 25].map((val) => (
-                                    <button
-                                        key={val}
-                                        type="button"
-                                        onClick={() => setCredits(val)}
-                                        className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${credits === val
-                                            ? "bg-[#1B3FA0] text-white shadow-lg scale-105"
-                                            : "text-[#1B3FA0]/50 hover:bg-[#1B3FA0]/5"
-                                            }`}
-                                    >
-                                        {val}
-                                    </button>
-                                ))}
+                        {creditsRequired === 0 ? (
+                            <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-2xl p-4">
+                                <span className="text-green-700 font-black text-sm">✦ This job is free to apply — no credits will be deducted.</span>
+                                <input type="hidden" name="credits_allocated" value="0" />
                             </div>
-                            <div className="w-20">
-                                <Input
-                                    name="credits_allocated"
-                                    type="number"
-                                    min="1"
-                                    max={freeCredits + boughtCredits}
-                                    value={credits}
-                                    onChange={(e) => setCredits(parseInt(e.target.value) || 1)}
-                                    className="bg-white border-white/60 font-black text-center rounded-xl h-11"
-                                />
-                            </div>
-                        </div>
-                        <p className="text-[11px] text-[#1B3FA0]/60 font-bold leading-tight px-1 italic">
-                            💡 High-credit applications are pinned to the top of the employer's dashboard!
-                        </p>
+                        ) : (
+                            <>
+                                {creditsRequired > 1 && (
+                                    <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-2">
+                                        <span className="text-amber-700 font-bold text-xs">Minimum required: <strong>{creditsRequired} credits</strong></span>
+                                    </div>
+                                )}
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1 flex items-center gap-2 bg-white p-1 rounded-2xl border border-white/40 shadow-inner">
+                                        {[creditsRequired, creditsRequired + 4, creditsRequired + 9, creditsRequired + 24]
+                                            .filter((v, i, a) => a.indexOf(v) === i)
+                                            .map((val) => (
+                                                <button
+                                                    key={val}
+                                                    type="button"
+                                                    onClick={() => setCredits(val)}
+                                                    className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${credits === val
+                                                        ? "bg-[#1B3FA0] text-white shadow-lg scale-105"
+                                                        : "text-[#1B3FA0]/50 hover:bg-[#1B3FA0]/5"
+                                                        }`}
+                                                >
+                                                    {val}
+                                                </button>
+                                            ))}
+                                    </div>
+                                    <div className="w-20">
+                                        <Input
+                                            name="credits_allocated"
+                                            type="number"
+                                            min={creditsRequired}
+                                            max={totalCredits}
+                                            value={credits}
+                                            onChange={(e) => setCredits(Math.max(creditsRequired, parseInt(e.target.value) || creditsRequired))}
+                                            className="bg-white border-white/60 font-black text-center rounded-xl h-11"
+                                        />
+                                    </div>
+                                </div>
+                                <p className="text-[11px] text-[#1B3FA0]/60 font-bold leading-tight px-1 italic">
+                                    💡 High-credit applications are pinned to the top of the employer&apos;s dashboard!
+                                </p>
+                            </>
+                        )}
                     </div>
 
                     {state?.error && (

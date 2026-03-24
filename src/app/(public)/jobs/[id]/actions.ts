@@ -13,12 +13,6 @@ export async function applyAction(formData: FormData) {
     const email = formData.get("email") as string;
     const subject = formData.get("subject") as string;
     const cover_letter = formData.get("cover_letter") as string;
-    // SECURITY: credits_allocated MUST be server-side only.
-    // Reading this from FormData allowed attackers to set it to 0 (free) or
-    // negative (which ADDED credits to the account on every application).
-    // Cost is always 1 credit per application, enforced here only.
-    const credits_allocated = 1;
-
     if (!job_id || !candidate_id || !email || !subject || !cover_letter) {
         return { error: "Missing required fields" };
     }
@@ -31,12 +25,16 @@ export async function applyAction(formData: FormData) {
     // 1. Refresh daily credits if needed
     await refreshCreditsIfNeeded(user.id);
 
-    // 2. Fetch job info for notification (author + title + company)
+    // 2. Fetch job info — credits_required is authoritative server-side only.
+    //    Never trust client-submitted credit cost.
     const { data: jobInfo } = await supabase
         .from("job_posts")
-        .select("author_id, title, companies(name)")
+        .select("author_id, title, credits_required, companies(name)")
         .eq("id", job_id)
         .single();
+
+    // Credits cost is set by the employer (defaults to 1). 0 = free to apply.
+    const credits_allocated = jobInfo?.credits_required ?? 1;
 
     // 3. Insert application
     const { error: appError } = await supabase.from("applications").insert({

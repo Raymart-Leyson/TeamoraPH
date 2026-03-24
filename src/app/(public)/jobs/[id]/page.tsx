@@ -193,6 +193,15 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                                         <Clock className="h-4 w-4" /> {job.hours_per_week} hrs/week
                                     </span>
                                 )}
+                                {(job.credits_required ?? 1) === 0 ? (
+                                    <span className="flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-full font-bold shadow-sm text-sm">
+                                        ✦ Free to Apply
+                                    </span>
+                                ) : (job.credits_required ?? 1) > 1 && (
+                                    <span className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 px-4 py-2 rounded-full font-bold shadow-sm text-sm">
+                                        ✦ {job.credits_required} Credits to Apply
+                                    </span>
+                                )}
                             </div>
                         </div>
 

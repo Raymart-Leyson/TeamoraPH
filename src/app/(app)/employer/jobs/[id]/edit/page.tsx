@@ -21,7 +21,7 @@ export default async function EditJobPage({ params }: Props) {
     const supabase = await createClient();
     const { data: job } = await supabase
         .from("job_posts")
-        .select("id, title, description, location, job_type, salary_range, hours_per_week, author_id")
+        .select("id, title, description, location, job_type, salary_range, hours_per_week, credits_required, author_id")
         .eq("id", id)
         .eq("author_id", profile.id)
         .single();

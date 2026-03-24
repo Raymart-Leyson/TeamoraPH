@@ -44,6 +44,7 @@ interface Job {
     job_type: string | null;
     salary_range: string | null;
     hours_per_week: number | null;
+    credits_required: number | null;
 }
 
 export function EditJobForm({ job }: { job: Job }) {
@@ -139,6 +140,22 @@ export function EditJobForm({ job }: { job: Job }) {
                             placeholder="e.g. $100k – $120k / year"
                             disabled={isPending}
                         />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="credits_required">Credits Required to Apply</Label>
+                        <Input
+                            id="credits_required"
+                            name="credits_required"
+                            type="number"
+                            min="0"
+                            max="50"
+                            defaultValue={job.credits_required ?? 1}
+                            disabled={isPending}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            How many credits a candidate must spend to submit an application. Set to <strong>0</strong> for free.
+                        </p>
                     </div>
 
                     <div className="space-y-2">

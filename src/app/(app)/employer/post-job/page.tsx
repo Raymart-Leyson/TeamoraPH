@@ -142,6 +142,22 @@ export default function PostJobPage() {
                         </div>
 
                         <div className="space-y-2">
+                            <Label htmlFor="credits_required">Credits Required to Apply</Label>
+                            <Input
+                                id="credits_required"
+                                name="credits_required"
+                                type="number"
+                                min="0"
+                                max="50"
+                                defaultValue="1"
+                                disabled={isPending}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                How many credits a candidate must spend to submit an application. Set to <strong>0</strong> to make it free. Default is 1.
+                            </p>
+                        </div>
+
+                        <div className="space-y-2">
                             <Label>Job Description *</Label>
                             <RichTextEditor
                                 name="description"
