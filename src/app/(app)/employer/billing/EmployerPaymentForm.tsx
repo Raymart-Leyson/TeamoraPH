@@ -60,7 +60,7 @@ export function EmployerPaymentForm({
                         <p className="text-xs font-bold text-[#1B3FA0]/50 mb-1">Your reference</p>
                         <p className="font-black text-[#3D6EFF] tracking-widest text-sm">{wiseReference}</p>
                     </div>
-                    <p className="text-xs text-[#1B3FA0]/40">Need help? Contact us at support@teamoraph.com</p>
+                    <p className="text-xs text-[#1B3FA0]/40">Need help? Contact us at raymart@selleruniverse.com</p>
                 </CardContent>
             </Card>
         );

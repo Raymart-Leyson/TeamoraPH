@@ -116,7 +116,7 @@ export default function BillingClient({
                             <p className="font-black text-[#3D6EFF] tracking-widest text-sm">{selected.wiseReference}</p>
                         </div>
                         <p className="text-xs text-[#1B3FA0]/40">
-                            Need help? Contact us at support@teamoraph.com
+                            Need help? Contact us at raymart@selleruniverse.com
                         </p>
                     </CardContent>
                 </Card>

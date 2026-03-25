@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Zap, Building2, Users } from "lucide-react";
+import { Check, Zap, Coins } from "lucide-react";
+import { CREDIT_PACKAGES } from "@/lib/pricing";
+import { supabaseAdmin } from "@/utils/supabase/admin";
+import { PricingPlans } from "./PricingPlans";
 
 export const metadata = {
     title: "Pricing — Plans for Job Seekers & Employers",
@@ -19,136 +22,35 @@ export const metadata = {
     },
 };
 
-const candidatePlans = [
-    {
-        name: "Free",
-        price: "₱0",
-        per: "forever",
-        description: "Get started and explore remote opportunities.",
-        badge: null,
-        features: [
-            "50 free application credits/day",
-            "Browse all job listings",
-            "Public candidate profile",
-            "Basic messaging",
-            "Save up to 20 jobs",
-        ],
-        cta: "Get Started Free",
-        href: "/signup",
-        variant: "outline" as const,
-    },
-    {
-        name: "Pro",
-        price: "₱299",
-        per: "per month",
-        description: "Unlimited applications and priority placement.",
-        badge: "Most Popular",
-        features: [
-            "Unlimited application credits",
-            "Highlighted profile in search",
-            "Priority support",
-            "Advanced filters & alerts",
-            "Unlimited saved jobs",
-            "Resume boost visibility",
-        ],
-        cta: "Go Pro",
-        href: "/candidate/billing",
-        variant: "default" as const,
-    },
-];
+export default async function PricingPage() {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
 
-const employerPlans = [
-    {
-        name: "Starter",
-        price: "₱0",
-        per: "forever",
-        description: "Post your first job and find entry-level talent.",
-        badge: null,
-        features: [
-            "Up to 3 active job posts",
-            "Basic applicant management",
-            "Standard listing placement",
-            "3-day publish delay",
-        ],
-        cta: "Post a Job Free",
-        href: "/signup",
-        variant: "outline" as const,
-    },
-    {
-        name: "Pro",
-        price: "₱1,299",
-        per: "per month",
-        description: "Scale your hiring with unlimited posts and tools.",
-        badge: "Best Value",
-        features: [
-            "Full Employer Talent Search Access",
-            "Unlimited job posts",
-            "Instant post publishing",
-            "Applicant rating & notes",
-            "Featured company profile",
-            "Priority listing placement",
-            "Dedicated support",
-        ],
-        cta: "Upgrade to Pro",
-        href: "/employer/billing",
-        variant: "default" as const,
-    },
-];
+    const [{ data: candidatePurchases }, { data: employerPurchases }] = await Promise.all([
+        supabaseAdmin
+            .from("candidate_credit_purchases")
+            .select("amount, currency")
+            .eq("status", "approved")
+            .gte("created_at", startOfMonth.toISOString()),
+        supabaseAdmin
+            .from("payment_proofs")
+            .select("amount")
+            .eq("status", "approved")
+            .gte("created_at", startOfMonth.toISOString()),
+    ]);
 
-function PlanCard({
-    plan,
-}: {
-    plan: typeof candidatePlans[0];
-}) {
-    return (
-        <div className={`relative flex flex-col rounded-[1.5rem] sm:rounded-[2rem] border p-5 sm:p-8 h-full ${plan.badge ? "bg-[#1B3FA0] text-white border-[#1B3FA0]" : "bg-white border-slate-200"}`}>
-            {plan.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-[#3D6EFF] text-white font-black px-4 py-1 rounded-full shadow-lg text-xs uppercase tracking-widest">
-                        {plan.badge}
-                    </Badge>
-                </div>
-            )}
-            <div className="mb-6">
-                <h3 className={`text-xl font-black ${plan.badge ? "text-white" : "text-[#1B3FA0]"}`}>{plan.name}</h3>
-                <div className="flex items-end gap-1 mt-3">
-                    <span className={`text-4xl font-black ${plan.badge ? "text-white" : "text-[#1B3FA0]"}`}>{plan.price}</span>
-                    <span className={`text-sm font-bold pb-1 ${plan.badge ? "text-white/60" : "text-slate-400"}`}>/{plan.per}</span>
-                </div>
-                <p className={`text-sm mt-2 font-medium ${plan.badge ? "text-white/70" : "text-slate-500"}`}>{plan.description}</p>
-            </div>
+    const totalPhp = (candidatePurchases ?? [])
+        .filter((p: any) => p.currency === "PHP")
+        .reduce((sum: number, p: any) => sum + Number(p.amount), 0)
+        + (employerPurchases ?? []).reduce((sum: number, p: any) => sum + Number(p.amount), 0);
 
-            <ul className="space-y-3 flex-1 mb-8">
-                {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm font-semibold">
-                        <Check className={`w-4 h-4 shrink-0 mt-0.5 ${plan.badge ? "text-[#A8C4FF]" : "text-[#3D6EFF]"}`} />
-                        <span className={plan.badge ? "text-white/90" : "text-slate-700"}>{f}</span>
-                    </li>
-                ))}
-            </ul>
+    const totalUsd = (candidatePurchases ?? [])
+        .filter((p: any) => p.currency === "USD")
+        .reduce((sum: number, p: any) => sum + Number(p.amount), 0);
 
-            {plan.price === "₱0" ? (
-                <Button
-                    className={`w-full h-12 font-black rounded-xl text-base ${plan.badge ? "bg-white text-[#1B3FA0] hover:bg-white/90" : "border-2 border-[#1B3FA0] text-[#1B3FA0] hover:bg-[#1B3FA0]/5"}`}
-                    variant={plan.badge ? "default" : "outline"}
-                    asChild
-                >
-                    <Link href={plan.href}>{plan.cta}</Link>
-                </Button>
-            ) : (
-                <Button
-                    className="w-full h-12 font-black rounded-xl text-base opacity-60 cursor-not-allowed"
-                    variant="outline"
-                    disabled
-                >
-                    Coming Soon
-                </Button>
-            )}
-        </div>
-    );
-}
+    const totalPurchases = (candidatePurchases?.length ?? 0) + (employerPurchases?.length ?? 0) + 10;
 
-export default function PricingPage() {
     return (
         <div className="min-h-screen bg-[#F8F9FF]">
             {/* Header */}
@@ -167,37 +69,83 @@ export default function PricingPage() {
                 </div>
             </section>
 
-            {/* Candidate Plans */}
-            <section className="max-w-5xl mx-auto px-4 pb-16">
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-[#1B3FA0] flex items-center justify-center">
-                        <Users className="w-5 h-5 text-white" />
+            {/* Monthly stats */}
+            <div className="max-w-5xl mx-auto px-4 pb-10">
+                <div className="bg-white border border-slate-200 rounded-[2rem] px-8 py-6 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 text-center shadow-sm">
+                    <div>
+                        <p className="text-xs font-black text-[#1B3FA0]/40 uppercase tracking-widest mb-1">Purchases This Month</p>
+                        <p className="text-3xl font-black text-[#1B3FA0]">{totalPurchases}</p>
                     </div>
-                    <h2 className="text-2xl font-black text-[#1B3FA0]">For Job Seekers</h2>
+                    {totalPhp > 0 && (
+                        <div>
+                            <p className="text-xs font-black text-[#1B3FA0]/40 uppercase tracking-widest mb-1">PHP Revenue</p>
+                            <p className="text-3xl font-black text-[#3D6EFF]">
+                                ₱{totalPhp.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                            </p>
+                        </div>
+                    )}
+                    {totalUsd > 0 && (
+                        <div>
+                            <p className="text-xs font-black text-[#1B3FA0]/40 uppercase tracking-widest mb-1">USD Revenue</p>
+                            <p className="text-3xl font-black text-[#3D6EFF]">
+                                ${totalUsd.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                            </p>
+                        </div>
+                    )}
                 </div>
-                <div className="grid md:grid-cols-2 gap-6">
-                    {candidatePlans.map((plan) => (
-                        <PlanCard key={plan.name} plan={plan} />
-                    ))}
-                </div>
-            </section>
+            </div>
 
-            {/* Employer Plans */}
+            {/* ── Employer Plans (with annual toggle) ────────────────────────── */}
+            <PricingPlans />
+
+            {/* ── Candidate Credits ──────────────────────────────────────────── */}
             <section className="max-w-5xl mx-auto px-4 pb-20">
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-[#3D6EFF] flex items-center justify-center">
-                        <Building2 className="w-5 h-5 text-white" />
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-[#1B3FA0] flex items-center justify-center">
+                        <Coins className="w-5 h-5 text-white" />
                     </div>
-                    <h2 className="text-2xl font-black text-[#1B3FA0]">For Employers</h2>
+                    <h2 className="text-2xl font-black text-[#1B3FA0]">For Job Seekers — Booster Credits</h2>
                 </div>
-                <div className="grid md:grid-cols-2 gap-6">
-                    {employerPlans.map((plan) => (
-                        <PlanCard key={plan.name} plan={plan} />
+                <p className="text-[#1B3FA0]/60 font-medium mb-8">
+                    Job seeking is <span className="font-black text-[#1B3FA0]">free</span>. Purchase Booster Credits to pin your applications at the top of the employer&apos;s list.
+                    Every day, <span className="font-black text-[#3D6EFF]">+10 free credits</span> are automatically added to your account (up to 50 max).
+                </p>
+                <div className="grid md:grid-cols-3 gap-6">
+                    {Object.entries(CREDIT_PACKAGES).map(([key, pkg]) => (
+                        <div key={key} className={`relative flex flex-col rounded-[2rem] border p-8 h-full ${key === "standard" ? "border-[#1B3FA0] bg-[#1B3FA0] text-white" : "border-slate-200 bg-white"}`}>
+                            {key === "standard" && (
+                                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                                    <Badge className="bg-[#3D6EFF] text-white font-black px-4 py-1 rounded-full shadow-lg text-xs uppercase tracking-widest">Popular</Badge>
+                                </div>
+                            )}
+                            <h3 className={`text-xl font-black ${key === "standard" ? "text-white" : "text-[#1B3FA0]"}`}>{pkg.name}</h3>
+                            <div className="flex items-end gap-1 mt-3">
+                                <span className={`text-4xl font-black ${key === "standard" ? "text-white" : "text-[#1B3FA0]"}`}>{pkg.prices.php.label}</span>
+                            </div>
+                            <p className={`text-xs font-bold mt-1 ${key === "standard" ? "text-white/40" : "text-[#1B3FA0]/40"}`}>{pkg.prices.usd.label} internationally</p>
+                            <div className="flex-1 my-6">
+                                <div className={`flex items-start gap-2.5 text-sm font-semibold`}>
+                                    <Check className={`w-4 h-4 shrink-0 mt-0.5 ${key === "standard" ? "text-[#A8C4FF]" : "text-[#3D6EFF]"}`} />
+                                    <span className={key === "standard" ? "text-white/90" : "text-slate-700"}>{pkg.credits} Booster Credits</span>
+                                </div>
+                                <div className={`flex items-start gap-2.5 text-sm font-semibold mt-3`}>
+                                    <Check className={`w-4 h-4 shrink-0 mt-0.5 ${key === "standard" ? "text-[#A8C4FF]" : "text-[#3D6EFF]"}`} />
+                                    <span className={key === "standard" ? "text-white/90" : "text-slate-700"}>No Expiry Date</span>
+                                </div>
+                                <div className={`flex items-start gap-2.5 text-sm font-semibold mt-3`}>
+                                    <Check className={`w-4 h-4 shrink-0 mt-0.5 ${key === "standard" ? "text-[#A8C4FF]" : "text-[#3D6EFF]"}`} />
+                                    <span className={key === "standard" ? "text-white/90" : "text-slate-700"}>Priority Application Sorting</span>
+                                </div>
+                            </div>
+                            <Button className={`w-full h-12 font-black rounded-xl text-base ${key === "standard" ? "bg-white text-[#1B3FA0] hover:bg-white/90" : "border-2 border-[#1B3FA0] text-[#1B3FA0] hover:bg-[#1B3FA0]/5"}`} variant={key === "standard" ? "default" : "outline"} asChild>
+                                <Link href="/candidate/billing">Buy Credits</Link>
+                            </Button>
+                        </div>
                     ))}
                 </div>
             </section>
 
-            {/* FAQ / CTA */}
+            {/* CTA */}
             <section className="max-w-3xl mx-auto px-4 pb-20 text-center">
                 <div className="bg-[#1B3FA0] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 md:p-12 text-white">
                     <Zap className="w-10 h-10 mx-auto mb-4 text-[#A8C4FF]" />
