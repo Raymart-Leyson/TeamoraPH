@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, AlertCircle, Loader2 } from "lucide-react";
 import type { PaymentMethod } from "@/components/wise/PaymentOptions";
 
+const ANNUAL_DISCOUNT = 0.20;
+
 interface Props {
     isActive: boolean;
     subscriptionEnd: string | null;
@@ -52,19 +54,25 @@ export default function EmployerBillingClient({
             : null
     );
     const [loading, setLoading] = useState<string | null>(null);
+    const [annual, setAnnual] = useState(false);
 
     async function handleSelect(planKey: string) {
+        const key = annual ? `${planKey}_annual` : planKey;
         setLoading(planKey);
         try {
-            const result = await createWisePaymentIntentAction(planKey);
+            const result = await createWisePaymentIntentAction(key);
             if (result.error) { toast.error(result.error); return; }
 
             const plan = PLANS[planKey as keyof typeof PLANS];
+            const monthlyPhp = plan.prices.php.amount / 100;
+            const priceLabel = annual
+                ? `₱${Math.round(monthlyPhp * 12 * (1 - ANNUAL_DISCOUNT)).toLocaleString()} /year`
+                : plan.prices.php.label;
             setSelected({
                 proofId: result.proofId!,
-                planKey,
-                planName: plan.name,
-                priceLabel: plan.prices.php.label,
+                planKey: key,
+                planName: plan.name + (annual ? " (Annual)" : ""),
+                priceLabel,
                 wiseReference: result.wiseReference!,
                 hasProof: false,
             });
@@ -119,40 +127,76 @@ export default function EmployerBillingClient({
             {!selected && (
                 <>
                     <div>
-                        <h2 className="text-lg font-black text-[#1B3FA0] mb-4">Choose a Plan</h2>
+                        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+                            <h2 className="text-lg font-black text-[#1B3FA0]">Choose a Plan</h2>
+                            {/* Monthly / Annual toggle */}
+                            <div className="flex items-center gap-3">
+                                <span className={`text-sm font-black ${!annual ? "text-[#1B3FA0]" : "text-[#1B3FA0]/40"}`}>Monthly</span>
+                                <button
+                                    onClick={() => setAnnual(!annual)}
+                                    className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${annual ? "bg-[#3D6EFF]" : "bg-slate-200"}`}
+                                >
+                                    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all duration-200 ${annual ? "left-7" : "left-1"}`} />
+                                </button>
+                                <span className={`text-sm font-black ${annual ? "text-[#1B3FA0]" : "text-[#1B3FA0]/40"}`}>
+                                    Annual
+                                    <Badge className="ml-2 bg-green-100 text-green-700 font-black text-xs px-2 py-0.5 rounded-full border-0">
+                                        Save 20%
+                                    </Badge>
+                                </span>
+                            </div>
+                        </div>
                         <div className="grid sm:grid-cols-2 gap-5">
-                            {(Object.entries(PLANS) as [string, typeof PLANS[keyof typeof PLANS]][]).map(([key, plan]) => (
-                                <Card key={key} className="border-none shadow-xl rounded-3xl bg-white/70 backdrop-blur-md">
-                                    <CardContent className="p-6 space-y-4">
-                                        <div className="flex items-start justify-between">
-                                            <div>
-                                                <p className="font-black text-[#1B3FA0] text-lg">{plan.name}</p>
-                                                <p className="text-xs font-bold text-[#1B3FA0]/50 mt-0.5">{plan.description}</p>
+                            {(Object.entries(PLANS) as [string, typeof PLANS[keyof typeof PLANS]][]).map(([key, plan]) => {
+                                const monthlyPhp = plan.prices.php.amount / 100;
+                                const displayedPhp = annual
+                                    ? Math.round(monthlyPhp * (1 - ANNUAL_DISCOUNT))
+                                    : monthlyPhp;
+                                const priceLabel = annual
+                                    ? `₱${displayedPhp.toLocaleString()}/mo`
+                                    : plan.prices.php.label;
+
+                                return (
+                                    <Card key={key} className="border-none shadow-xl rounded-3xl bg-white/70 backdrop-blur-md">
+                                        <CardContent className="p-6 space-y-4">
+                                            <div className="flex items-start justify-between">
+                                                <div>
+                                                    <p className="font-black text-[#1B3FA0] text-lg">{plan.name}</p>
+                                                    <p className="text-xs font-bold text-[#1B3FA0]/50 mt-0.5">{plan.description}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    {annual && (
+                                                        <p className="text-xs font-bold text-slate-400 line-through">{plan.prices.php.label}</p>
+                                                    )}
+                                                    <Badge className="bg-[#3D6EFF]/10 text-[#3D6EFF] font-black rounded-xl text-xs border-0">
+                                                        {priceLabel}
+                                                    </Badge>
+                                                    {annual && (
+                                                        <p className="text-xs font-bold text-green-600 mt-1">billed annually</p>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <Badge className="bg-[#3D6EFF]/10 text-[#3D6EFF] font-black rounded-xl text-xs border-0">
-                                                {plan.prices.php.label}
-                                            </Badge>
-                                        </div>
-                                        <ul className="space-y-1.5">
-                                            {plan.features.map(f => (
-                                                <li key={f} className="flex items-center gap-2 text-sm font-bold text-[#1B3FA0]/70">
-                                                    <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
-                                                    {f}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                        <Button
-                                            onClick={() => handleSelect(key)}
-                                            disabled={!!loading}
-                                            className="w-full bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-black rounded-2xl h-11"
-                                        >
-                                            {loading === key
-                                                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Getting reference...</>
-                                                : "Select Plan"}
-                                        </Button>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                                            <ul className="space-y-1.5">
+                                                {plan.features.map(f => (
+                                                    <li key={f} className="flex items-center gap-2 text-sm font-bold text-[#1B3FA0]/70">
+                                                        <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                                                        {f}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <Button
+                                                onClick={() => handleSelect(key)}
+                                                disabled={!!loading}
+                                                className="w-full bg-[#1B3FA0] hover:bg-[#1B3FA0]/90 text-white font-black rounded-2xl h-11"
+                                            >
+                                                {loading === key
+                                                    ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Getting reference...</>
+                                                    : "Select Plan"}
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
+                                );
+                            })}
                         </div>
                     </div>
 

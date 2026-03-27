@@ -29,7 +29,10 @@ export async function createWisePaymentIntentAction(plan: string): Promise<{
     const profile = await getUserProfile();
     if (!profile || profile.role !== "employer") return { error: "Unauthorized" };
 
-    if (!["pro", "premium"].includes(plan)) return { error: "Invalid plan" };
+    const isAnnual = plan.endsWith("_annual");
+    const basePlan = isAnnual ? plan.replace("_annual", "") : plan;
+
+    if (!["pro", "premium"].includes(basePlan)) return { error: "Invalid plan" };
 
     const supabase = await createClient();
 
@@ -46,8 +49,11 @@ export async function createWisePaymentIntentAction(plan: string): Promise<{
     }
 
     const wiseReference = generateWiseReference(plan);
-    const planConfig = PRICING_PLANS[plan as keyof typeof PRICING_PLANS];
-    const amount = planConfig.prices.php.amount / 100;
+    const planConfig = PRICING_PLANS[basePlan as keyof typeof PRICING_PLANS];
+    const monthlyAmount = planConfig.prices.php.amount / 100;
+    const amount = isAnnual
+        ? Math.round(monthlyAmount * 12 * 0.8) // 20% annual discount
+        : monthlyAmount;
 
     const { data, error } = await supabase.from("payment_proofs").insert({
         employer_id: profile.id,
@@ -137,7 +143,8 @@ export async function checkWisePaymentAction(proofId: string): Promise<CheckResu
         .eq("id", proofId);
 
     const periodEnd = new Date();
-    periodEnd.setDate(periodEnd.getDate() + 30);
+    const daysToAdd = proof.plan.endsWith("_annual") ? 365 : 30;
+    periodEnd.setDate(periodEnd.getDate() + daysToAdd);
 
     await supabase.from("subscriptions").upsert({
         employer_id: profile.id,
